@@ -30,7 +30,10 @@ If any box can't be ticked, the screen is not ready to ship.
       override the heading size with `!important`.
 - [ ] Use `<Eyebrow>` for uppercase labels.
 - [ ] Use `<Card>` for any glass card chrome. No inline `bg-white/40 +
-      border + shadow` combinations.
+      border + shadow` combinations. If children own padding (rows,
+      grouped controls), pass `padding="none"`.
+- [ ] Use `<Toggle>` for any on/off switch (permissions, notifications,
+      accessibility settings). Never roll a bespoke `<button role="switch">`.
 - [ ] Use `<Button>` for every CTA. Use `variant="primary"` for the one
       main action, `variant="ghost"` for the secondary text link.
 - [ ] Use token classes for color and shadow:
@@ -69,6 +72,11 @@ If any box can't be ticked, the screen is not ready to ship.
 - [ ] **Voice over a switch** — announces switch role + on/off state.
 - [ ] **No inline hex** anywhere in the new JSX.
 - [ ] **No inline shadow literals** (e.g. `shadow-[0_8px_32px…]`).
+- [ ] **No duplicated card chrome** — grep your diff for
+      `rounded-[var(--radius-panel)] border` outside `Card.tsx`. If you find
+      it elsewhere, refactor onto `<Card>`.
+- [ ] **No bespoke switches** — every `role="switch"` element is the
+      `<Toggle>` component.
 - [ ] **No off-scale spacing** (e.g. `mt-[27px]`).
 - [ ] **No `!important`** unless you wrote a brief note on why.
 - [ ] **No `console.log`** left in.

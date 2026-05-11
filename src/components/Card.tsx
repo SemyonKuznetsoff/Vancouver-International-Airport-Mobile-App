@@ -1,4 +1,4 @@
-type Padding = "default" | "compact" | "lg";
+type Padding = "none" | "compact" | "default" | "lg";
 
 type CardProps = {
   children: React.ReactNode;
@@ -8,15 +8,27 @@ type CardProps = {
 };
 
 const paddingClasses: Record<Padding, string> = {
-  default: "p-5",
+  none: "",
   compact: "p-4",
+  default: "p-5",
   lg: "p-6",
 };
 
 /**
- * Glass card primitive. Standard chrome for any panel-style card across the
- * app. Compose content inside; do not reauthor `bg-white/40 + border + shadow`
- * combinations in page files.
+ * Glass card primitive — the **single source** of the standard elevated
+ * glass surface (fill, border, radius, shadow). Compose content inside.
+ *
+ * - Do not re-author `bg-[var(--color-surface-card)] + border + shadow +
+ *   rounded-[var(--radius-panel)]` combinations in page files or other
+ *   primitives. If you need card chrome, use Card.
+ * - Use `padding="none"` when the children own their own padding
+ *   (e.g. a list of rows, an `AuthOptionGroup`).
+ * - Use `padding="compact"` (16px) inside dense lists.
+ * - Use `padding="default"` (20px) for most informational cards.
+ * - Use `padding="lg"` (24px) for hero cards.
+ *
+ * Extra layout concerns (e.g. `overflow-hidden`, divider selectors) come in
+ * via `className`.
  */
 export function Card({
   children,

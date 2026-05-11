@@ -182,6 +182,7 @@ Reuse, before you build new:
 | Header with back + step | `ScreenHeader` |
 | Primary / ghost CTA | `Button` |
 | Permission row with toggle | `PermissionCard` |
+| On/off switch (any setting) | `Toggle` |
 | Auth provider row | `AuthOption` + `AuthOptionGroup` |
 | Inline SVG | add to `icons.tsx`, never import external images |
 

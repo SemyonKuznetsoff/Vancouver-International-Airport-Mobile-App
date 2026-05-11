@@ -1,5 +1,6 @@
 "use client";
 
+import { Card } from "./Card";
 import { ChevronRightIcon } from "./icons";
 
 type AuthOptionProps = {
@@ -54,14 +55,18 @@ type AuthOptionGroupProps = {
 };
 
 /**
- * Glassy card that groups AuthOption rows with hairline dividers between them.
+ * Glassy card that groups AuthOption rows with hairline dividers between
+ * them. Composes <Card> for the standard card chrome (fill, border, radius,
+ * shadow) and layers on `overflow-hidden` (so hover backgrounds stay inside
+ * the rounded edge) plus a sibling-divider selector.
  */
 export function AuthOptionGroup({ children }: AuthOptionGroupProps) {
   return (
-    <div
-      className="overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-[var(--color-surface-card)] shadow-[var(--shadow-card)] [&>*+*]:border-t [&>*+*]:border-[var(--color-border)]"
+    <Card
+      padding="none"
+      className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border)]"
     >
       {children}
-    </div>
+    </Card>
   );
 }

@@ -193,7 +193,10 @@ under the `@theme` block.
 
 ## 6. Cards
 
-The `<Card>` primitive owns the glass card chrome. Compose content inside.
+`<Card>` is the **single source** of the standard elevated glass surface.
+Any glass card chrome anywhere in the app — fill, border, radius, shadow —
+comes from this component. Other primitives (e.g. `AuthOptionGroup`,
+`PermissionCard`) compose Card; they never re-author the chrome.
 
 ### Standard glass card
 
@@ -204,19 +207,65 @@ The `<Card>` primitive owns the glass card chrome. Compose content inside.
 </Card>
 ```
 
-- Background: `rgba(255,255,255,0.4)`
+- Background: `var(--color-surface-card)` (`rgba(255,255,255,0.4)`)
 - Border: `1px solid var(--color-border)`
 - Radius: `var(--radius-panel)` → 22px
 - Shadow: `var(--shadow-card)`
-- Padding: 20px (`p-5`) default. Override via `padding="lg"` for hero cards.
+- Padding: 20px (`p-5`) default. Use `padding="compact"` (16px) for dense
+  lists, `padding="lg"` (24px) for hero cards, or `padding="none"` when
+  children own their own padding.
 
-### Variants
+### Padding variants
 
-| Variant | When to use |
-|---|---|
-| `default` | Most informational cards. |
-| `compact` | Inside dense lists (16px padding instead of 20). |
-| `interactive` | Hover/active feedback for tappable cards. |
+| Variant | px | When to use |
+|---|---|---|
+| `none` | 0 | Children own padding (rows, tabbed panels, AuthOptionGroup). |
+| `compact` | 16 | Dense lists, secondary cards. |
+| `default` | 20 | Most informational cards. |
+| `lg` | 24 | Hero / spotlight cards. |
+
+### Composing layout concerns
+
+Extra layout needs (`overflow-hidden`, divider selectors, custom max-width)
+flow in via Card's `className`. That keeps the chrome canonical and the
+composition explicit:
+
+```tsx
+<Card
+  padding="none"
+  className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border)]"
+>
+  {/* rows */}
+</Card>
+```
+
+### Do
+
+```tsx
+// ✅ One glass surface, one primitive.
+<Card>…</Card>
+
+// ✅ Composition for grouped rows.
+<Card padding="none" className="overflow-hidden">
+  <Row />
+  <Row />
+</Card>
+```
+
+### Don't
+
+```tsx
+// ❌ Re-authoring card chrome inline.
+<div className="rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-white/40 shadow-[var(--shadow-card)] p-5">
+  …
+</div>
+
+// ❌ Using bg-white/40 for the card fill.
+<Card className="bg-white/40">…</Card> // there is a token: --color-surface-card
+
+// ❌ Inventing a one-off shadow.
+<div className="shadow-[0_8px_32px_0_rgba(0,0,0,0.07)]">…</div>
+```
 
 ### Stacked card group
 
@@ -273,10 +322,58 @@ Use `flex flex-col gap-3` (12px between siblings).
 
 ### Toggle (switch)
 
+The `<Toggle>` component is the single source of switch chrome. Use it for
+every on/off setting across the app — permissions, notification preferences,
+accessibility toggles. Never roll a bespoke switch.
+
+**Anatomy**
+
 - Track: 44×26, rounded full.
-- Knob: 20×20, white, `--shadow-toggle` drop.
+- Knob: 20×20, white, `--shadow-toggle` drop, translates 18px between off
+  (left, 3px from edge) and on (right, 21px from edge).
 - Track ON: `--color-action-primary`. Track OFF: `--color-text-secondary` @ 40%.
-- Always `role="switch" aria-checked aria-label`.
+- Hit area: extended to 44×44 via a transparent `::before` pseudo-element so
+  the visible chrome stays compact while the tap target meets the 44px floor.
+  No layout impact.
+- Disabled: `opacity-50 pointer-events-none` plus the native `disabled` attr.
+
+**API**
+
+```tsx
+<Toggle
+  checked={on}
+  onChange={setOn}
+  ariaLabel="Notifications"
+  disabled={false}
+/>
+```
+
+Controlled only — the parent owns state. `aria-label` is required so screen
+readers can identify the switch without a visible label.
+
+**A11y**
+
+- `role="switch"`, `aria-checked={checked}`, `aria-label` are all set by the
+  component.
+- Focus is handled globally via `:focus-visible` in `globals.css`.
+- Motion (`transition-colors`, `transition-transform`) is short-lived and
+  honours the global `prefers-reduced-motion: reduce` cutoff.
+
+**Do**
+
+```tsx
+<Toggle checked={notifications} onChange={setNotifications} ariaLabel="Notifications" />
+```
+
+**Don't**
+
+```tsx
+// ❌ Bespoke <button role="switch">
+<button role="switch" aria-checked={on} onClick={() => setOn(!on)} className="…">…</button>
+
+// ❌ Native checkbox styled to look like a switch
+<input type="checkbox" className="appearance-none w-11 h-[26px] rounded-full" />
+```
 
 ### Disabled
 
@@ -434,8 +531,9 @@ visibly changing existing screens.**
 | `Button` | `src/components/Button.tsx` | `primary` / `ghost` variants. |
 | `IconTile` | `src/components/IconTile.tsx` | Generic translucent chip. |
 | `FeatureList` | `src/components/FeatureList.tsx` | Numbered feature rows. |
-| `AuthOption` / `AuthOptionGroup` | `src/components/AuthOption.tsx` | Auth provider rows. |
-| `PermissionCard` | `src/components/PermissionCard.tsx` | Permission + toggle card. |
+| `AuthOption` / `AuthOptionGroup` | `src/components/AuthOption.tsx` | Auth provider rows. Group composes `Card`. |
+| `PermissionCard` | `src/components/PermissionCard.tsx` | Permission card. Uses `Toggle` for the switch. |
+| `Toggle` | `src/components/Toggle.tsx` | Reusable accessible switch. Use for any on/off setting. |
 | `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks. |
 
 ---
