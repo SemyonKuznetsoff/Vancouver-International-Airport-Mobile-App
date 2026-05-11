@@ -155,3 +155,21 @@ export function AeroplanBadge({ size = 22 }: { size?: number }) {
     </span>
   );
 }
+
+/**
+ * Calm three-quarter arc spinner. Drives the loading state on `<Button>`.
+ *
+ * Uses Tailwind's `animate-spin` which the global
+ * `prefers-reduced-motion: reduce` rule collapses to ~0ms duration —
+ * the arc renders as a static SVG in that mode, still readable as a
+ * loading indicator.
+ */
+export function SpinnerIcon(props: IconProps) {
+  const { className = "animate-spin", ...rest } = props;
+  return (
+    <svg {...strokeProps({ ...rest, className })}>
+      <circle cx="12" cy="12" r="9" opacity="0.25" />
+      <path d="M21 12a9 9 0 0 0-9-9" />
+    </svg>
+  );
+}

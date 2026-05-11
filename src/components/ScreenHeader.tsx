@@ -6,14 +6,16 @@ type ScreenHeaderProps = {
   backHref?: Route | URL;
   backLabel?: string;
   step?: string;
-  right?: React.ReactNode;
+  trailing?: React.ReactNode;
+  className?: string;
 };
 
 /**
  * Top row for any non-root screen.
  *
  * - Left: optional circular back button (44×44 tap target).
- * - Right: optional step label (e.g. "Step 2 of 3") or arbitrary content.
+ * - Right: optional step label (e.g. "Step 2 of 3") or arbitrary `trailing`
+ *   content.
  *
  * The header sits inside the page's `px-6` gutter and `pt-2` from `AppShell`.
  */
@@ -21,10 +23,11 @@ export function ScreenHeader({
   backHref,
   backLabel = "Go back",
   step,
-  right,
+  trailing,
+  className = "",
 }: ScreenHeaderProps) {
   return (
-    <header className="flex items-center justify-between pt-2">
+    <header className={`flex items-center justify-between pt-2 ${className}`.trim()}>
       {backHref ? (
         <Link
           href={backHref as Route}
@@ -37,7 +40,7 @@ export function ScreenHeader({
         <span aria-hidden className="h-11 w-11" />
       )}
 
-      {right ?? (
+      {trailing ?? (
         step ? (
           <span className="text-[11px] uppercase leading-[1.5] tracking-[0.22em] text-[var(--color-text-secondary)]">
             {step}
