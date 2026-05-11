@@ -36,7 +36,14 @@ If any box can't be ticked, the screen is not ready to ship.
 - [ ] Use token classes for color and shadow:
       `text-[var(--color-text-primary)]`, not raw hex.
       `shadow-[var(--shadow-card)]`, not custom shadow values.
+      For the glass card fill use `bg-[var(--color-surface-card)]`, never
+      `bg-white/40`.
+- [ ] Use type-role utilities for typography: `text-display`, `text-title`,
+      `text-body`, `text-body-sm`, `text-label`, `text-eyebrow`, `text-micro`.
+      Avoid inline `text-[34px] leading-[1.05]` clusters.
 - [ ] Use only allowed spacing values: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64.
+      Spacing tokens (`--space-1` … `--space-16`) are also available — prefer
+      the token form (`gap-[var(--space-3)]`) over arbitrary px values.
 - [ ] Keep tap targets ≥ 44×44.
 - [ ] Body copy: max 2 short lines per paragraph.
 - [ ] Card body: max 2 lines at 13px.

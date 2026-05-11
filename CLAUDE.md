@@ -45,6 +45,12 @@ centred phone-width column.
   - `display` (34px) — Screen 1 / hero screens.
   - `title` (30px) — Step / detail / dialog screens.
 - Use `<Eyebrow>` for the small uppercase label above headings.
+- Type tokens live in `globals.css` under `--text-display`, `--text-title`,
+  `--text-body`, `--text-body-sm`, `--text-label`, `--text-eyebrow`,
+  `--text-micro`. Each registers font-size + line-height + weight + tracking
+  so a single utility (e.g. `text-body`) renders the role correctly. New
+  components must consume these instead of inline `text-[14px] leading-[1.55]`
+  literals.
 - Body text: 14px / line-height 1.55, `--color-text-secondary`.
 - Metadata / captions: 11–12px. Never go below 11px.
 - Italic accent: place inside `<em>` within `<Heading>`. One italic clause max.
@@ -53,8 +59,11 @@ centred phone-width column.
 ## 5. Color token rules
 
 - Always reference tokens, never raw hex.
+- Never write `bg-white/40` for the glass card fill — that fill has a token
+  (`--color-surface-card`). Use `bg-[var(--color-surface-card)]`.
 - Semantic tokens (preferred): `--color-bg`, `--color-surface`,
-  `--color-surface-elevated`, `--color-text-primary`, `--color-text-secondary`,
+  `--color-surface-elevated`, `--color-surface-card`,
+  `--color-text-primary`, `--color-text-secondary`,
   `--color-text-muted`, `--color-action-primary`, `--color-action-primary-fg`,
   `--color-border`, `--color-border-soft`, `--color-success`,
   `--color-warning`, `--color-danger`, `--focus-ring`.
@@ -95,7 +104,8 @@ matches that you flag in the PR description.
 
 - Radii live in tokens: `--radius-card` (24), `--radius-panel` (22),
   `--radius-chip` (10), `--radius-pill` (9999).
-- Shadows live in tokens: `--shadow-button`, `--shadow-card`, `--shadow-panel`.
+- Shadows live in tokens: `--shadow-button`, `--shadow-card`,
+  `--shadow-panel`, `--shadow-toggle`.
 - Never inline a custom shadow with `shadow-[0_8px_32px…]`. If you need a new
   shadow, add a token first.
 
@@ -197,6 +207,13 @@ If a screen needs something that doesn't fit, propose a new primitive in
 - ❌ Do not author off-scale spacing.
 - ❌ Do not add `!important` to override Heading or Button — extend the
   component instead.
+- ❌ Do not change pixel output of `/`, `/onboarding/sign-in`, or
+  `/onboarding/permissions` while doing foundation work (token additions,
+  primitive refactors). Foundation upgrades land **without visual drift**;
+  visual changes ship in a separate, clearly scoped PR.
+- ❌ Do not introduce a new arbitrary value (color, spacing, type size,
+  shadow, motion duration) when a token exists. If no token exists, add the
+  token in `globals.css` + `docs/design-system.md` first, then consume it.
 
 ## 15. Pre-build checklist (every new screen)
 

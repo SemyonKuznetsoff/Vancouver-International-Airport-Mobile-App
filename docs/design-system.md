@@ -52,18 +52,27 @@ When new routes are added, append rows to this table in the same PR.
 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48 · 64
 ```
 
-| px | Tailwind | Use for |
-|---|---|---|
-| 4 | `gap-1` | icon ↔ adjacent text label |
-| 8 | `gap-2` | tight related items in a row |
-| 12 | `gap-3` | stacked sibling cards |
-| 16 | `gap-4` | internal card spacing between text blocks |
-| 20 | `p-5` | compact card padding |
-| 24 | `px-6` / `gap-6` | page horizontal gutter, generous card padding |
-| 32 | `mt-8` / `gap-8` | between major sections |
-| 40 | `mt-10` | hero-to-content rhythm |
-| 48 | `mt-12` | extra hero rhythm on step screens |
-| 64 | `mt-16` | rarely; use sparingly for vertical drama |
+The scale is mirrored as CSS variables in `globals.css` so new components
+and primitives can consume tokens directly instead of memorising Tailwind
+step numbers.
+
+| px | Token | Tailwind | Use for |
+|---|---|---|---|
+| 4 | `--space-1` | `gap-1` | icon ↔ adjacent text label |
+| 8 | `--space-2` | `gap-2` | tight related items in a row |
+| 12 | `--space-3` | `gap-3` | stacked sibling cards |
+| 16 | `--space-4` | `gap-4` | internal card spacing between text blocks |
+| 20 | `--space-5` | `p-5` | compact card padding |
+| 24 | `--space-6` | `px-6` / `gap-6` | page horizontal gutter, generous card padding |
+| 32 | `--space-8` | `mt-8` / `gap-8` | between major sections |
+| 40 | `--space-10` | `mt-10` | hero-to-content rhythm |
+| 48 | `--space-12` | `mt-12` | extra hero rhythm on step screens |
+| 64 | `--space-16` | `mt-16` | rarely; use sparingly for vertical drama |
+
+Either form is accepted: `gap-3`, `gap-[var(--space-3)]`, and
+`gap-[12px]` all resolve to the same gap. New primitives should prefer
+the token form (`gap-[var(--space-3)]`) so a future scale retune flows
+through one source of truth.
 
 **Forbidden:** 17, 22 (except `--radius-panel`), 23, 26 (except toggle
 height), 27, 29, 31. Any pixel-perfect Figma value that breaks this scale
@@ -76,26 +85,43 @@ must be flagged in the PR description.
 Family: **Plus Jakarta Sans**, loaded via `next/font/google` in
 `src/app/layout.tsx`. Weights: 400 / 500 / 600 / 700, plus italic.
 
-| Role | Size / LH | Weight | Tracking | Token / Component |
+The scale lives as **type-role tokens** in `globals.css` under the
+`@theme` block. Each role registers font-size, line-height, font-weight,
+and letter-spacing together, so a single Tailwind utility (e.g.
+`text-display`) renders the role in full. Refactor or build new
+components by reaching for these utilities — do not author
+`text-[34px] leading-[1.05] font-semibold tracking-[-0.025em]` clusters.
+
+| Role | Token / Utility | Size / LH | Weight | Tracking | Used by |
+|---|---|---|---|---|---|
+| Display heading (hero) | `--text-display` / `text-display` | 34 / 1.05 | 600 | -0.025em | `<Heading size="display">` |
+| Screen title | `--text-title` / `text-title` | 30 / 1.1 | 600 | -0.025em | `<Heading size="title">` |
+| Body | `--text-body` / `text-body` | 14 / 1.55 | 400 | 0 | screen body copy |
+| Body small (card text) | `--text-body-sm` / `text-body-sm` | 13 / 1.55 | 500 | 0 | inside `<Card>` |
+| Label / caption | `--text-label` / `text-label` | 11 / 1.5 | 400 | 0 | metadata, captions |
+| Eyebrow | `--text-eyebrow` / `text-eyebrow` | 11 / 1.5 | 400 | +0.22em uppercase | `<Eyebrow>` |
+| Micro-label (uppercase) | `--text-micro` / `text-micro` | 10 / 1.5 | 600 | +0.16em uppercase | card footer labels |
+
+Composed sizes that don't fit a single role yet:
+
+| Role | Size / LH | Weight | Tracking | Notes |
 |---|---|---|---|---|
-| Display heading (hero) | 34 / 1.05 | 600 | -0.025em | `<Heading size="display">` |
-| Screen title | 30 / 1.1 | 600 | -0.025em | `<Heading size="title">` |
-| Section title (in-card) | 15 / 1.4 | 600 | 0 | use `<h2>` + `text-[15px] font-semibold` |
+| Section title (in-card) | 15 / 1.4 | 600 | 0 | use `<h2>` + `text-[15px] font-semibold` until promoted to a token |
 | Card title | 15 / 1.4 | 600 | 0 | inside `<Card>` |
-| Body | 14 / 1.55 | 400 | 0 | `<p>` |
-| Body small (card text) | 13 / 1.55 | 500 | 0 | inside `<Card>` |
-| Label | 11–12 / 1.5 | 400/500 | 0 | metadata, captions |
-| Eyebrow | 11 / 1.5 | 400 | +0.22em uppercase | `<Eyebrow>` |
 | Button (primary) | 15 / 1 | 500 | 0 | `<Button variant="primary">` |
 | Button (ghost) | 13 / 1.5 | 500 | +0.025em | `<Button variant="ghost">` |
 | Metadata / caption | 11 / 1.5 | 400 | +0.025em | small grey notes |
-| Micro-label (uppercase) | 10 / 1.5 | 600 | +0.16em uppercase | card footer labels |
 
 Italic accent: render via `<em>` inside `<Heading>`. The Heading component
-maps `[&_em]` to `font-normal italic`. One italic phrase per screen, max.
+maps `[&_em]` to `font-normal italic`, which also resets the role token's
+600 weight. One italic phrase per screen, max.
 
 **Body min:** 13px. Below that, the text is metadata — keep it short and
 high-contrast.
+
+> `FeatureList` currently uses 14 / 1.5 and 13 / 1.5 line-heights —
+> slightly tighter than the body / body-sm role tokens. It is intentionally
+> not refactored onto the role tokens until its rhythm is reconciled.
 
 ---
 
@@ -112,6 +138,7 @@ under the `@theme` block.
 | `--color-surface` | `#e2eef0` | Generic surface. Alias of `--color-bg`. |
 | `--color-surface-elevated` | `rgba(255,255,255,0.6)` | Chips, icon tiles, secondary buttons. |
 | `--color-surface-overlay` | `rgba(255,255,255,0.5)` | Lower-opacity overlay layer. |
+| `--color-surface-card` | `rgba(255,255,255,0.4)` | Glass card fill. Consume via `bg-[var(--color-surface-card)]` — never `bg-white/40`. |
 
 ### Text
 
@@ -247,7 +274,7 @@ Use `flex flex-col gap-3` (12px between siblings).
 ### Toggle (switch)
 
 - Track: 44×26, rounded full.
-- Knob: 20×20, white, `--shadow-button` style drop.
+- Knob: 20×20, white, `--shadow-toggle` drop.
 - Track ON: `--color-action-primary`. Track OFF: `--color-text-secondary` @ 40%.
 - Always `role="switch" aria-checked aria-label`.
 
@@ -325,6 +352,71 @@ If a screen needs a new glyph, add it to `icons.tsx` with a stroked
 - Line length: don't let body paragraphs exceed ~50 characters per line at
   375px — the `<p>` widths in `AppShell` already enforce this.
 - Use `prefers-color-scheme` only when dark mode tokens exist (not yet).
+
+---
+
+## 11. Motion tokens
+
+Motion tokens live in `globals.css` and exist so future transitions, sheets,
+toasts, and overlays share one rhythm. New transitions should consume these
+tokens via `duration-[var(--duration-fast)]` and
+`[transition-timing-function:var(--ease-standard)]`. Existing
+`duration-150` instances in `Button`, `AuthOption`, and the
+`PermissionCard` toggle are not on the scale and are left in place until
+revisited.
+
+| Token | Value | Use |
+|---|---|---|
+| `--duration-instant` | `100ms` | Hover / press feedback. |
+| `--duration-fast` | `180ms` | Default UI transition (color, fade). |
+| `--duration-base` | `240ms` | Sheets, drawers, expanding rows. |
+| `--duration-slow` | `320ms` | Hero / page-level transitions. |
+| `--ease-standard` | `cubic-bezier(0.2, 0, 0, 1)` | Default entry / exit. |
+| `--ease-emphasis` | `cubic-bezier(0.3, 0, 0.1, 1)` | Emphasised entry. |
+| `--ease-exit` | `cubic-bezier(0.4, 0, 1, 1)` | Quick fade-out / dismissal. |
+
+All new motion must still respect the global
+`prefers-reduced-motion: reduce` cutoff in `globals.css`.
+
+---
+
+## 12. Z-index scale
+
+A small, fixed stack. Use these tokens (or their numeric values) for
+anything that creates a stacking layer; never invent ad-hoc `z-50` style
+values. Nothing in onboarding currently needs anything beyond
+`--z-base`.
+
+| Token | Value | Use |
+|---|---|---|
+| `--z-base` | `0` | Default in-flow content. |
+| `--z-sticky` | `10` | Sticky headers, pinned bottom CTAs. |
+| `--z-overlay` | `100` | Dimmers, scrims behind sheets. |
+| `--z-modal` | `1000` | Bottom sheets, modals, dialogs. |
+| `--z-toast` | `2000` | Toasts and snackbars. |
+
+---
+
+## 13. Foundation refactor rules
+
+Foundation work upgrades tokens, primitives, and conventions **without
+visibly changing existing screens.**
+
+- Existing onboarding screens (`/`, `/onboarding/sign-in`,
+  `/onboarding/permissions`) must look pixel-identical before and after a
+  foundation refactor. If a token swap would shift a pixel, defer the
+  refactor and document why.
+- New components and primitives **must consume tokens** (color, spacing,
+  type role, shadow, radius, motion) instead of arbitrary values like
+  `bg-white/40`, `shadow-[0_8px_…]`, `mt-[27px]`, or
+  `text-[34px] leading-[1.05]`.
+- Refactor opportunistically: when you touch a component for another
+  reason, migrate its inline literals onto tokens — but only if the
+  visual output is identical. Never bundle a visual change with a
+  token migration; ship them in separate PRs so regressions are
+  attributable.
+- If a token does not yet exist for the value you need, add the token in
+  this doc and `globals.css` first, then consume it.
 
 ---
 

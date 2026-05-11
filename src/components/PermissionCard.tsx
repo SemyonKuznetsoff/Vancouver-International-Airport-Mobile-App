@@ -79,7 +79,7 @@ function Toggle({ on, onChange, ariaLabel }: ToggleProps) {
     >
       <span
         aria-hidden
-        className={`block h-5 w-5 rounded-full bg-white shadow-[0_2px_6px_0_rgba(0,0,0,0.18)] transition-transform duration-150 ${
+        className={`block h-5 w-5 rounded-full bg-white shadow-[var(--shadow-toggle)] transition-transform duration-150 ${
           on ? "translate-x-[21px]" : "translate-x-[3px]"
         }`}
       />

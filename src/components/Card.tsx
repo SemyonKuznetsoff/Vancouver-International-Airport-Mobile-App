@@ -26,7 +26,7 @@ export function Card({
 }: CardProps) {
   return (
     <Tag
-      className={`rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-white/40 shadow-[var(--shadow-card)] ${paddingClasses[padding]} ${className}`.trim()}
+      className={`rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-[var(--color-surface-card)] shadow-[var(--shadow-card)] ${paddingClasses[padding]} ${className}`.trim()}
     >
       {children}
     </Tag>
