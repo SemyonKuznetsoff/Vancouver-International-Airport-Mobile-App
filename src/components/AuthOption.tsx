@@ -9,6 +9,7 @@ type AuthOptionProps = {
   badge?: string;
   onClick?: () => void;
   ariaLabel?: string;
+  className?: string;
 };
 
 /**
@@ -22,13 +23,14 @@ export function AuthOption({
   badge,
   onClick,
   ariaLabel,
+  className = "",
 }: AuthOptionProps) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={ariaLabel ?? label}
-      className="flex h-[58px] w-full items-center justify-between gap-3 px-5 text-left transition-colors duration-150 hover:bg-[var(--color-surface-hover)] active:bg-[var(--color-surface-pressed)]"
+      className={`flex h-[58px] w-full items-center justify-between gap-3 px-5 text-left transition-colors duration-150 hover:bg-[var(--color-surface-hover)] active:bg-[var(--color-surface-pressed)] ${className}`.trim()}
     >
       <span className="flex items-center gap-3">
         <span className="inline-flex w-[22px] shrink-0 items-center justify-center text-[var(--color-text-primary)]">
@@ -52,6 +54,7 @@ export function AuthOption({
 
 type AuthOptionGroupProps = {
   children: React.ReactNode;
+  className?: string;
 };
 
 /**
@@ -60,11 +63,11 @@ type AuthOptionGroupProps = {
  * shadow) and layers on `overflow-hidden` (so hover backgrounds stay inside
  * the rounded edge) plus a sibling-divider selector.
  */
-export function AuthOptionGroup({ children }: AuthOptionGroupProps) {
+export function AuthOptionGroup({ children, className = "" }: AuthOptionGroupProps) {
   return (
     <Card
       padding="none"
-      className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border)]"
+      className={`overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border)] ${className}`.trim()}
     >
       {children}
     </Card>

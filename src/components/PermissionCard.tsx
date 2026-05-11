@@ -11,6 +11,7 @@ type PermissionCardProps = {
   footerLabel: string;
   defaultOn?: boolean;
   toggleAriaLabel: string;
+  className?: string;
 };
 
 export function PermissionCard({
@@ -20,11 +21,12 @@ export function PermissionCard({
   footerLabel,
   defaultOn = true,
   toggleAriaLabel,
+  className = "",
 }: PermissionCardProps) {
   const [on, setOn] = useState(defaultOn);
 
   return (
-    <Card as="article">
+    <Card as="article" className={className}>
       <div className="flex items-start gap-4">
         <span
           aria-hidden

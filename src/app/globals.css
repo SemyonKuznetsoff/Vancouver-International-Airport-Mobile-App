@@ -195,14 +195,19 @@
   --alpha-border-soft: 0.4;
   --alpha-surface-card: 0.4;
 
-  /* ---- Numeric type scale ---- */
-  --font-size-100: 10px;
-  --font-size-200: 11px;
-  --font-size-300: 13px;
-  --font-size-400: 14px;
-  --font-size-500: 15px;
-  --font-size-600: 30px;
-  --font-size-700: 34px;
+  /* ---- Numeric type scale ----
+     Stored in rem so OS-level "larger text" preferences and browser
+     font-size settings scale the entire type system. Root remains the
+     default 16px → values render identically to the previous px values:
+     0.625rem→10, 0.6875rem→11, 0.8125rem→13, 0.875rem→14, 0.9375rem→15,
+     1.875rem→30, 2.125rem→34. */
+  --font-size-100: 0.625rem;
+  --font-size-200: 0.6875rem;
+  --font-size-300: 0.8125rem;
+  --font-size-400: 0.875rem;
+  --font-size-500: 0.9375rem;
+  --font-size-600: 1.875rem;
+  --font-size-700: 2.125rem;
 
   /* ---- Numeric weight scale ---- */
   --font-weight-regular: 400;
@@ -258,6 +263,29 @@
   --color-warning: var(--warning-500);
   --color-danger: var(--danger-500);
   --color-info: var(--info-500);
+
+  /* Status surface trios (bg / border / fg) — consumed by InlineAlert,
+     ErrorState badges, status banners. Each trio is a solid background,
+     a mid-light border, and a high-contrast foreground. */
+  --color-success-bg: var(--success-50);
+  --color-success-border: var(--success-300);
+  --color-success-fg: var(--success-700);
+
+  --color-warning-bg: var(--warning-50);
+  --color-warning-border: var(--warning-300);
+  --color-warning-fg: var(--warning-700);
+
+  --color-danger-bg: var(--danger-50);
+  --color-danger-border: var(--danger-300);
+  --color-danger-fg: var(--danger-700);
+
+  --color-info-bg: var(--info-50);
+  --color-info-border: var(--info-300);
+  --color-info-fg: var(--info-700);
+
+  --color-neutral-bg: var(--mist-50);
+  --color-neutral-border: var(--steel-300);
+  --color-neutral-fg: var(--steel-700);
 
   /* Aurora accents (background-only) */
   --color-aurora-sky: var(--aurora-sky-300);
@@ -343,7 +371,7 @@
   --space-12: 48px;
   --space-16: 64px;
 
-  /* Motion */
+  /* Motion — primitive durations + easings */
   --duration-instant: 100ms;
   --duration-fast: 180ms;
   --duration-base: 240ms;
@@ -352,6 +380,44 @@
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
   --ease-emphasis: cubic-bezier(0.3, 0, 0.1, 1);
   --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Spring approximations — bezier curves with overshoot. True spring
+     physics (stiffness / damping) needs the Web Animations API; these
+     covers the common iOS feel for sheet snap, drag release, chip
+     toggle. */
+  --ease-spring-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-spring-gentle: cubic-bezier(0.25, 1.25, 0.5, 1);
+  --ease-spring-stiff: cubic-bezier(0.5, 1.4, 0.4, 1);
+
+  /* Motion roles — each role pairs a duration with an easing.
+     Components consume role tokens, not the raw primitives. */
+  --motion-micro-duration: var(--duration-instant);
+  --motion-micro-ease: var(--ease-standard);
+
+  --motion-element-duration: var(--duration-base);
+  --motion-element-ease: var(--ease-emphasis);
+
+  --motion-page-duration: var(--duration-slow);
+  --motion-page-ease: var(--ease-emphasis);
+
+  --motion-overlay-duration: var(--duration-base);
+  --motion-overlay-ease: var(--ease-emphasis);
+
+  --motion-exit-duration: var(--duration-fast);
+  --motion-exit-ease: var(--ease-exit);
+
+  --motion-spring-snappy: var(--ease-spring-snappy);
+  --motion-spring-gentle: var(--ease-spring-gentle);
+  --motion-spring-stiff: var(--ease-spring-stiff);
+
+  /* Motion distances — transform offsets for slide-in / slide-out.
+     Reduced-motion drops these to 0 (see media query below), so any
+     `translateY(var(--motion-distance-md))` becomes fade-only for
+     free when the user has reduced motion enabled. */
+  --motion-distance-xs: 4px;
+  --motion-distance-sm: 8px;
+  --motion-distance-md: 16px;
+  --motion-distance-lg: 24px;
 
   /* Z-index */
   --z-base: 0;
@@ -393,13 +459,102 @@ body {
   border-radius: 6px;
 }
 
-/* Respect users who prefer reduced motion */
+/* Respect users who prefer reduced motion.
+   Two layers: drop all transform distances to 0 (so slide-in motions
+   collapse to fade-only when the consumer reads them through tokens),
+   and strip animation / transition duration at the * level as a
+   sledgehammer fallback for any motion that bypasses the tokens. */
 @media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-distance-xs: 0px;
+    --motion-distance-sm: 0px;
+    --motion-distance-md: 0px;
+    --motion-distance-lg: 0px;
+  }
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* =================================================================
+   Accessibility modes
+   Each block re-maps SEMANTIC tokens only — components are untouched.
+   ================================================================= */
+
+/* Reduce Transparency
+   Apple HIG: when this is on, translucent panels must become solid.
+   Aurora intensity drops, glass surfaces become solid mist, hairlines
+   gain a visible steel boundary. */
+@media (prefers-reduced-transparency: reduce) {
+  :root {
+    /* Aurora steps down two stops in its scale → washed pale tint */
+    --color-aurora-sky: var(--aurora-sky-100);
+    --color-aurora-lavender: var(--aurora-lavender-100);
+    --color-aurora-mint: var(--aurora-mint-100);
+
+    /* Surfaces become solid */
+    --color-surface-card: var(--mist-50);
+    --color-surface-elevated: var(--mist-50);
+    --color-surface-overlay: var(--mist-50);
+    --color-surface-hover: var(--mist-100);
+    --color-surface-pressed: var(--mist-200);
+
+    /* Borders become solid steel */
+    --color-border: var(--steel-300);
+    --color-border-soft: var(--steel-200);
+    --color-border-hairline: var(--steel-300);
+
+    /* Control surfaces become solid */
+    --color-track-off: var(--steel-300);
+  }
+}
+
+/* Increase Contrast
+   Secondary and muted text darken; borders strengthen; focus ring grows.
+   Background and primary text stay the same — the goal is greater
+   separation between layers, not a different look. */
+@media (prefers-contrast: more) {
+  :root {
+    --color-text-secondary: var(--navy-800);
+    --color-text-muted: var(--navy-700);
+
+    --color-border: var(--navy-300);
+    --color-border-soft: var(--navy-400);
+    --color-border-hairline: var(--navy-300);
+
+    --color-track-off: var(--steel-600);
+
+    --focus-ring: 3px solid var(--navy-900);
+  }
+}
+
+/* Forced Colors (Windows High Contrast, etc.)
+   Re-map all boundary tokens onto CSS system colors so the OS theme
+   paints them. Tokens that depend on transparency are replaced with
+   system equivalents. Add explicit borders to the Toggle track + knob
+   since their on/off state was previously communicated via bg alone. */
+@media (forced-colors: active) {
+  :root {
+    --color-border: CanvasText;
+    --color-border-soft: CanvasText;
+    --color-border-hairline: CanvasText;
+
+    --color-track-off: ButtonFace;
+
+    --focus-ring: 2px solid Highlight;
+  }
+
+  /* Toggle: ensure track and knob remain perceivable when the system
+     strips backgrounds. Geometry shifts ~1px in forced-colors mode —
+     accepted trade-off in favour of visibility. */
+  [role="switch"] {
+    border: 1px solid CanvasText;
+  }
+  [role="switch"] > [aria-hidden] {
+    border: 1px solid CanvasText;
   }
 }

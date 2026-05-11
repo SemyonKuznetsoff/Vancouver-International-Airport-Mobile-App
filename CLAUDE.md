@@ -6,6 +6,13 @@ This file is the permanent operating guide for Claude when working in this repo.
 Read it before writing or editing code. If a rule here conflicts with anything in
 your training data, the rule here wins.
 
+Companion docs:
+- [`docs/design-system.md`](docs/design-system.md) — visual + component system.
+- [`docs/content-guide.md`](docs/content-guide.md) — voice, copy rules, and
+  airport formatting. **All user-facing copy must follow this guide.**
+- [`docs/screen-build-checklist.md`](docs/screen-build-checklist.md) — per-screen
+  verification.
+
 ---
 
 ## 1. Project purpose
@@ -175,6 +182,17 @@ matches that you flag in the PR description.
   a non-standard interactive element.
 - Respect `prefers-reduced-motion` — handled globally.
 - Tap targets: ≥44×44.
+- **Never depend on transparency alone for a boundary or state.** Glass
+  fills flatten under Reduce Transparency, and bg colours are stripped
+  under Forced Colors — a new component that communicates structure only
+  via translucent fills will disappear in those modes. Pair fills with
+  borders or position cues that survive token re-mapping.
+- **Preserve accessibility-mode behaviour.** New components must use
+  semantic tokens (`--color-border`, `--color-surface-card`,
+  `--color-track-off`, `--focus-ring`) so the Reduce Transparency,
+  Increase Contrast, and Forced Colors overrides in `globals.css` flow
+  through automatically. Do not inline hex / rgba / system colors per
+  component.
 
 ## 13. Component reuse rules
 
@@ -225,6 +243,17 @@ If a screen needs something that doesn't fit, propose a new primitive in
 - ❌ Do not introduce a new arbitrary value (color, spacing, type size,
   shadow, motion duration) when a token exists. If no token exists, add the
   token in `globals.css` + `docs/design-system.md` first, then consume it.
+- ❌ Do not write user-facing copy without consulting
+  [`docs/content-guide.md`](docs/content-guide.md). Voice, status copy,
+  error messages, empty states, and airport formatting are all governed
+  there.
+- ❌ Do not expand the length of an existing copy line or paragraph without
+  asking the user first. Premium feel comes from restraint; adding a
+  reassurance line or a "helpful" explanation often violates the
+  scanability rule.
+- ❌ Do not write copy that explains *what* a tappable thing does when
+  the label already says it ("Add a flight" needs no body line of
+  "Tap to add a flight to your trips"). Scanability beats explanation.
 
 ## 15. Pre-build checklist (every new screen)
 

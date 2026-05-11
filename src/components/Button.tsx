@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { Route } from "next";
+import { SpinnerIcon } from "./icons";
 
 type Variant = "primary" | "ghost";
 
@@ -7,18 +10,24 @@ type CommonProps = {
   variant?: Variant;
   children: React.ReactNode;
   trailingIcon?: React.ReactNode;
+  loading?: boolean;
+  loadingLabel?: string;
+  disabled?: boolean;
   className?: string;
 };
 
 type ButtonAsButton = CommonProps &
-  React.ButtonHTMLAttributes<HTMLButtonElement> & { href?: never };
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "disabled"> & {
+    href?: never;
+  };
 
 type ButtonAsLink = CommonProps & {
   href: Route | URL;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2 font-medium tracking-[0.005em] transition-colors duration-150 select-none";
+  "inline-flex items-center justify-center gap-2 font-medium tracking-[0.005em] transition-colors duration-150 select-none disabled:opacity-[var(--opacity-disabled)] disabled:cursor-not-allowed disabled:pointer-events-none aria-disabled:opacity-[var(--opacity-disabled)] aria-disabled:cursor-not-allowed aria-disabled:pointer-events-none aria-busy:cursor-progress";
 
 const variants: Record<Variant, string> = {
   primary:
@@ -32,40 +41,69 @@ export function Button(props: ButtonAsButton | ButtonAsLink) {
     variant = "primary",
     children,
     trailingIcon,
+    loading = false,
+    loadingLabel,
+    disabled = false,
     className = "",
     ...rest
   } = props as CommonProps & Record<string, unknown>;
 
+  const isLink = "href" in props && props.href != null;
+  const inactive = disabled || loading;
+
   const classes = `${base} ${variants[variant]} ${className}`.trim();
+
+  const label = loading && loadingLabel ? loadingLabel : children;
+  const trailing = loading ? (
+    <SpinnerIcon size={16} />
+  ) : trailingIcon ? (
+    trailingIcon
+  ) : null;
 
   const inner = (
     <>
-      <span>{children}</span>
-      {trailingIcon ? (
+      <span>{label}</span>
+      {trailing ? (
         <span className="inline-flex items-center" aria-hidden>
-          {trailingIcon}
+          {trailing}
         </span>
       ) : null}
     </>
   );
 
-  if ("href" in props && props.href != null) {
+  if (isLink) {
+    const linkProps = rest as React.AnchorHTMLAttributes<HTMLAnchorElement>;
+    const { onClick: providedOnClick, ...restLinkProps } = linkProps;
+    const onClick: React.MouseEventHandler<HTMLAnchorElement> = (event) => {
+      if (inactive) {
+        event.preventDefault();
+        return;
+      }
+      providedOnClick?.(event);
+    };
     return (
       <Link
-        href={props.href as Route}
+        href={(props as ButtonAsLink).href as Route}
         className={classes}
-        {...(rest as React.AnchorHTMLAttributes<HTMLAnchorElement>)}
+        aria-busy={loading || undefined}
+        aria-disabled={inactive || undefined}
+        tabIndex={inactive ? -1 : undefined}
+        onClick={onClick}
+        {...restLinkProps}
       >
         {inner}
       </Link>
     );
   }
 
+  const btnProps = rest as React.ButtonHTMLAttributes<HTMLButtonElement>;
   return (
     <button
       type="button"
       className={classes}
-      {...(rest as React.ButtonHTMLAttributes<HTMLButtonElement>)}
+      disabled={inactive}
+      aria-busy={loading || undefined}
+      {...btnProps}
     >
       {inner}
     </button>
