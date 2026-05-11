@@ -48,13 +48,16 @@ export default function OnboardingPage() {
 
         <div className="mt-auto flex flex-col gap-3 pt-8 pb-2">
           <Button
+            href="/onboarding/sign-in"
             variant="primary"
             trailingIcon={<ArrowRightIcon size={16} />}
             aria-label="Begin your journey"
           >
             Begin your journey
           </Button>
-          <Button variant="ghost">I already have an account</Button>
+          <Button href="/onboarding/sign-in" variant="ghost">
+            I already have an account
+          </Button>
         </div>
       </main>
     </AppShell>
