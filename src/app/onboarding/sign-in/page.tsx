@@ -49,9 +49,7 @@ export default function SignInPage() {
 
         <div className="mt-8 flex items-center gap-3">
           <span className="h-px flex-1 bg-[var(--color-border)]" />
-          <span className="text-micro font-normal uppercase tracking-[0.22em] text-[var(--color-text-secondary)]">
-            Or
-          </span>
+          <Eyebrow tone="secondary">Or</Eyebrow>
           <span className="h-px flex-1 bg-[var(--color-border)]" />
         </div>
 

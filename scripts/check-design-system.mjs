@@ -53,16 +53,14 @@ const ALLOW = {
   ],
 
   // Inline `tracking-[Nem]` is acceptable in components where the role
-  // token's letter-spacing differs from the design intent. The same four
-  // files plus FeatureList (numbered-index tracking 0.05em) and the
-  // sign-in page (OR-divider override at 0.22em + trust-line 0.025em)
+  // token's letter-spacing differs from the design intent. The four
+  // primitive files plus FeatureList (numbered-index tracking 0.05em)
   // qualify.
   "arbitrary-tracking": [
     "src/components/BrandMark.tsx",
     "src/components/Button.tsx",
     "src/components/AuthOption.tsx",
     "src/components/FeatureList.tsx",
-    "src/app/onboarding/sign-in/page.tsx",
   ],
 };
 
