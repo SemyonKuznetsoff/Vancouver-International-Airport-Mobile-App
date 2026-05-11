@@ -1,299 +1,76 @@
 @import "tailwindcss";
 
-/* =================================================================
-   YVR design tokens — two-tier model
-
-   1. PRIMITIVES: raw scale values (colors, alphas, type, blur,
-      elevation). Internal to the token system. Components MUST NOT
-      reference primitives directly.
-   2. SEMANTICS: component-facing roles. Components reference these
-      only — never raw hex, never `bg-white/40`, never `text-[14px]`.
-
-   Editing this file:
-   - To retune a hue or a scale step, edit the primitive.
-   - To change which primitive a role consumes, edit the semantic.
-   - To add a new role, place it in the semantic block.
-   ================================================================= */
-
+/* ---------- Design tokens ---------- */
 @theme {
-  /* =========================================
-     1. PRIMITIVES
-     ========================================= */
-
-  /* ---- Color: Navy (brand primary + dark text) ---- */
-  --navy-50: #f1f5f9;
-  --navy-100: #e2eaf3;
-  --navy-200: #c4d4e6;
-  --navy-300: #9ab4cd;
-  --navy-400: #6c8fb0;
-  --navy-500: #466e95;
-  --navy-600: #35567a;
-  --navy-700: #2b4669;
-  --navy-800: #23395a;
-  --navy-900: #1d3557; /* anchor — legacy --color-text-primary / --color-action-primary */
-
-  /* ---- Color: Steel (supporting text, mid-saturation blue) ---- */
-  --steel-50: #f4f7fa;
-  --steel-100: #e6ecf1;
-  --steel-200: #ccd9e3;
-  --steel-300: #a4b9cb;
-  --steel-400: #8ba4ba;
-  --steel-500: #6d8aa3; /* anchor — legacy --color-text-muted */
-  --steel-600: #547591;
-  --steel-700: #3a6a8a; /* anchor — legacy --color-text-secondary */
-  --steel-800: #2e5470;
-  --steel-900: #213e54;
-
-  /* ---- Color: Mist (cool pale surface base) ---- */
-  --mist-50: #eef5f7;
-  --mist-100: #e2eef0; /* anchor — legacy --color-bg / --color-surface */
-  --mist-200: #cfdfe3;
-  --mist-300: #b0c8cf;
-  --mist-400: #87aab4;
-  --mist-500: #5e8d99;
-  --mist-600: #4a7480;
-  --mist-700: #3a5d68;
-  --mist-800: #2d484f;
-  --mist-900: #1f3338;
-
-  /* ---- Color: Teal (forward-looking action / highlight accent) ---- */
-  --teal-50: #ecfdf8;
-  --teal-100: #d2faf0;
-  --teal-200: #a8f5e1;
-  --teal-300: #6deed1;
-  --teal-400: #46ecd5; /* shares value with aurora-mint-400 */
-  --teal-500: #20d1bb;
-  --teal-600: #18a89a;
-  --teal-700: #178379;
-  --teal-800: #156963;
-  --teal-900: #114c47;
-
-  /* ---- Color: Aurora-sky (background accent only) ---- */
-  --aurora-sky-50: #f0f7ff;
-  --aurora-sky-100: #dceefe;
-  --aurora-sky-200: #b8dafd;
-  --aurora-sky-300: #8ec5ff; /* anchor — legacy --color-aurora-sky */
-  --aurora-sky-400: #5fa9ee;
-  --aurora-sky-500: #3b8bd6;
-  --aurora-sky-600: #2670b5;
-  --aurora-sky-700: #1d5a92;
-  --aurora-sky-800: #194b78;
-  --aurora-sky-900: #133858;
-
-  /* ---- Color: Aurora-lavender (background accent only) ---- */
-  --aurora-lavender-50: #f7f0ff;
-  --aurora-lavender-100: #ecdcff;
-  --aurora-lavender-200: #dab2ff; /* anchor — legacy --color-aurora-lavender */
-  --aurora-lavender-300: #c08aff;
-  --aurora-lavender-400: #a45fe6;
-  --aurora-lavender-500: #8244c9;
-  --aurora-lavender-600: #6635a4;
-  --aurora-lavender-700: #4d2880;
-  --aurora-lavender-800: #361d5c;
-  --aurora-lavender-900: #211238;
-
-  /* ---- Color: Aurora-mint (background accent only) ---- */
-  --aurora-mint-50: #ecfdf8;
-  --aurora-mint-100: #d2faf0;
-  --aurora-mint-200: #a8f5e1;
-  --aurora-mint-300: #6deed1;
-  --aurora-mint-400: #46ecd5; /* anchor — legacy --color-aurora-mint */
-  --aurora-mint-500: #20d1bb;
-  --aurora-mint-600: #18a89a;
-  --aurora-mint-700: #178379;
-  --aurora-mint-800: #156963;
-  --aurora-mint-900: #114c47;
-
-  /* ---- Color: Success ---- */
-  --success-50: #ebfaf3;
-  --success-100: #d2f1e2;
-  --success-200: #a4e2c2;
-  --success-300: #6cd09b;
-  --success-400: #36b475;
-  --success-500: #1ea25e;
-  --success-600: #0a8754; /* anchor — legacy --color-success */
-  --success-700: #086d44;
-  --success-800: #075738;
-  --success-900: #054028;
-
-  /* ---- Color: Warning ---- */
-  --warning-50: #fdf5e7;
-  --warning-100: #fae5c2;
-  --warning-200: #f4cf86;
-  --warning-300: #eab441;
-  --warning-400: #d99a23;
-  --warning-500: #c97a16; /* anchor — legacy --color-warning */
-  --warning-600: #a3640f;
-  --warning-700: #80500c;
-  --warning-800: #5f3c0a;
-  --warning-900: #432a07;
-
-  /* ---- Color: Danger ---- */
-  --danger-50: #fcebea;
-  --danger-100: #f8cfcc;
-  --danger-200: #f0a39e;
-  --danger-300: #e6776f;
-  --danger-400: #d54a40;
-  --danger-500: #b3261e; /* anchor — legacy --color-danger */
-  --danger-600: #971e17;
-  --danger-700: #791812;
-  --danger-800: #5d130e;
-  --danger-900: #420d09;
-
-  /* ---- Color: Info (forward-looking, no current consumer) ---- */
-  --info-50: #ebf3ff;
-  --info-100: #c9deff;
-  --info-200: #95bcff;
-  --info-300: #5d96f0;
-  --info-400: #3478d4;
-  --info-500: #1f5fb1;
-  --info-600: #194c8d;
-  --info-700: #143c70;
-  --info-800: #102e57;
-  --info-900: #0b2140;
-
-  /* ---- Color: Neutral (achromatic anchors) ---- */
-  --neutral-0: #ffffff;
-  --neutral-50: #f5f7f8;
-  --neutral-100: #ebeef0;
-  --neutral-200: #d4dadd;
-  --neutral-300: #b7bfc4;
-  --neutral-400: #99a3a9;
-  --neutral-500: #7a858c;
-  --neutral-600: #5d6770;
-  --neutral-700: #444c54;
-  --neutral-800: #2c333a;
-  --neutral-900: #14181d;
-  --neutral-1000: #000000;
-
-  /* ---- Alphas: white (translucent glass layers) ---- */
-  --white-a05: rgba(255, 255, 255, 0.05);
-  --white-a10: rgba(255, 255, 255, 0.1);
-  --white-a20: rgba(255, 255, 255, 0.2);
-  --white-a30: rgba(255, 255, 255, 0.3);
-  --white-a40: rgba(255, 255, 255, 0.4); /* card fill, soft border */
-  --white-a50: rgba(255, 255, 255, 0.5); /* surface overlay */
-  --white-a60: rgba(255, 255, 255, 0.6); /* elevated surface, border */
-  --white-a70: rgba(255, 255, 255, 0.7);
-  --white-a80: rgba(255, 255, 255, 0.8);
-
-  /* ---- Alphas: black (shadow / dim composition) ---- */
-  --black-a10: rgba(0, 0, 0, 0.1);
-  --black-a18: rgba(0, 0, 0, 0.18); /* toggle knob shadow */
-  --black-a30: rgba(0, 0, 0, 0.3);
-  --black-a50: rgba(0, 0, 0, 0.5);
-
-  /* ---- Opacity scalars (interaction state) ---- */
-  --opacity-disabled: 0.5;
-  --opacity-muted: 0.6;
-  --opacity-hover: 0.7;
-  --opacity-pressed: 0.9;
-  --opacity-overlay: 0.5;
-
-  /* ---- Component-alpha scalars (color composition) ---- */
-  --alpha-track-off: 0.4;
-  --alpha-border-soft: 0.4;
-  --alpha-surface-card: 0.4;
-
-  /* ---- Numeric type scale ----
-     Stored in rem so OS-level "larger text" preferences and browser
-     font-size settings scale the entire type system. Root remains the
-     default 16px → values render identically to the previous px values:
-     0.625rem→10, 0.6875rem→11, 0.8125rem→13, 0.875rem→14, 0.9375rem→15,
-     1.875rem→30, 2.125rem→34. */
-  --font-size-100: 0.625rem;
-  --font-size-200: 0.6875rem;
-  --font-size-300: 0.8125rem;
-  --font-size-400: 0.875rem;
-  --font-size-500: 0.9375rem;
-  --font-size-600: 1.875rem;
-  --font-size-700: 2.125rem;
-
-  /* ---- Numeric weight scale ---- */
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  /* ---- Blur scale (future glass / overlay effects) ---- */
-  --blur-none: 0;
-  --blur-card: 8px;
-  --blur-overlay: 12px;
-  --blur-heavy: 24px;
-
-  /* ---- Elevation scale (5 steps) ----
-     0 flat · 1 resting card · 2 lifted interactive card
-     3 sheet / modal · 4 toast / popover */
-  --shadow-elevation-0: none;
-  --shadow-elevation-1: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-  --shadow-elevation-2: 0 10px 36px -4px rgba(31, 38, 135, 0.1);
-  --shadow-elevation-3: 0 12px 40px -4px rgba(31, 38, 135, 0.12);
-  --shadow-elevation-4: 0 16px 48px 0 rgba(31, 38, 135, 0.16);
-
-  /* =========================================
-     2. SEMANTICS — component-facing roles
-     ========================================= */
-
   /* Surfaces */
-  --color-bg: var(--mist-100);
-  --color-surface: var(--mist-100);
-  --color-surface-elevated: var(--white-a60);
-  --color-surface-overlay: var(--white-a50);
-  --color-surface-card: var(--white-a40);
-  --color-surface-hover: var(--white-a30);
-  --color-surface-pressed: var(--white-a40);
+  --color-bg: #e2eef0;
+  --color-surface: #e2eef0;
+  --color-surface-elevated: rgba(255, 255, 255, 0.6);
+  --color-surface-overlay: rgba(255, 255, 255, 0.5);
+  --color-surface-card: rgba(255, 255, 255, 0.4);
+  --color-surface-hover: rgba(255, 255, 255, 0.3);
+  --color-surface-pressed: rgba(255, 255, 255, 0.4);
 
   /* Text */
-  --color-text-primary: var(--navy-900);
-  --color-text-secondary: var(--steel-700);
-  --color-text-muted: var(--steel-500);
-  --color-text-inverse: var(--neutral-0);
+  --color-text-primary: #1d3557;
+  --color-text-secondary: #3a6a8a;
+  --color-text-muted: #6d8aa3;
+  --color-text-inverse: #ffffff;
 
   /* Borders */
-  --color-border: var(--white-a60);
-  --color-border-soft: var(--white-a40);
-  --color-border-hairline: var(--white-a60); /* legacy alias */
+  --color-border: rgba(255, 255, 255, 0.6);
+  --color-border-soft: rgba(255, 255, 255, 0.4);
+  --color-border-hairline: rgba(255, 255, 255, 0.6); /* legacy alias */
 
   /* Actions */
-  --color-action-primary: var(--navy-900);
-  --color-action-primary-fg: var(--neutral-0);
+  --color-action-primary: #1d3557;
+  --color-action-primary-fg: #ffffff;
+
+  /* Control surfaces — composed from semantic text token + alpha */
+  --color-track-off: color-mix(
+    in srgb,
+    var(--color-text-secondary) 40%,
+    transparent
+  );
+
+  /* Opacity scalars (interaction state) */
+  --opacity-disabled: 0.5;
+  --opacity-muted: 0.6;
+  --opacity-overlay: 0.5;
 
   /* Status — reserved for live data states only */
-  --color-success: var(--success-600);
-  --color-warning: var(--warning-500);
-  --color-danger: var(--danger-500);
-  --color-info: var(--info-500);
+  --color-success: #0a8754;
+  --color-warning: #c97a16;
+  --color-danger: #b3261e;
+  --color-info: #1f5fb1;
 
   /* Status surface trios (bg / border / fg) — consumed by InlineAlert,
      ErrorState badges, status banners. Each trio is a solid background,
      a mid-light border, and a high-contrast foreground. */
-  --color-success-bg: var(--success-50);
-  --color-success-border: var(--success-300);
-  --color-success-fg: var(--success-700);
+  --color-success-bg: #ebfaf3;
+  --color-success-border: #6cd09b;
+  --color-success-fg: #086d44;
 
-  --color-warning-bg: var(--warning-50);
-  --color-warning-border: var(--warning-300);
-  --color-warning-fg: var(--warning-700);
+  --color-warning-bg: #fdf5e7;
+  --color-warning-border: #eab441;
+  --color-warning-fg: #80500c;
 
-  --color-danger-bg: var(--danger-50);
-  --color-danger-border: var(--danger-300);
-  --color-danger-fg: var(--danger-700);
+  --color-danger-bg: #fcebea;
+  --color-danger-border: #e6776f;
+  --color-danger-fg: #791812;
 
-  --color-info-bg: var(--info-50);
-  --color-info-border: var(--info-300);
-  --color-info-fg: var(--info-700);
+  --color-info-bg: #ebf3ff;
+  --color-info-border: #5d96f0;
+  --color-info-fg: #143c70;
 
-  --color-neutral-bg: var(--mist-50);
-  --color-neutral-border: var(--steel-300);
-  --color-neutral-fg: var(--steel-700);
+  --color-neutral-bg: #eef5f7;
+  --color-neutral-border: #a4b9cb;
+  --color-neutral-fg: #3a6a8a;
 
-  /* Aurora accents (background-only) */
-  --color-aurora-sky: var(--aurora-sky-300);
-  --color-aurora-lavender: var(--aurora-lavender-200);
-  --color-aurora-mint: var(--aurora-mint-400);
-
-  /* Control surfaces */
-  --color-track-off: color-mix(in srgb, var(--steel-700) 40%, transparent);
+  /* Aurora accents — background only */
+  --color-aurora-sky: #8ec5ff;
+  --color-aurora-lavender: #dab2ff;
+  --color-aurora-mint: #46ecd5;
 
   /* Radii */
   --radius-chip: 10px;
@@ -301,23 +78,41 @@
   --radius-card: 24px;
   --radius-pill: 9999px;
 
-  /* Shadows — component-facing tokens map to the elevation scale */
-  --shadow-card: var(--shadow-elevation-1);
-  --shadow-panel: var(--shadow-elevation-3);
+  /* Shadows */
   --shadow-button: 0 6px 18px -8px rgba(29, 53, 87, 0.45);
-  --shadow-toggle: 0 2px 6px 0 var(--black-a18);
+  --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --shadow-panel: 0 12px 40px -4px rgba(31, 38, 135, 0.12);
+  --shadow-toggle: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
 
   /* Focus */
-  --focus-ring: 2px solid var(--navy-900);
+  --focus-ring: 2px solid #1d3557;
 
   /* Typography family */
   --font-sans: var(--font-jakarta), system-ui, -apple-system, "Segoe UI",
     sans-serif;
 
-  /* ---- Type-role tokens (semantic) ----
-     Each role maps font-size to the numeric scale, then declares line-height,
-     weight, and tracking. Components consume `text-display`, `text-body`,
-     etc. — never the raw `--font-size-*` primitive. */
+  /* ---------- Numeric type scale ----------
+     Stored in rem so OS-level "larger text" preferences and browser
+     font-size settings scale the entire type system. Root remains the
+     default 16px → values render identically to the previous px sizes. */
+  --font-size-100: 0.625rem;   /* 10 */
+  --font-size-200: 0.6875rem;  /* 11 */
+  --font-size-300: 0.8125rem;  /* 13 */
+  --font-size-400: 0.875rem;   /* 14 */
+  --font-size-500: 0.9375rem;  /* 15 */
+  --font-size-600: 1.875rem;   /* 30 */
+  --font-size-700: 2.125rem;   /* 34 */
+
+  /* Numeric font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ---------- Type-role tokens ----------
+     Each role registers font-size, line-height, weight, and tracking
+     together. Components consume `text-display`, `text-body`, etc. —
+     not the raw `--font-size-*` primitives. */
 
   --text-display: var(--font-size-700);
   --text-display--line-height: 1.05;
@@ -351,15 +146,11 @@
   --text-micro--font-weight: var(--font-weight-semibold);
   --text-micro--letter-spacing: 0.16em;
 
-  /* Type emphasis weights (paired regular / emphasis per role) */
-  --text-body-weight: var(--font-weight-regular);
-  --text-body-emphasis-weight: var(--font-weight-medium);
-  --text-label-weight: var(--font-weight-regular);
-  --text-label-emphasis-weight: var(--font-weight-semibold);
-  --text-caption-weight: var(--font-weight-regular);
-  --text-caption-emphasis-weight: var(--font-weight-semibold);
-
-  /* Spacing scale (also accessible as Tailwind step utilities) */
+  /* ---------- Spacing scale ----------
+     The approved rhythm. Accessible as CSS vars from any component via
+     arbitrary-value utilities (e.g. `gap-[var(--space-3)]`). The
+     existing Tailwind step utilities (`gap-3`, `mt-8`, etc.) remain
+     equivalent and stay in use until refactor. */
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -370,61 +161,6 @@
   --space-10: 40px;
   --space-12: 48px;
   --space-16: 64px;
-
-  /* Motion — primitive durations + easings */
-  --duration-instant: 100ms;
-  --duration-fast: 180ms;
-  --duration-base: 240ms;
-  --duration-slow: 320ms;
-
-  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --ease-emphasis: cubic-bezier(0.3, 0, 0.1, 1);
-  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
-
-  /* Spring approximations — bezier curves with overshoot. True spring
-     physics (stiffness / damping) needs the Web Animations API; these
-     covers the common iOS feel for sheet snap, drag release, chip
-     toggle. */
-  --ease-spring-snappy: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-spring-gentle: cubic-bezier(0.25, 1.25, 0.5, 1);
-  --ease-spring-stiff: cubic-bezier(0.5, 1.4, 0.4, 1);
-
-  /* Motion roles — each role pairs a duration with an easing.
-     Components consume role tokens, not the raw primitives. */
-  --motion-micro-duration: var(--duration-instant);
-  --motion-micro-ease: var(--ease-standard);
-
-  --motion-element-duration: var(--duration-base);
-  --motion-element-ease: var(--ease-emphasis);
-
-  --motion-page-duration: var(--duration-slow);
-  --motion-page-ease: var(--ease-emphasis);
-
-  --motion-overlay-duration: var(--duration-base);
-  --motion-overlay-ease: var(--ease-emphasis);
-
-  --motion-exit-duration: var(--duration-fast);
-  --motion-exit-ease: var(--ease-exit);
-
-  --motion-spring-snappy: var(--ease-spring-snappy);
-  --motion-spring-gentle: var(--ease-spring-gentle);
-  --motion-spring-stiff: var(--ease-spring-stiff);
-
-  /* Motion distances — transform offsets for slide-in / slide-out.
-     Reduced-motion drops these to 0 (see media query below), so any
-     `translateY(var(--motion-distance-md))` becomes fade-only for
-     free when the user has reduced motion enabled. */
-  --motion-distance-xs: 4px;
-  --motion-distance-sm: 8px;
-  --motion-distance-md: 16px;
-  --motion-distance-lg: 24px;
-
-  /* Z-index */
-  --z-base: 0;
-  --z-sticky: 10;
-  --z-overlay: 100;
-  --z-modal: 1000;
-  --z-toast: 2000;
 }
 
 /* Mobile-first viewport behavior */
@@ -459,102 +195,13 @@ body {
   border-radius: 6px;
 }
 
-/* Respect users who prefer reduced motion.
-   Two layers: drop all transform distances to 0 (so slide-in motions
-   collapse to fade-only when the consumer reads them through tokens),
-   and strip animation / transition duration at the * level as a
-   sledgehammer fallback for any motion that bypasses the tokens. */
+/* Respect users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  :root {
-    --motion-distance-xs: 0px;
-    --motion-distance-sm: 0px;
-    --motion-distance-md: 0px;
-    --motion-distance-lg: 0px;
-  }
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;
-  }
-}
-
-/* =================================================================
-   Accessibility modes
-   Each block re-maps SEMANTIC tokens only — components are untouched.
-   ================================================================= */
-
-/* Reduce Transparency
-   Apple HIG: when this is on, translucent panels must become solid.
-   Aurora intensity drops, glass surfaces become solid mist, hairlines
-   gain a visible steel boundary. */
-@media (prefers-reduced-transparency: reduce) {
-  :root {
-    /* Aurora steps down two stops in its scale → washed pale tint */
-    --color-aurora-sky: var(--aurora-sky-100);
-    --color-aurora-lavender: var(--aurora-lavender-100);
-    --color-aurora-mint: var(--aurora-mint-100);
-
-    /* Surfaces become solid */
-    --color-surface-card: var(--mist-50);
-    --color-surface-elevated: var(--mist-50);
-    --color-surface-overlay: var(--mist-50);
-    --color-surface-hover: var(--mist-100);
-    --color-surface-pressed: var(--mist-200);
-
-    /* Borders become solid steel */
-    --color-border: var(--steel-300);
-    --color-border-soft: var(--steel-200);
-    --color-border-hairline: var(--steel-300);
-
-    /* Control surfaces become solid */
-    --color-track-off: var(--steel-300);
-  }
-}
-
-/* Increase Contrast
-   Secondary and muted text darken; borders strengthen; focus ring grows.
-   Background and primary text stay the same — the goal is greater
-   separation between layers, not a different look. */
-@media (prefers-contrast: more) {
-  :root {
-    --color-text-secondary: var(--navy-800);
-    --color-text-muted: var(--navy-700);
-
-    --color-border: var(--navy-300);
-    --color-border-soft: var(--navy-400);
-    --color-border-hairline: var(--navy-300);
-
-    --color-track-off: var(--steel-600);
-
-    --focus-ring: 3px solid var(--navy-900);
-  }
-}
-
-/* Forced Colors (Windows High Contrast, etc.)
-   Re-map all boundary tokens onto CSS system colors so the OS theme
-   paints them. Tokens that depend on transparency are replaced with
-   system equivalents. Add explicit borders to the Toggle track + knob
-   since their on/off state was previously communicated via bg alone. */
-@media (forced-colors: active) {
-  :root {
-    --color-border: CanvasText;
-    --color-border-soft: CanvasText;
-    --color-border-hairline: CanvasText;
-
-    --color-track-off: ButtonFace;
-
-    --focus-ring: 2px solid Highlight;
-  }
-
-  /* Toggle: ensure track and knob remain perceivable when the system
-     strips backgrounds. Geometry shifts ~1px in forced-colors mode —
-     accepted trade-off in favour of visibility. */
-  [role="switch"] {
-    border: 1px solid CanvasText;
-  }
-  [role="switch"] > [aria-hidden] {
-    border: 1px solid CanvasText;
   }
 }
