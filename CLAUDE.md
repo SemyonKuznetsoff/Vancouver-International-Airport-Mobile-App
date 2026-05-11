@@ -129,11 +129,19 @@ matches that you flag in the PR description.
 ## 8. Button rules
 
 - Use the `<Button>` component for every CTA. Do not build raw `<button>`s
-  for primary actions.
+  for any pill-shaped action.
 - Variants:
   - `primary` — full-width, 54px tall, navy pill, white text, trailing icon
     optional. One per screen.
-  - `ghost` — 44px text-link style for "I already have an account" etc.
+  - `secondary` — 52px tall, surface-elevated fill with hairline border,
+    supports `leadingIcon`. Use for a **peer alternative** action — e.g.
+    "Sign in with email" next to a stack of OAuth options. Not the main
+    path; not a text link.
+  - `ghost` — 44px text-link style for "I already have an account",
+    "Set up later", etc.
+- Never create a one-off pill button inside a page file. If you reach for
+  a custom `<button className="h-[...] rounded-[var(--radius-pill)] ...">`,
+  promote it to a Button variant first.
 - Touch target minimum: 44×44. Buttons hit this by default; raw `<button>`s
   must opt in (`h-11 w-11` or larger).
 - Pass `href` to render as `<Link>` (client navigation). Otherwise it renders

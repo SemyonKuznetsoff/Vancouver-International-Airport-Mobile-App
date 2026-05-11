@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { AuthOption, AuthOptionGroup } from "@/components/AuthOption";
+import { Button } from "@/components/Button";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Heading } from "@/components/Heading";
 import { ScreenHeader } from "@/components/ScreenHeader";
@@ -55,14 +56,14 @@ export default function SignInPage() {
           <span className="h-px flex-1 bg-[var(--color-border)]" />
         </div>
 
-        <button
-          type="button"
+        <Button
+          variant="secondary"
+          leadingIcon={<MailIcon size={16} />}
           aria-label="Sign in with email"
-          className="mt-4 inline-flex h-[52px] w-full items-center justify-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] text-body font-medium text-[var(--color-text-primary)] hover:bg-[var(--color-surface-elevated-hover)]"
+          className="mt-4"
         >
-          <MailIcon size={16} />
-          <span>Sign in with email</span>
-        </button>
+          Sign in with email
+        </Button>
 
         <div className="mt-auto flex flex-col items-center gap-3 pt-8 pb-2">
           <Link

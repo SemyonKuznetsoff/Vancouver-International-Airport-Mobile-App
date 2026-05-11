@@ -100,7 +100,10 @@ When adding or revising a primitive:
 - [ ] Use `<Toggle>` for any on/off switch (permissions, notifications,
       accessibility settings). Never roll a bespoke `<button role="switch">`.
 - [ ] Use `<Button>` for every CTA. Use `variant="primary"` for the one
-      main action, `variant="ghost"` for the secondary text link.
+      main action, `variant="secondary"` for a peer-alternative pill
+      action (e.g. "Sign in with email" next to OAuth options), and
+      `variant="ghost"` for the secondary text-link CTA. Never roll a
+      one-off pill button inside a page file.
 - [ ] Use token classes for color and shadow:
       `text-[var(--color-text-primary)]`, not raw hex.
       `shadow-[var(--shadow-card)]`, not custom shadow values.

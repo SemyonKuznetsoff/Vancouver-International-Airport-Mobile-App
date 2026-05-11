@@ -157,6 +157,7 @@ Composed sizes that don't fit a single role yet:
 | Section title (in-card) | 15 / 1.4 | 600 | 0 | use `<h2>` + `text-[15px] font-semibold` until promoted to a token |
 | Card title | 15 / 1.4 | 600 | 0 | inside `<Card>` |
 | Button (primary) | 15 / 1 | 500 | 0 | `<Button variant="primary">` |
+| Button (secondary) | 14 / 1.55 | 500 | 0 | `<Button variant="secondary">` |
 | Button (ghost) | 13 / 1.5 | 500 | +0.025em | `<Button variant="ghost">` |
 | Metadata / caption | 11 / 1.5 | 400 | +0.025em | small grey notes |
 
@@ -455,6 +456,31 @@ const [submitting, setSubmitting] = useState(false);
 The `loadingLabel` is optional. Without it, the original `children` stay
 visible while the spinner trails — preferred for short labels where
 swapping text would feel busier than the work itself.
+
+### Secondary CTA — `<Button variant="secondary">`
+
+- Height: 52px.
+- Width: 100% of parent.
+- Radius: `var(--radius-pill)` (9999).
+- Fill: `var(--color-surface-elevated)` — translucent over the aurora.
+- Border: `1px solid var(--color-border)`.
+- Text: 14px / Medium / `var(--color-text-primary)`.
+- Hover fill: `var(--color-surface-elevated-hover)`.
+- Supports `leadingIcon` (16px) — e.g. `<Button variant="secondary" leadingIcon={<MailIcon size={16} />}>Sign in with email</Button>`.
+- Inherits `loading` / `disabled` from the Button base.
+
+**When to use.** The secondary CTA is for an action that is **a peer
+alternative**, not the main path and not a text link — "Sign in with
+email" next to a stack of Apple/Google/Aeroplan sign-in rows, "Add
+another flight" next to "Add a flight", etc. It is visually heavier
+than ghost (a real pill, not text-only) and lighter than primary (no
+fill colour, no shadow).
+
+**Do not create one-off pill buttons inside page files.** If a screen
+needs a pill-shaped neutral action, use `<Button variant="secondary">`.
+The hand-rolled email pill that used to live in
+`onboarding/sign-in/page.tsx` was the original instance; it has now
+been formalised into this variant.
 
 ### Ghost / text link — `<Button variant="ghost">`
 
