@@ -29,6 +29,14 @@ type ButtonAsLink = CommonProps & {
 const base =
   "inline-flex items-center justify-center gap-2 font-medium tracking-[0.005em] transition-colors duration-150 select-none disabled:opacity-[var(--opacity-disabled)] disabled:cursor-not-allowed disabled:pointer-events-none aria-disabled:opacity-[var(--opacity-disabled)] aria-disabled:cursor-not-allowed aria-disabled:pointer-events-none aria-busy:cursor-progress";
 
+/**
+ * Variant typography is intentionally **inline** rather than via type-role
+ * utilities. Button's text size is coupled to its variant chrome (54px
+ * primary pill takes 15px / `leading-none`; 44px ghost takes 13px with the
+ * specific 0.025em tracking that distinguishes it from a body link). Both
+ * are documented exceptions to the "use type-role utilities" rule in
+ * design-system.md §4 and allow-listed in `scripts/check-design-system.mjs`.
+ */
 const variants: Record<Variant, string> = {
   primary:
     "h-[54px] w-full rounded-[var(--radius-pill)] bg-[var(--color-action-primary)] text-[var(--color-action-primary-fg)] text-[15px] leading-none shadow-[var(--shadow-button)] active:opacity-90",

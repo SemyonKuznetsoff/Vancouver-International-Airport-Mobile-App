@@ -27,6 +27,22 @@ const ALLOW = {
   // gradient) whose hex values are licensed brand colours — kept literal
   // until replaced by licensed assets. See CLAUDE.md §8.
   "raw-hex": ["src/components/icons.tsx", "src/app/layout.tsx"],
+  // Type-role utilities cover almost every text rendering. Four files
+  // carry intentional inline px sizes:
+  //   - BrandMark: bespoke uppercase brand lockup at 13px / 0.18em
+  //     tracking — not a body role.
+  //   - Button: variant typography is coupled to variant chrome (15px
+  //     primary, 13px ghost). Documented in Button.tsx header.
+  //   - icons.tsx AeroplanBadge: 10px monogram inside a brand badge —
+  //     not a text-micro semantic.
+  //   - AuthOption: row badge at 10px / 0.14em tracking — bespoke
+  //     tighter tracking than text-micro provides.
+  "arbitrary-text-px": [
+    "src/components/BrandMark.tsx",
+    "src/components/Button.tsx",
+    "src/components/icons.tsx",
+    "src/components/AuthOption.tsx",
+  ],
 };
 
 const CHECKS = [

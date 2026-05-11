@@ -67,7 +67,7 @@ export function ErrorState({
           </span>
         ) : null}
         <div className="flex flex-col gap-2">
-          <h2 className="text-[15px] font-semibold leading-[1.4] text-[var(--color-text-primary)]">
+          <h2 className="text-section-title text-[var(--color-text-primary)]">
             {title}
           </h2>
           {description ? (

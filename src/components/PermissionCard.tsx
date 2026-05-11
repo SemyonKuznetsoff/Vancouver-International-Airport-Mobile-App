@@ -37,7 +37,7 @@ export function PermissionCard({
 
         <div className="flex flex-1 flex-col gap-3">
           <div className="flex items-start justify-between gap-3">
-            <h2 className="max-w-[160px] text-[15px] font-semibold leading-[1.4] text-[var(--color-text-primary)]">
+            <h2 className="max-w-[160px] text-section-title text-[var(--color-text-primary)]">
               {title}
             </h2>
             <Toggle
@@ -47,11 +47,11 @@ export function PermissionCard({
             />
           </div>
 
-          <p className="text-[13px] font-medium leading-[1.55] text-[var(--color-text-secondary)]">
+          <p className="text-body-sm text-[var(--color-text-secondary)]">
             {description}
           </p>
 
-          <p className="mt-2 inline-flex items-center gap-2 text-[10px] font-semibold uppercase leading-[1.5] tracking-[0.16em] text-[var(--color-text-secondary)]">
+          <p className="mt-2 inline-flex items-center gap-2 text-micro uppercase text-[var(--color-text-secondary)]">
             <span
               aria-hidden
               className="inline-block h-1 w-1 rounded-full bg-[var(--color-aurora-mint)]"
