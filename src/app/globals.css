@@ -1,26 +1,97 @@
 @import "tailwindcss";
 
+/* ---------- Design tokens ---------- */
+@theme {
+  /* Surfaces */
+  --color-bg: #e2eef0;
+  --color-surface: #e2eef0;
+  --color-surface-base: #e2eef0; /* legacy alias of --color-bg */
+  --color-surface-elevated: rgba(255, 255, 255, 0.6);
+  --color-surface-overlay: rgba(255, 255, 255, 0.5);
+
+  /* Text */
+  --color-text-primary: #1d3557;
+  --color-text-secondary: #3a6a8a;
+  --color-text-muted: #6d8aa3;
+  --color-text-inverse: #ffffff;
+
+  /* Borders */
+  --color-border: rgba(255, 255, 255, 0.6);
+  --color-border-soft: rgba(255, 255, 255, 0.4);
+  --color-border-hairline: rgba(255, 255, 255, 0.6); /* legacy alias */
+
+  /* Actions */
+  --color-action-primary: #1d3557;
+  --color-action-primary-fg: #ffffff;
+
+  /* Status — reserved for live data states only */
+  --color-success: #0a8754;
+  --color-warning: #c97a16;
+  --color-danger: #b3261e;
+
+  /* Aurora accents — background only */
+  --color-aurora-sky: #8ec5ff;
+  --color-aurora-lavender: #dab2ff;
+  --color-aurora-mint: #46ecd5;
+
+  /* Radii */
+  --radius-chip: 10px;
+  --radius-panel: 22px;
+  --radius-card: 24px;
+  --radius-pill: 9999px;
+
+  /* Shadows */
+  --shadow-button: 0 6px 18px -8px rgba(29, 53, 87, 0.45);
+  --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --shadow-panel: 0 12px 40px -4px rgba(31, 38, 135, 0.12);
+
+  /* Focus */
+  --focus-ring: 2px solid #1d3557;
+
+  /* Typography */
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, "Segoe UI",
+    sans-serif;
+}
+
+/* Mobile-first viewport behavior */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  color: var(--color-text-primary);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01", "cv11";
+  overscroll-behavior-y: none;
+}
+
+/* Visible focus state — used on all interactive elements */
+:where(button, a, [role="button"], [tabindex]):focus {
+  outline: none;
+}
+:where(button, a, [role="button"], [tabindex]):focus-visible {
+  outline: var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }
