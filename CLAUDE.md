@@ -220,6 +220,9 @@ Reuse, before you build new:
 | Permission row with toggle | `PermissionCard` |
 | On/off switch (any setting) | `Toggle` |
 | Auth provider row | `AuthOption` + `AuthOptionGroup` |
+| Settings / vault / preferences list row | `SettingsRow` (group inside `<Card padding="none">` with hairline divider className) |
+| Inline airport-code header (one line) | `AirportCodePair` |
+| Split flight route (origin / centre line / destination) | `RouteTimeline` |
 | Icon chip inside a card or row | `IconTile` |
 | Inline SVG | add to `icons.tsx`, never import external images |
 
@@ -227,6 +230,12 @@ For onboarding-screen composition (top rhythm after `<ScreenHeader>`,
 bottom CTA group, trust line, divider label, icon-chip chrome) follow
 the canonical patterns in `docs/design-system.md` §2a — those screens
 are the reference implementations.
+
+For authenticated-screen composition (shell + tab bar, large-title
+header + trailing slot, hero identity card, trip card, settings row
+groups, footer version line) follow the canonical patterns in
+`docs/design-system.md` §2b — `/profile` is the reference
+implementation.
 
 If a screen needs something that doesn't fit, propose a new primitive in
 `docs/design-system.md` first — do not invent one-off styles in a page file.
@@ -251,6 +260,26 @@ If a screen needs something that doesn't fit, propose a new primitive in
 - ❌ Do not hand-roll an icon chip inside a card
   (`inline-flex h-N w-N rounded-2xl bg-[var(--color-surface-elevated)]`).
   Use `<IconTile size={N}>` — the single source for icon-chip chrome.
+- ❌ Do not hand-roll a settings / vault / preferences list row
+  (`<a className="flex items-center gap-3 px-4 py-4">…<ChevronRightIcon /></a>`)
+  inside a page file. Use `<SettingsRow>` — the single source for
+  authed-app list-row chrome. Group rows inside `<Card padding="none">`
+  with the divider className from `docs/design-system.md` §12k.
+- ❌ Do not hand-roll a trip / flight card cluster (airline + status
+  pill + split route + gate/boarding/seat strip + CTAs) inside a page
+  file. Compose it from the §2b reference — `<Card padding="none">`,
+  `<RouteTimeline>`, three `<MetricBlock>`s on `--color-surface-tile`,
+  and a stacked primary + ghost `<Button>` pair.
+- ❌ Do not render a split flight route (origin / dashed line /
+  destination) inline. Use `<RouteTimeline>`. Use `<AirportCodePair>`
+  only for the inline single-line form.
+- ❌ Do not author the dark teal hero gradient with raw hex
+  (`linear-gradient(…, #0e4a4e, …)`) or raw white-alpha foregrounds.
+  Consume the `--color-surface-hero-*` tokens from
+  `docs/design-system.md` §5.
+- ❌ Do not use `--color-warning` / `--color-success` for a loyalty
+  tier badge. Use the `--color-hero-tier-*` tokens — status tones are
+  reserved for live data.
 - ❌ Do not invent bespoke bottom-CTA spacers
   (`min-h-N max-h-N flex-grow`, fixed-height shims). Onboarding screens
   use `mt-auto flex flex-col gap-3 pt-8 pb-2` — see

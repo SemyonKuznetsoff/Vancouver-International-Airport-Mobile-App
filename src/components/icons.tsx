@@ -158,6 +158,90 @@ export function BellIcon(props: IconProps) {
   );
 }
 
+export function SettingsIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06A2 2 0 1 1 4.27 16.97l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06A2 2 0 1 1 7.03 4.27l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+    </svg>
+  );
+}
+
+export function SparkleIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M5.6 18.4l2.8-2.8M15.6 8.4l2.8-2.8" />
+    </svg>
+  );
+}
+
+export function SyncIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8" />
+      <path d="M21 4v4h-4" />
+      <path d="M21 12a9 9 0 0 1-15 6.7L3 16" />
+      <path d="M3 20v-4h4" />
+    </svg>
+  );
+}
+
+export function NavigationIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M3 11 21 4l-7 17-2-8-9-2Z" />
+    </svg>
+  );
+}
+
+export function IdCardIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="9" cy="12" r="2.5" />
+      <path d="M5 17c.5-1.6 2-2.5 4-2.5s3.5.9 4 2.5M15 10h4M15 14h3" />
+    </svg>
+  );
+}
+
+export function CreditCardIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <path d="M3 10h18M7 15h3" />
+    </svg>
+  );
+}
+
+export function SlidersIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M4 7h10M18 7h2M4 12h2M10 12h10M4 17h12M20 17h0" />
+      <circle cx="16" cy="7" r="2" />
+      <circle cx="8" cy="12" r="2" />
+      <circle cx="18" cy="17" r="2" />
+    </svg>
+  );
+}
+
+export function BookmarkIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M6 4h12v17l-6-4-6 4Z" />
+    </svg>
+  );
+}
+
+export function LifeBuoyIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <circle cx="12" cy="12" r="9" />
+      <circle cx="12" cy="12" r="4" />
+      <path d="m4.9 4.9 4.2 4.2M14.9 14.9l4.2 4.2M19.1 4.9l-4.2 4.2M9.1 14.9l-4.2 4.2" />
+    </svg>
+  );
+}
+
 export function AppleIcon(props: IconProps) {
   return (
     <svg {...fillProps(props)} fill="currentColor">
