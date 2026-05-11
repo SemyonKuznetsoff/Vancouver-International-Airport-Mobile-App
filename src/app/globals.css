@@ -2,33 +2,51 @@
 
 /* ---------- Design tokens ---------- */
 @theme {
-  /* Brand & text colors */
-  --color-text-primary: #1d3557;
-  --color-text-secondary: #3a6a8a;
-  --color-text-inverse: #ffffff;
-
   /* Surfaces */
-  --color-surface-base: #e2eef0;
+  --color-bg: #e2eef0;
+  --color-surface: #e2eef0;
+  --color-surface-base: #e2eef0; /* legacy alias of --color-bg */
   --color-surface-elevated: rgba(255, 255, 255, 0.6);
   --color-surface-overlay: rgba(255, 255, 255, 0.5);
-  --color-border-hairline: rgba(255, 255, 255, 0.6);
+
+  /* Text */
+  --color-text-primary: #1d3557;
+  --color-text-secondary: #3a6a8a;
+  --color-text-muted: #6d8aa3;
+  --color-text-inverse: #ffffff;
+
+  /* Borders */
+  --color-border: rgba(255, 255, 255, 0.6);
+  --color-border-soft: rgba(255, 255, 255, 0.4);
+  --color-border-hairline: rgba(255, 255, 255, 0.6); /* legacy alias */
 
   /* Actions */
   --color-action-primary: #1d3557;
   --color-action-primary-fg: #ffffff;
 
-  /* Aurora accents (used in flattened gradient background) */
+  /* Status — reserved for live data states only */
+  --color-success: #0a8754;
+  --color-warning: #c97a16;
+  --color-danger: #b3261e;
+
+  /* Aurora accents — background only */
   --color-aurora-sky: #8ec5ff;
   --color-aurora-lavender: #dab2ff;
   --color-aurora-mint: #46ecd5;
 
   /* Radii */
   --radius-chip: 10px;
+  --radius-panel: 22px;
   --radius-card: 24px;
   --radius-pill: 9999px;
 
   /* Shadows */
   --shadow-button: 0 6px 18px -8px rgba(29, 53, 87, 0.45);
+  --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  --shadow-panel: 0 12px 40px -4px rgba(31, 38, 135, 0.12);
+
+  /* Focus */
+  --focus-ring: 2px solid #1d3557;
 
   /* Typography */
   --font-sans: var(--font-jakarta), system-ui, -apple-system, "Segoe UI",
@@ -50,7 +68,7 @@ body {
 body {
   font-family: var(--font-sans);
   color: var(--color-text-primary);
-  background: var(--color-surface-base);
+  background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "ss01", "cv11";
@@ -62,7 +80,7 @@ body {
   outline: none;
 }
 :where(button, a, [role="button"], [tabindex]):focus-visible {
-  outline: 2px solid var(--color-text-primary);
+  outline: var(--focus-ring);
   outline-offset: 2px;
   border-radius: 6px;
 }

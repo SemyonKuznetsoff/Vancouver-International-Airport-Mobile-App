@@ -59,7 +59,7 @@ type AuthOptionGroupProps = {
 export function AuthOptionGroup({ children }: AuthOptionGroupProps) {
   return (
     <div
-      className="overflow-hidden rounded-[20px] border border-[var(--color-border-hairline)] bg-white/40 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] [&>*+*]:border-t [&>*+*]:border-[var(--color-border-hairline)]"
+      className="overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-white/40 shadow-[var(--shadow-card)] [&>*+*]:border-t [&>*+*]:border-[var(--color-border)]"
     >
       {children}
     </div>

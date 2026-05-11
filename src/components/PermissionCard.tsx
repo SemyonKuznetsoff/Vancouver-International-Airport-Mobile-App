@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Card } from "./Card";
 
 type PermissionCardProps = {
   icon: React.ReactNode;
@@ -22,7 +23,7 @@ export function PermissionCard({
   const [on, setOn] = useState(defaultOn);
 
   return (
-    <article className="rounded-[22px] border border-[var(--color-border-hairline)] bg-white/40 p-5 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)]">
+    <Card as="article">
       <div className="flex items-start gap-4">
         <span
           aria-hidden
@@ -52,7 +53,7 @@ export function PermissionCard({
           </p>
         </div>
       </div>
-    </article>
+    </Card>
   );
 }
 

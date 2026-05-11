@@ -8,16 +8,16 @@ import { ArrowRightIcon } from "@/components/icons";
 
 const features: Feature[] = [
   {
-    title: "Personalized trip guidance",
+    title: "Trip guidance",
     description: "From curbside to your gate.",
   },
   {
     title: "Indoor wayfinding",
-    description: "Lounges, dining, security — mapped.",
+    description: "Find gates, lounges, dining, and services.",
   },
   {
-    title: "Live flight intelligence",
-    description: "Boarding, gates, delays in real time.",
+    title: "Live updates",
+    description: "Boarding, delays, and gate changes.",
   },
 ];
 
@@ -34,11 +34,10 @@ export default function OnboardingPage() {
           <Heading>
             Your journey,
             <br />
-            <em>effortlessly guided.</em>
+            <em>calmly guided.</em>
           </Heading>
           <p className="text-[14px] leading-[1.55] text-[var(--color-text-secondary)]">
-            A premium companion through YVR — calmly guiding you from arrival
-            to takeoff.
+            Flights, maps, gates, and alerts in one quiet place.
           </p>
         </section>
 
