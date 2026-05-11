@@ -55,6 +55,14 @@ declare its **three states** before declaring done:
       appropriate variant. `info` / `success` / `neutral` default to
       polite announcement; `warning` / `danger` opt in to
       `role="alert"` only when the message is time-critical.
+- [ ] **Travel data uses travel atoms.** Every gate, boarding time,
+      security wait, parking %, distance, walking time, countdown,
+      flight status, airport-code pair, and live-data freshness
+      indicator must render via the §12h primitives (`<StatusPill>`,
+      `<LiveIndicator>`, `<MetricBlock>`, `<CountdownBlock>`,
+      `<AirportCodePair>`, `<GateDisplay>`). Never inline a gate
+      number with bespoke typography, never roll a custom status
+      pill, never type `→` by hand inside a heading.
 
 ## Component state coverage
 

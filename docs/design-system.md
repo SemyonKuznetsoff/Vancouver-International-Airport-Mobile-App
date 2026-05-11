@@ -1731,6 +1731,225 @@ Status legend:
 
 ---
 
+## 12h. Travel data atoms
+
+Six reusable primitives for the data shapes the YVR app shows on every
+live-data screen: flight status, gates, boarding times, security waits,
+parking availability, countdowns, airport-pair journeys. **No screen
+may invent its own typography or chrome for these values** — use the
+atoms or extend them in this section before writing inline markup.
+
+```
+StatusPill        →  live flight / parking / security state
+LiveIndicator     →  data-freshness signal ("LIVE" / "SYNCED" / "STALE")
+MetricBlock       →  value-first metric (security wait, walking time, %)
+CountdownBlock    →  label-first time-relative metric (boarding in 42 min)
+AirportCodePair   →  YVR → SFO header with optional flight + city pair
+GateDisplay       →  GATE / D73 with optional terminal + helper
+```
+
+### StatusPill
+
+```tsx
+<StatusPill tone="success" leadingDot>On time</StatusPill>
+<StatusPill tone="warning">Boarding</StatusPill>
+<StatusPill tone="danger" size="sm">Delayed 40 min</StatusPill>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `tone` | `"success" \| "warning" \| "danger" \| "info" \| "neutral"` | `"neutral"` | Picks the status surface trio (bg + border + fg). |
+| `size` | `"sm" \| "md"` | `"md"` | `sm` = 20px tall, `md` = 28px tall. Both use `text-micro` so the label scans identically. |
+| `leadingDot` | `boolean` | `false` | 6px filled dot at `currentColor` (the variant fg). |
+| `children` | `ReactNode` | — | The label. Keep it short — content-guide §3. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** Pill (`--radius-pill`), 1px border, status surface fill,
+status surface fg, `text-micro uppercase`. Single-line content.
+
+**Do**
+
+```tsx
+<StatusPill tone="success" leadingDot>On time</StatusPill>
+<StatusPill tone="danger">Gate changed</StatusPill>
+```
+
+**Don't**
+
+```tsx
+// ❌ Rolling a custom pill in a page file.
+<span className="rounded-full bg-green-100 text-green-800 px-2 py-1 text-[10px]">…</span>
+
+// ❌ Using tone for decoration (status surfaces are reserved for live data).
+<StatusPill tone="success">Vancouver</StatusPill>
+```
+
+### LiveIndicator
+
+```tsx
+<LiveIndicator status="live" label="Live" pulse />
+<LiveIndicator status="synced" label="Synced" />
+<LiveIndicator status="stale" label="Stale" />
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `status` | `"live" \| "synced" \| "stale"` | `"live"` | Maps to `--color-success` / `--color-text-muted` / `--color-warning` for the dot. |
+| `label` | `string` | (required) | "LIVE" / "SYNCED" / "STALE" — content carries the meaning. |
+| `pulse` | `boolean` | `false` | Adds a soft expanding-ring `animate-ping` on the dot. Only fires when `status === "live"`. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** Small dot (8px) + uppercase `text-micro` label. `aria-label`
+on the wrapper carries the label so screen readers don't read the dot.
+The label `<span>` is `aria-hidden` to avoid double-announce.
+
+**Reduced motion.** `animate-ping`'s duration collapses to ~0ms via the
+global `prefers-reduced-motion: reduce` rule — the dot stays static and
+visible. No extra component logic.
+
+### MetricBlock
+
+```tsx
+<MetricBlock value="8 min" label="Security wait" />
+<MetricBlock value="72%" label="Parking" tone="warning" align="center" />
+<MetricBlock value="420 m" label="Walk to D73" helper="8 min walk" />
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `value` | `ReactNode` | (required) | Renders at `text-title tabular-nums`. Pass the formatted string ("8 min", "72%", "420 m") per content-guide §6. |
+| `label` | `string` | (required) | `text-micro uppercase`, secondary colour. |
+| `helper` | `string` | — | Optional second line at `text-label` muted. |
+| `tone` | `"neutral" \| "success" \| "warning" \| "danger" \| "info"` | `"neutral"` | Tints **the value only**. Label + helper stay neutral. |
+| `align` | `"left" \| "center" \| "right"` | `"left"` | Useful when laying out a strip of metrics. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** Value (top, large, tabular-nums) → label (small uppercase)
+→ optional helper. Value-first scanning.
+
+**When to use which.** `MetricBlock` is the **stand-alone metric** —
+"security wait is 8 min." `CountdownBlock` is the **time-until** form
+— "boarding in 42 min." Pick by which one a user would say aloud.
+
+### CountdownBlock
+
+```tsx
+<CountdownBlock value="42 min" label="Boarding in" tone="warning" />
+<CountdownBlock value="8 min" label="Walk" />
+<CountdownBlock value="52 min" label="Buffer" tone="success" />
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `value` | `ReactNode` | (required) | `text-title tabular-nums`. |
+| `label` | `string` | (required) | `text-eyebrow uppercase` — sits **above** the value (countdowns are context-first). |
+| `tone` | `"neutral" \| "success" \| "warning" \| "danger" \| "info"` | `"neutral"` | Tints the value as time tightens. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** Eyebrow label (top) → value (large, tabular-nums). The
+label-first order is the only visual difference from `MetricBlock` and
+it carries semantic intent.
+
+### AirportCodePair
+
+```tsx
+<AirportCodePair origin="YVR" destination="SFO" />
+<AirportCodePair
+  origin="YVR"
+  destination="NRT"
+  flightNumber="AC003"
+  subtitle="Vancouver → Tokyo Narita"
+/>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `origin` | `string` | (required) | Three-letter IATA code; rendered uppercase. |
+| `destination` | `string` | (required) | Same. |
+| `flightNumber` | `string` | — | Joined with subtitle by ` · `. |
+| `subtitle` | `string` | — | Free-form, e.g. the city pair. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** `text-title tabular-nums uppercase` for the code pair with
+a `→` (U+2192) separator. Support line below at `text-label`. The
+`<span>` carrying the code pair has `aria-label="<origin> to <destination>"`;
+the arrow is `aria-hidden` so screen readers read "YVR to SFO".
+
+**Formatting.** Per [content-guide.md](./content-guide.md) §6:
+- Codes are always 3 uppercase letters.
+- Arrow is `→` (U+2192). Never `->` or `>`.
+- City name only appears in `subtitle`, never inside the code pair.
+
+### GateDisplay
+
+```tsx
+<GateDisplay gate="D73" />
+<GateDisplay gate="D73" terminal="M" helper="Domestic" />
+<GateDisplay gate="A1" terminal="A" helper="Pre-clearance" />
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `gate` | `string` | (required) | The bare gate identifier — `"D73"`, not `"Gate D73"`. The component renders the "GATE" eyebrow. |
+| `terminal` | `string` | — | Rendered as `"Terminal <X>"`. |
+| `helper` | `string` | — | Appended after `Terminal X` with ` · `. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** Eyebrow `GATE` (top) → value (large, tabular-nums,
+uppercase) → optional support line at `text-label`.
+
+### Do / Don't (cross-cutting)
+
+**Do**
+
+```tsx
+// A flight card composed from atoms.
+<Card>
+  <AirportCodePair origin="YVR" destination="SFO" flightNumber="AC123" />
+  <div className="mt-6 flex items-end justify-between">
+    <CountdownBlock value="42 min" label="Boarding in" tone="warning" />
+    <GateDisplay gate="D73" terminal="M" />
+  </div>
+  <div className="mt-4 flex items-center justify-between">
+    <StatusPill tone="warning" leadingDot>Boarding soon</StatusPill>
+    <LiveIndicator status="live" label="Live" pulse />
+  </div>
+</Card>
+```
+
+**Don't**
+
+```tsx
+// ❌ Hand-rolling a status pill in a page file.
+<span className="bg-red-100 text-red-700 rounded-full px-2 py-1 text-xs">Delayed</span>
+
+// ❌ Inlining the gate as bare text inside a card body.
+<p className="text-lg">Gate D73</p>
+
+// ❌ Using → "by hand" inside a heading.
+<h2 className="text-2xl">YVR → SFO</h2>
+
+// ❌ Using StatusPill or LiveIndicator as decoration on non-live content.
+<StatusPill tone="success">Welcome aboard</StatusPill>
+```
+
+### Composition rules
+
+1. **Atoms do not nest inside each other.** A `CountdownBlock` does
+   not contain a `StatusPill`; that's two atoms inside a row layout
+   owned by the screen.
+2. **Atoms do not own card chrome.** Wrap them in `<Card>` (or compose
+   them inside `<EmptyState>` / `<ErrorState>`) when you need
+   elevation.
+3. **Numbers use the atoms or `tabular-nums`.** If a value needs to
+   appear inline inside body copy, use `tabular-nums` on the wrapping
+   `<span>` so adjacent numbers don't shimmy as they update.
+4. **Status tone is reserved for live data.** Don't use the `tone`
+   prop on `StatusPill` / `MetricBlock` / `CountdownBlock` for
+   decorative purposes — `success` is for "on time", not for "good".
+
+---
+
 ## 13. Foundation refactor rules
 
 Foundation work upgrades tokens, primitives, and conventions **without
@@ -1775,6 +1994,12 @@ visibly changing existing screens.**
 | `EmptyState` | `src/components/EmptyState.tsx` | Centered "no content yet" panel. Composes `Card`. |
 | `ErrorState` | `src/components/ErrorState.tsx` | Centered "something is wrong" panel with retry. Composes `Card`. |
 | `InlineAlert` | `src/components/InlineAlert.tsx` | Flat status banner for inline live data (gate change, delay). |
+| `StatusPill` | `src/components/StatusPill.tsx` | Compact pill for flight / parking / security live state. Travel atom. |
+| `LiveIndicator` | `src/components/LiveIndicator.tsx` | Small dot + uppercase label signalling data freshness. Travel atom. |
+| `MetricBlock` | `src/components/MetricBlock.tsx` | Value-first stand-alone metric (security wait, parking %). Travel atom. |
+| `CountdownBlock` | `src/components/CountdownBlock.tsx` | Label-first time-relative metric ("Boarding in 42 min"). Travel atom. |
+| `AirportCodePair` | `src/components/AirportCodePair.tsx` | "YVR → SFO" header with optional flight + city pair. Travel atom. |
+| `GateDisplay` | `src/components/GateDisplay.tsx` | "GATE / D73" with optional terminal + helper. Travel atom. |
 | `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`). |
 
 ---
