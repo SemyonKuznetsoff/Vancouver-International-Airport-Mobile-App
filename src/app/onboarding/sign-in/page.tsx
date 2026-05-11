@@ -49,9 +49,7 @@ export default function SignInPage() {
 
         <div className="mt-8 flex items-center gap-3">
           <span className="h-px flex-1 bg-[var(--color-border)]" />
-          <span className="text-micro font-normal uppercase tracking-[0.22em] text-[var(--color-text-secondary)]">
-            Or
-          </span>
+          <Eyebrow tone="secondary">Or</Eyebrow>
           <span className="h-px flex-1 bg-[var(--color-border)]" />
         </div>
 
@@ -68,7 +66,7 @@ export default function SignInPage() {
           <Button variant="ghost" href="/onboarding/permissions">
             Continue as guest
           </Button>
-          <p className="inline-flex items-center gap-1.5 text-label tracking-[0.025em] text-[var(--color-text-secondary)]">
+          <p className="inline-flex items-center gap-2 text-label text-[var(--color-text-secondary)]">
             <ShieldCheckIcon size={12} />
             <span>Stored on your device · Never shared with airlines</span>
           </p>

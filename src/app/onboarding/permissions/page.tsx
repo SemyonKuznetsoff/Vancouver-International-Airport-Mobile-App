@@ -17,7 +17,7 @@ export default function PermissionsPage() {
       <main className="flex flex-1 flex-col px-6">
         <ScreenHeader backHref="/onboarding/sign-in" step="Step 3 of 3" />
 
-        <section className="mt-12 flex flex-col gap-4">
+        <section className="mt-8 flex flex-col gap-4">
           <Eyebrow>Smart Guidance</Eyebrow>
           <Heading size="title">
             Set up helpful
@@ -48,7 +48,7 @@ export default function PermissionsPage() {
           />
         </section>
 
-        <p className="mt-8 inline-flex items-start gap-2 text-label text-[var(--color-text-secondary)]">
+        <p className="mt-8 inline-flex items-center gap-2 text-label text-[var(--color-text-secondary)]">
           <LockIcon size={12} />
           <span>Your location and notifications stay on this device.</span>
         </p>

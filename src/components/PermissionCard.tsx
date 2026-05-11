@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card } from "./Card";
+import { IconTile } from "./IconTile";
 import { Toggle } from "./Toggle";
 
 type PermissionCardProps = {
@@ -28,12 +29,7 @@ export function PermissionCard({
   return (
     <Card as="article" className={className}>
       <div className="flex items-start gap-4">
-        <span
-          aria-hidden
-          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)]"
-        >
-          {icon}
-        </span>
+        <IconTile size={40}>{icon}</IconTile>
 
         <div className="flex flex-1 flex-col gap-3">
           <div className="flex items-start justify-between gap-3">
