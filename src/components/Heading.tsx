@@ -8,8 +8,8 @@ type HeadingProps = {
 };
 
 const sizeClasses: Record<Size, string> = {
-  display: "text-[34px] leading-[1.05]",
-  title: "text-[30px] leading-[1.1]",
+  display: "text-display",
+  title: "text-title",
 };
 
 /**
@@ -18,8 +18,12 @@ const sizeClasses: Record<Size, string> = {
  * - `display` (default, 34px) — hero screens like the welcome page.
  * - `title` (30px) — step screens like sign-in, permissions, settings.
  *
+ * Size, line-height, weight, and tracking come from the `--text-display` /
+ * `--text-title` role tokens in globals.css. Update those tokens to retune
+ * the scale — do not override sizes inline on this component.
+ *
  * Italic accent: wrap the accent phrase in `<em>`. The component styles
- * em as normal-weight italic.
+ * em as normal-weight italic so the role token's 600 weight is reset.
  *
  *   <Heading size="title">
  *     Continue your
@@ -35,7 +39,7 @@ export function Heading({
 }: HeadingProps) {
   return (
     <Tag
-      className={`font-semibold text-[var(--color-text-primary)] tracking-[-0.025em] [&_em]:font-normal [&_em]:italic ${sizeClasses[size]} ${className}`.trim()}
+      className={`text-[var(--color-text-primary)] [&_em]:font-normal [&_em]:italic ${sizeClasses[size]} ${className}`.trim()}
     >
       {children}
     </Tag>

@@ -30,13 +30,29 @@ If any box can't be ticked, the screen is not ready to ship.
       override the heading size with `!important`.
 - [ ] Use `<Eyebrow>` for uppercase labels.
 - [ ] Use `<Card>` for any glass card chrome. No inline `bg-white/40 +
-      border + shadow` combinations.
+      border + shadow` combinations. If children own padding (rows,
+      grouped controls), pass `padding="none"`.
+- [ ] Use `<Toggle>` for any on/off switch (permissions, notifications,
+      accessibility settings). Never roll a bespoke `<button role="switch">`.
 - [ ] Use `<Button>` for every CTA. Use `variant="primary"` for the one
       main action, `variant="ghost"` for the secondary text link.
 - [ ] Use token classes for color and shadow:
       `text-[var(--color-text-primary)]`, not raw hex.
       `shadow-[var(--shadow-card)]`, not custom shadow values.
+      For the glass card fill use `bg-[var(--color-surface-card)]`, never
+      `bg-white/40`. For hover/pressed tints use `--color-surface-hover` /
+      `--color-surface-pressed`, never `bg-white/30` / `bg-white/40`.
+- [ ] **Never reference a primitive token in a component.** Names that
+      start with `--navy-`, `--steel-`, `--mist-`, `--teal-`, `--aurora-*-`,
+      `--success-`, `--warning-`, `--danger-`, `--info-`, `--neutral-`,
+      `--white-a*`, `--black-a*`, or `--font-size-*` are primitives — they
+      belong to `globals.css` only. Use semantic tokens in `.tsx` files.
+- [ ] Use type-role utilities for typography: `text-display`, `text-title`,
+      `text-body`, `text-body-sm`, `text-label`, `text-eyebrow`, `text-micro`.
+      Avoid inline `text-[34px] leading-[1.05]` clusters.
 - [ ] Use only allowed spacing values: 4, 8, 12, 16, 20, 24, 32, 40, 48, 64.
+      Spacing tokens (`--space-1` … `--space-16`) are also available — prefer
+      the token form (`gap-[var(--space-3)]`) over arbitrary px values.
 - [ ] Keep tap targets ≥ 44×44.
 - [ ] Body copy: max 2 short lines per paragraph.
 - [ ] Card body: max 2 lines at 13px.
@@ -62,6 +78,11 @@ If any box can't be ticked, the screen is not ready to ship.
 - [ ] **Voice over a switch** — announces switch role + on/off state.
 - [ ] **No inline hex** anywhere in the new JSX.
 - [ ] **No inline shadow literals** (e.g. `shadow-[0_8px_32px…]`).
+- [ ] **No duplicated card chrome** — grep your diff for
+      `rounded-[var(--radius-panel)] border` outside `Card.tsx`. If you find
+      it elsewhere, refactor onto `<Card>`.
+- [ ] **No bespoke switches** — every `role="switch"` element is the
+      `<Toggle>` component.
 - [ ] **No off-scale spacing** (e.g. `mt-[27px]`).
 - [ ] **No `!important`** unless you wrote a brief note on why.
 - [ ] **No `console.log`** left in.
