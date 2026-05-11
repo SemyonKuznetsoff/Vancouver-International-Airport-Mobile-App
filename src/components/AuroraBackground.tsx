@@ -2,7 +2,7 @@ export function AuroraBackground() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[var(--color-surface-base)]"
+      className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-[var(--color-bg)]"
       style={{
         backgroundImage: [
           "radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--color-aurora-sky) 55%, transparent) 0%, transparent 55%)",
