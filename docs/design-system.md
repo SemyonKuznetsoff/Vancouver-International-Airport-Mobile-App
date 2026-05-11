@@ -39,6 +39,7 @@ disagrees with the code, the doc wins — fix the code.
 | `/` (Welcome) | n/a | `/onboarding/sign-in` |
 | `/onboarding/sign-in` | `/` | `/onboarding/permissions` (guest) |
 | `/onboarding/permissions` | `/onboarding/sign-in` | `/` (start app) |
+| `/profile` (Profile main) | n/a — tab root | `/profile/settings`, `/profile/personal`, `/profile/payment`, `/profile/security`, `/profile/preferences`, `/profile/notifications`, `/profile/vault`, `/saved`, `/support`, `/flights/<id>`, `/flights/<id>/navigate` (placeholders today) |
 
 When new routes are added, append rows to this table in the same PR.
 
@@ -138,6 +139,168 @@ not a hand-rolled `<span>` with manual tracking:
   and stays in sync if the token retunes.
 - If a future card needs a softer corner on its tile, add a `radius` prop
   to `IconTile` rather than inlining the override.
+
+---
+
+## 2b. Authenticated screen patterns
+
+The canonical layout for any screen that lives inside the logged-in app
+(Profile today; Home, Flights, Map, Services next). The Profile main
+screen (`/profile`) is the **reference implementation** — copying its
+structure into a future authed screen should produce a screen that feels
+like the same product.
+
+### Shell + tab bar
+
+```tsx
+<AppShellAuthed>
+  <LargeTitleHeader title="Profile" subtitle="Your travel command center" trailing={…} />
+  <div className="mt-8 flex flex-col gap-8 px-6 pb-8">
+    …content…
+  </div>
+</AppShellAuthed>
+```
+
+- **Always `AppShellAuthed`**, never `AppShell`. The five tabs surface
+  routes that don't exist for unauthenticated users — onboarding uses
+  `AppShell`; the authed app uses `AppShellAuthed`.
+- `BottomTabBar` is rendered automatically by `AppShellAuthed`. Active-tab
+  detection is driven by `usePathname()` — placing the page at the matching
+  route lights up the correct tab. **Do not** pass `activeHref` unless the
+  pathname can't be trusted.
+- **Top rhythm:** the `LargeTitleHeader` block is followed by `mt-8` (32px)
+  on the first content container. Section-to-section gap inside the column
+  is `gap-8` (32px). Page horizontal gutter stays `px-6`.
+- **No bottom padding for safe area.** `BottomTabBar` owns the bottom
+  inset; the page must not re-add `paddingBottom: env(safe-area-inset-bottom)`.
+  Reserve a content `pb-8` so the last block doesn't touch the tab bar.
+
+### Header trailing slot
+
+Trailing icon buttons in the header (settings gear, notification bell,
+filter, etc.) use the same 44×44 chip as the back chip:
+
+```tsx
+<a
+  href="/profile/settings"
+  aria-label="Open settings"
+  className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
+>
+  <SettingsIcon size={18} />
+</a>
+```
+
+If this lockup appears on a second authed screen, promote it to a
+`HeaderIconButton` primitive — until then, keep the inline form identical
+to the Profile example so the chrome stays consistent.
+
+### Profile identity hero card
+
+The dark teal identity card on `/profile` is **screen-local** today: it
+composes inline using the §5 hero-surface semantic tokens
+(`--color-surface-hero-*`) plus glass tile children for the four stat
+pills inside. It is **not** a `<Card>` — Card hard-codes the glass fill.
+
+If a second hero card appears (e.g. a "Membership" panel on a future
+screen), promote the inline composition to a `<HeroCard>` primitive
+before duplicating the gradient. Until then:
+
+- Use the `--color-surface-hero-*` tokens for the gradient, foreground,
+  inner glass tiles, chip borders, and avatar surface.
+- Use `--color-hero-tier-gold-*` for a loyalty-tier chip. Never use the
+  status tones (`success` / `warning` / `danger`) decoratively — status
+  is reserved for live data per §5.
+
+### Settings / vault row groups
+
+Use `<SettingsRow>` for every row in a settings or vault list (Personal
+Information, Payment Methods, Travel Preferences, Notifications, Saved
+Places, Help & Support, etc.). Group rows inside a single `<Card>` with
+hairline dividers between them:
+
+```tsx
+<Card
+  padding="none"
+  className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border-soft)]"
+>
+  <SettingsRow href="/profile/personal" icon={<IdCardIcon size={18} />} title="Personal information" description="Passport · Date of birth · Contact" />
+  <SettingsRow href="/profile/payment" icon={<CreditCardIcon size={18} />} title="Payment methods" description="Visa ····4821 · Apple Pay" trailing={<CountBadge>2</CountBadge>} />
+  <SettingsRow href="/profile/security" icon={<LockIcon size={18} />} title="Security & password" description="2FA active · Updated 30 days ago" trailing={<StatusPill tone="success" size="sm" leadingDot>Secure</StatusPill>} />
+</Card>
+```
+
+- **Never hand-roll a row** (icon + title + description + chevron flexbox)
+  inside a page file. Use `<SettingsRow>`. See §12l.
+- Section header above the group uses an inline `<h2>` at
+  `text-section-title` plus a `text-label` subtitle, with a small
+  `text-body-sm font-semibold` text link on the trailing edge (e.g.
+  "Manage"). A `Button variant="ghost"` would be 44px tall and would
+  dominate the section header — keep it as a plain link.
+
+### Trip / next-trip card
+
+Use `<Card padding="none">` and compose the trip card content inside:
+
+```tsx
+<Card as="article" padding="none" aria-label="Next trip">
+  <header className="px-4 pt-4 pb-4">…airline + StatusPill…</header>
+  <div className="border-t border-[var(--color-border-soft)] px-4 pt-4">
+    <RouteTimeline origin={origin} destination={destination} duration="10h 45 · Nonstop" />
+  </div>
+  <div className="mx-4 mt-4 flex … bg-[var(--color-surface-tile)] …">
+    <GateDisplay gate="D73" terminal="Intl" />
+    <MetricBlock label="Boarding" value="13:55" align="left" />
+    <MetricBlock label="Seat" value="14A" align="left" />
+  </div>
+  <div className="flex flex-col gap-2 px-4 pt-4 pb-4">
+    <Button variant="primary" leadingIcon={<NavigationIcon size={16} />} href="…">Navigate to gate</Button>
+    <Button variant="ghost" href="…">View trip details</Button>
+  </div>
+</Card>
+```
+
+- Route visualisation uses `<RouteTimeline>` (not `<AirportCodePair>`).
+  See §12h for when to pick which.
+- Gate / Boarding / Seat strip uses **`<GateDisplay>`** for the gate
+  column and `<MetricBlock align="left">` for Boarding + Seat, with
+  `--color-surface-tile` as the strip fill and `--color-border-soft`
+  vertical dividers. `<GateDisplay>` is **required** for every gate
+  value — never pass a gate identifier to `<MetricBlock>` (that would
+  put "GATE" on the bottom and lose the `terminal` prop). `<MetricBlock>`
+  stays the right primitive for general metrics like times, durations,
+  percentages, and seat numbers.
+- `<RouteTimeline>` and `<GateDisplay>` are designed to **compose
+  together** inside a hero trip card: the timeline carries the
+  origin → destination story, the gate strip below carries the boarding
+  detail. See the example above and §12h for the atom rules.
+- **CTAs stack vertically** inside the card: `Button variant="primary"`
+  above `Button variant="ghost"`, full-width each. The Figma reference
+  shows a side-by-side primary + secondary pair at ~46px height; we use
+  the system's stacked primary + ghost so trip-card actions match the
+  rest of the app. If a future iteration needs side-by-side actions
+  inside a card, propose a `Button size="compact"` variant first.
+
+### Card surfaces in the authed app
+
+The Profile Figma mockup renders the trip card and vault row groups as
+**solid white** cards. The system ships them as the translucent `<Card>`
+glass surface (`--color-surface-card`). This is a deliberate deviation:
+keeps surface continuity with onboarding and lets the aurora background
+show through. **Do not** re-author solid-white card chrome inline; if a
+genuinely solid surface is required, add a `tone` prop to `<Card>` first.
+
+### Footer version line
+
+A small centred app-version line at the bottom of the screen renders as:
+
+```tsx
+<p className="text-center text-label tabular-nums text-[var(--color-text-muted)]">
+  YVR Concierge · v4.12.0
+</p>
+```
+
+`tabular-nums` keeps the version numerals from shimmying when the build
+rolls.
 
 ---
 
@@ -328,8 +491,9 @@ it onto a semantic token.
 | `--color-surface-elevated` | `--white-a60` | Chips, icon tiles, secondary buttons. |
 | `--color-surface-overlay` | `--white-a50` | Lower-opacity overlay layer. |
 | `--color-surface-card` | `--white-a40` | Glass card fill. Consume via `bg-[var(--color-surface-card)]` — never `bg-white/40`. |
-| `--color-surface-hover` | `--white-a30` | Hover tint on translucent rows (e.g. `AuthOption`). |
+| `--color-surface-hover` | `--white-a30` | Hover tint on translucent rows (e.g. `AuthOption`, `SettingsRow`). |
 | `--color-surface-pressed` | `--white-a40` | Pressed tint on translucent rows. |
+| `--color-surface-tile` | `rgba(29,53,87, 0.06)` (navy @ 6%) | Warm inner-card tile fill. Use for the leading `<IconTile>` inside `<SettingsRow>`, the trip card's gate/boarding/seat strip, and the trip-card header airline chip. Distinct from `--color-surface-elevated`, which is translucent over aurora — this tone is meant to sit **inside** a card. |
 
 ### Semantic — Text
 
@@ -395,6 +559,48 @@ foreground colour used for both text and icon.
 | `--color-aurora-sky` | `#8ec5ff` |
 | `--color-aurora-lavender` | `#dab2ff` |
 | `--color-aurora-mint` | `#46ecd5` |
+
+### Semantic — Hero surface
+
+The dark teal **profile identity** card on `/profile` (and any future
+premium / membership hero panel) lives on its own surface. The hero
+surface tokens are the **only** correct way to render dark-teal content
+in the app — never inline `linear-gradient(…, #0e4a4e, …)` or raw
+`rgba(255,255,255, …)` foregrounds.
+
+| Token | Value | Usage |
+|---|---|---|
+| `--color-surface-hero-start` | `#0e4a4e` | Hero gradient start stop. |
+| `--color-surface-hero-end` | `#0a3a3d` | Hero gradient end stop. |
+| `--color-surface-hero-fg` | `#ffffff` | High-contrast text on the hero surface. |
+| `--color-surface-hero-fg-muted` | `rgba(255,255,255, 0.65)` | Secondary text on the hero surface (email, stat labels, `LiveIndicator` label). |
+| `--color-surface-hero-fg-soft` | `rgba(255,255,255, 0.55)` | Tertiary text on the hero surface (sync footnote). |
+| `--color-surface-hero-tile` | `rgba(255,255,255, 0.08)` | Inner glass tile fill on the hero (stat pills). |
+| `--color-surface-hero-tile-border` | `rgba(255,255,255, 0.1)` | Border on hero glass tiles. |
+| `--color-surface-hero-chip` | `rgba(255,255,255, 0.1)` | Membership chip fill on the hero. |
+| `--color-surface-hero-chip-border` | `rgba(255,255,255, 0.16)` | Border on hero membership chips. |
+| `--color-surface-hero-avatar` | `rgba(255,255,255, 0.12)` | Initial-monogram avatar tile fill. |
+| `--color-surface-hero-avatar-border` | `rgba(255,255,255, 0.18)` | Avatar tile border. |
+
+**Gradient lockup.** The hero surface is always painted as a
+`linear-gradient(167deg, var(--color-surface-hero-start) 8%, var(--color-surface-hero-end) 92%)`.
+Do not alter the angle or stops without updating this section.
+
+### Semantic — Membership tier
+
+Loyalty-tier accents used **only** on the hero surface. Not a status
+colour — never use these for live data, never use them outside the
+hero surface.
+
+| Token | Value | Usage |
+|---|---|---|
+| `--color-hero-tier-gold-bg` | `rgba(200,164,92, 0.15)` | Gold-tier chip fill (Aeroplan Gold, Star Alliance Gold). |
+| `--color-hero-tier-gold-border` | `rgba(200,164,92, 0.4)` | Gold-tier chip border. |
+| `--color-hero-tier-gold-fg` | `#e1c685` | Gold-tier chip foreground (icon + label). |
+
+If a new tier (Aeroplan Diamond, Silver, etc.) is introduced, add a
+parallel `--color-hero-tier-<name>-{bg,border,fg}` trio. Never reuse
+`--color-warning` or `--color-success` for a tier badge.
 
 ### Focus
 
@@ -1817,6 +2023,8 @@ follow the migration discipline in §12f.
 | `EmptyState` | beta | Centered "no content yet" panel. | — | — | Content, not a live region. |
 | `ErrorState` | beta | Centered "something went wrong" panel. | — | — | `role` prop chooses `status` (polite, default) or `alert`. |
 | `InlineAlert` | beta | Flat status banner. | `info`, `success`, `warning`, `danger`, `neutral` | — | `role` prop chooses `status` (default) or `alert`. |
+| `RouteTimeline` | beta | Split origin/destination + dashed centre line + plane glyph + duration. Travel atom. | — | — | `aria-label="<origin> to <destination>"` on the wrapper; dots / dashed line / icon are `aria-hidden`. |
+| `SettingsRow` | beta | Authed-app settings / vault list row (icon + title + description + optional trailing + chevron). | — | — | Renders as `<Link>` or `<button>` — global `:focus-visible` ring; chevron is `aria-hidden`; tap target ≥ 44px tall. |
 | `icons` (module) | stable | Inline SVG icon set incl. `SpinnerIcon`. | — | numeric `size` | All icons default to `aria-hidden`; meaningful icons get `aria-label` from the parent button. |
 
 Status legend:
@@ -1841,7 +2049,8 @@ StatusPill        →  live flight / parking / security state
 LiveIndicator     →  data-freshness signal ("LIVE" / "SYNCED" / "STALE")
 MetricBlock       →  value-first metric (security wait, walking time, %)
 CountdownBlock    →  label-first time-relative metric (boarding in 42 min)
-AirportCodePair   →  YVR → SFO header with optional flight + city pair
+AirportCodePair   →  YVR → SFO inline header with optional flight + city pair
+RouteTimeline     →  split origin/destination + dashed line + plane + duration
 GateDisplay       →  GATE / D73 with optional terminal + helper
 ```
 
@@ -1928,6 +2137,12 @@ visible. No extra component logic.
 "security wait is 8 min." `CountdownBlock` is the **time-until** form
 — "boarding in 42 min." Pick by which one a user would say aloud.
 
+**Never use `MetricBlock` for gate values.** Gates are not general
+metrics — they carry a `terminal` prop and a canonical "GATE" eyebrow.
+Use `<GateDisplay>` instead (see below). The lint check can't catch
+this swap because both primitives consume valid tokens; treat it as a
+contract violation on review.
+
 ### CountdownBlock
 
 ```tsx
@@ -1977,6 +2192,72 @@ the arrow is `aria-hidden` so screen readers read "YVR to SFO".
 - Arrow is `→` (U+2192). Never `->` or `>`.
 - City name only appears in `subtitle`, never inside the code pair.
 
+### RouteTimeline
+
+```tsx
+<RouteTimeline
+  origin={{ code: "YVR", city: "Vancouver", time: "14:35" }}
+  destination={{ code: "NRT", city: "Tokyo", time: "17:20", offset: "+1" }}
+  duration="10h 45 · Nonstop"
+/>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `origin` | `{ code, city, time, offset? }` | (required) | Left endpoint. `code` is 3-letter IATA (rendered uppercase). `time` is 24-hour `HH:MM`. `offset` is the day suffix beside the time (`"+1"` for next-day arrival). |
+| `destination` | `{ code, city, time, offset? }` | (required) | Right endpoint. Same shape. |
+| `duration` | `string` | — | Centre-line label, e.g. `"10h 45 · Nonstop"` or `"12h 10 · 1 stop"`. Per content-guide §6, use `h` + bare minutes (no `min`). |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** Three columns inside a flex row: left endpoint block,
+centre column (dashed hairline + plane glyph + duration label), right
+endpoint block. Codes render at `text-title tabular-nums uppercase`
+(identical to `AirportCodePair`). City at `text-label` secondary. Time
+at `text-body-sm tabular-nums` primary, with optional offset in
+secondary colour beside it.
+
+**Accessibility.** The wrapper carries `aria-label="<origin> to
+<destination>"` so screen readers announce "YVR to NRT". All decorative
+parts (dots, dashed line, plane icon) are `aria-hidden`.
+
+**When to use `RouteTimeline` vs `AirportCodePair`.**
+
+| Use `AirportCodePair` | Use `RouteTimeline` |
+|---|---|
+| Inline single-line header (`YVR → SFO`) on a flight card, search result, or notification. | Hero trip card where origin + destination need their own city / time stacks split across the card width. |
+| Mid-density list rows where vertical space is at a premium. | Profile next-trip card, Trip detail header, connection timeline, boarding-pass detail. |
+| The subtitle line carries the flight number + city pair as a single string. | Each endpoint owns its own city + time; the centre line carries duration + stop pattern. |
+
+Both primitives render the codes with the same typography
+(`text-title tabular-nums uppercase`) so a screen that mixes them keeps
+visual rhythm.
+
+**Do**
+
+```tsx
+// Hero trip card on Profile.
+<Card padding="none">
+  <RouteTimeline origin={origin} destination={destination} duration="10h 45 · Nonstop" />
+</Card>
+
+// Inline header on a flight search result.
+<AirportCodePair origin="YVR" destination="SFO" flightNumber="AC123" />
+```
+
+**Don't**
+
+```tsx
+// ❌ Inlining the split layout in a page file.
+<div className="flex justify-between">
+  <span className="text-title font-bold">YVR</span>
+  <PlaneIcon />
+  <span className="text-title font-bold">NRT</span>
+</div>
+
+// ❌ Embedding RouteTimeline inside another card-shaped primitive
+// (e.g. EmptyState) — atoms don't nest inside elevation primitives.
+```
+
 ### GateDisplay
 
 ```tsx
@@ -1994,6 +2275,15 @@ the arrow is `aria-hidden` so screen readers read "YVR to SFO".
 
 **Anatomy.** Eyebrow `GATE` (top) → value (large, tabular-nums,
 uppercase) → optional support line at `text-label`.
+
+**Required for every gate value.** Anywhere the app shows a gate
+identifier — flight card, boarding pass, next-trip strip, journey
+timeline — render it through `<GateDisplay>`. Do not pass a gate to
+`<MetricBlock>`, do not inline `<p>Gate D73</p>`, do not concatenate
+terminal + gate into a single string. `<GateDisplay>` and
+`<RouteTimeline>` are designed to compose inside a hero trip card —
+timeline carries origin → destination, GateDisplay carries the gate
+column of the boarding strip.
 
 ### Do / Don't (cross-cutting)
 
@@ -2022,6 +2312,9 @@ uppercase) → optional support line at `text-label`.
 
 // ❌ Inlining the gate as bare text inside a card body.
 <p className="text-lg">Gate D73</p>
+
+// ❌ Rendering the gate through MetricBlock.
+<MetricBlock label="Gate" value="Intl D73" />   // use <GateDisplay terminal="Intl" gate="D73" />
 
 // ❌ Using → "by hand" inside a heading.
 <h2 className="text-2xl">YVR → SFO</h2>
@@ -2470,7 +2763,124 @@ CTA when scrolled to the very bottom.
 
 ---
 
-## 12k. Design preview route
+## 12k. Authenticated app list primitives
+
+Row primitives for the **settings / vault / preferences lists** that
+recur across the authed app. Onboarding has its own row primitive
+(`AuthOption` for sign-in provider rows); the authed app uses
+`SettingsRow`. Pick by surface, not by visual similarity.
+
+```
+SettingsRow   →  icon + title + description + optional trailing + chevron
+```
+
+### SettingsRow
+
+```tsx
+<Card
+  padding="none"
+  className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border-soft)]"
+>
+  <SettingsRow
+    href="/profile/personal"
+    icon={<IdCardIcon size={18} />}
+    title="Personal information"
+    description="Passport · Date of birth · Contact"
+  />
+  <SettingsRow
+    href="/profile/payment"
+    icon={<CreditCardIcon size={18} />}
+    title="Payment methods"
+    description="Visa ····4821 · Apple Pay"
+    trailing={<CountBadge>2</CountBadge>}
+  />
+  <SettingsRow
+    href="/profile/notifications"
+    icon={<BellIcon size={18} />}
+    title="Notifications"
+    description="Flight alerts · Gate changes · Security"
+    unread
+  />
+</Card>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `icon` | `ReactNode` | (required) | Leading glyph — passed into a 38px `<IconTile>`. Use 18px inline icons from `icons.tsx`. |
+| `title` | `string` | (required) | One-line label, `text-body` weight 500. Truncated with ellipsis if too long — keep titles 3 words / 1 line. |
+| `description` | `string` | — | Single line beneath the title, `text-label` secondary. Truncated. |
+| `href` | `Route \| URL` | — | When present, renders as `<Link>`. Otherwise renders as `<button>`. |
+| `onClick` | `() => void` | — | Optional. Fires on both branches. |
+| `trailing` | `ReactNode` | — | Optional slot before the chevron — use for `<StatusPill size="sm">`, a count badge, or a small status chip. Never use for a second action button (one tap target per row). |
+| `unread` | `boolean` | `false` | Adds a small `--color-danger` dot beside the title. Use for rows whose downstream screen has unread / pending state. |
+| `iconTone` | `"tile" \| "elevated"` | `"tile"` | Picks the IconTile fill. `tile` reads warm on a solid inner card (the default authed list rhythm); `elevated` is the airy translucent tile used directly on the aurora background. |
+
+**Anatomy.** 70px row, `px-4 py-4`, `gap-3`. Leading `<IconTile size={38}>`,
+title + description vertical stack, optional trailing slot, trailing 16px
+chevron at `--color-text-muted`. Hover tints `--color-surface-hover`.
+
+**Grouping.** Stack rows inside a single `<Card padding="none">` with
+hairline dividers:
+
+```tsx
+<Card padding="none" className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border-soft)]">
+```
+
+The divider selector belongs on the Card, not on the row — the row
+does not paint its own border. Multiple groups can sit on the same
+screen (the Profile screen has two: Travel Vault and Help & Saved).
+
+**A11y.** Renders as `<Link>` or `<button>`; both branches inherit the
+global `:focus-visible` ring. The chevron is `aria-hidden`. Tap target
+is the full row (≥ 44px tall). When `unread` is true, the dot is
+`aria-hidden` — surface the unread state via the row's `description`
+or a `<StatusPill>` in `trailing` if it must be announced.
+
+**When to use `SettingsRow`.**
+
+| Use `SettingsRow` | Use something else |
+|---|---|
+| Profile vault rows (Personal info, Payment, Security, Notifications). | An on/off toggle in a row → use `<PermissionCard>` or compose `<Toggle>` inside a custom row. |
+| Settings / preferences screens (Language, Accessibility, Parking, Dining). | A sign-in provider row → use `<AuthOption>` (onboarding only). |
+| Help & Support, Saved Places, App about. | A row that is the *only* content on the screen → consider `<Button>` or a hero card instead. |
+
+**Do**
+
+```tsx
+<SettingsRow
+  href="/profile/security"
+  icon={<LockIcon size={18} />}
+  title="Security & password"
+  description="2FA active · Updated 30 days ago"
+  trailing={<StatusPill tone="success" size="sm" leadingDot>Secure</StatusPill>}
+/>
+```
+
+**Don't**
+
+```tsx
+// ❌ Hand-rolling a row inside a page file.
+<a href="/profile/security" className="flex items-center gap-3 px-4 py-4">
+  <span className="h-10 w-10 rounded-2xl bg-white/40 …">
+    <LockIcon size={18} />
+  </span>
+  <div>
+    <p className="text-sm font-medium">Security & password</p>
+    <p className="text-xs text-gray-500">2FA active · Updated 30 days ago</p>
+  </div>
+  <ChevronRightIcon />
+</a>
+
+// ❌ Two actions in one row.
+<SettingsRow … trailing={<><Button …/><Button …/></>} />
+
+// ❌ Manual divider lines on the row.
+<SettingsRow … className="border-b border-gray-200" />
+```
+
+---
+
+## 12l. Design preview route
 
 **`/design`** — a development manifest of every reusable primitive,
 variant, and state. Lives at [src/app/design/page.tsx](../src/app/design/page.tsx).
@@ -2589,7 +2999,8 @@ visibly changing existing screens.**
 | `LiveIndicator` | `src/components/LiveIndicator.tsx` | Small dot + uppercase label signalling data freshness. Travel atom. |
 | `MetricBlock` | `src/components/MetricBlock.tsx` | Value-first stand-alone metric (security wait, parking %). Travel atom. |
 | `CountdownBlock` | `src/components/CountdownBlock.tsx` | Label-first time-relative metric ("Boarding in 42 min"). Travel atom. |
-| `AirportCodePair` | `src/components/AirportCodePair.tsx` | "YVR → SFO" header with optional flight + city pair. Travel atom. |
+| `AirportCodePair` | `src/components/AirportCodePair.tsx` | "YVR → SFO" inline header with optional flight + city pair. Travel atom. |
+| `RouteTimeline` | `src/components/RouteTimeline.tsx` | Split origin/destination with dashed centre line, plane glyph, and duration label. Travel atom — pair with `<AirportCodePair>` for inline contexts. |
 | `GateDisplay` | `src/components/GateDisplay.tsx` | "GATE / D73" with optional terminal + helper. Travel atom. |
 | `TextField` | `src/components/TextField.tsx` | Label + 52px input + helper / error message. Form atom. |
 | `SearchField` | `src/components/SearchField.tsx` | Pill-shaped search input with clear button. Form atom. |
@@ -2599,7 +3010,8 @@ visibly changing existing screens.**
 | `BottomTabBar` | `src/components/BottomTabBar.tsx` | Five-tab bottom nav (Home, Flights, Map, Services, Profile). Safe-area aware. |
 | `LargeTitleHeader` | `src/components/LargeTitleHeader.tsx` | iOS-style display title with optional back chip + trailing slot. |
 | `StickyBottomCTA` | `src/components/StickyBottomCTA.tsx` | Sticky bottom action(s) inside a scroll container. |
-| `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`). |
+| `SettingsRow` | `src/components/SettingsRow.tsx` | Authed-app settings / vault list row. Composes `<IconTile>` + `ChevronRightIcon`. Group rows inside a `<Card padding="none">` with hairline dividers. See §12k and §2b. |
+| `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`, `SettingsIcon`, `SparkleIcon`, `SyncIcon`, `NavigationIcon`, `IdCardIcon`, `CreditCardIcon`, `SlidersIcon`, `BookmarkIcon`, `LifeBuoyIcon`). |
 
 ---
 

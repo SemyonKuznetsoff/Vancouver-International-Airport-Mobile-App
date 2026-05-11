@@ -25,6 +25,53 @@ If any box can't be ticked, the screen is not ready to ship.
 
 ---
 
+## Authenticated screens
+
+Any screen that lives inside the logged-in app (`/profile`, future
+`/home`, `/flights`, `/map`, `/services`) is a structurally different
+beast from onboarding. Use the rules below in addition to the generic
+ones above.
+
+- [ ] **Shell is `<AppShellAuthed>`, never `<AppShell>`.** Onboarding's
+      shell omits the tab bar and uses `min-h-dvh`; the authed shell
+      reserves the bottom for `<BottomTabBar>` and scrolls `<main>`
+      internally. See `design-system.md` §12j.
+- [ ] **Bottom tab bar is rendered by the shell.** Do not render
+      `<BottomTabBar>` inside the page; `AppShellAuthed` already does.
+      Active-tab detection uses `usePathname()` — putting the page at
+      the matching route lights up the correct tab. Do not pass
+      `activeHref` unless overriding intentionally.
+- [ ] **Header uses `<LargeTitleHeader>`,** with `subtitle` for the
+      single-line context line and `trailing` for icon buttons (gear,
+      bell, filter). For step screens inside the authed app (forms,
+      detail screens with a back chip), use `<ScreenHeader>` instead.
+- [ ] **No safe-area padding at the bottom.** `BottomTabBar` owns
+      `env(safe-area-inset-bottom)`. Adding it again on the page
+      double-counts and creates dead space.
+- [ ] **Reserve `pb-8` on the content column** so the last block does
+      not touch the tab bar. Do not use `pb-0`.
+- [ ] **Section rhythm is `gap-8` (32px)** between major blocks inside
+      the content column; the first block sits `mt-8` below the
+      `LargeTitleHeader`. Page gutter stays `px-6` (24px).
+- [ ] **Settings / vault / preferences lists use `<SettingsRow>`,**
+      never a hand-rolled row. Group rows inside `<Card padding="none">`
+      with the divider className from §12k. If a row needs an on/off
+      switch, use `<PermissionCard>` or compose `<Toggle>` — not
+      `SettingsRow`'s `trailing` slot.
+- [ ] **Trip / flight cards use the travel atoms.** Codes via
+      `<AirportCodePair>` (inline) or `<RouteTimeline>` (split).
+      Gate / Boarding / Seat strips via `<MetricBlock>`. Status via
+      `<StatusPill>`. Live freshness via `<LiveIndicator>`. Never
+      inline a gate number with bespoke typography.
+- [ ] **Hero / membership surfaces use the §5 hero tokens.** Inline
+      `linear-gradient(…, #0e4a4e, …)` and raw white-alpha foregrounds
+      are violations. Loyalty-tier chips use the `--color-hero-tier-*`
+      trio, never status tones.
+- [ ] **CTAs inside a card stack vertically** — `Button variant="primary"`
+      above `Button variant="ghost"`. Side-by-side primary + secondary
+      pairs are not supported by the current Button system; if a future
+      screen needs them, propose `Button size="compact"` first.
+
 ## Live-data screens
 
 Any screen whose primary content depends on a remote fetch must

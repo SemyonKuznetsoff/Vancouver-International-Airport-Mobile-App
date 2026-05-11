@@ -34,7 +34,9 @@ import { LargeTitleHeader } from "@/components/LargeTitleHeader";
 import { LiveIndicator } from "@/components/LiveIndicator";
 import { MetricBlock } from "@/components/MetricBlock";
 import { PermissionCard } from "@/components/PermissionCard";
+import { RouteTimeline } from "@/components/RouteTimeline";
 import { SearchField } from "@/components/SearchField";
+import { SettingsRow } from "@/components/SettingsRow";
 import { Skeleton } from "@/components/Skeleton";
 import { StatusPill } from "@/components/StatusPill";
 import { StickyBottomCTA } from "@/components/StickyBottomCTA";
@@ -45,8 +47,13 @@ import {
   AppleIcon,
   ArrowRightIcon,
   BellIcon,
+  BookmarkIcon,
+  CreditCardIcon,
   GoogleIcon,
+  IdCardIcon,
+  LifeBuoyIcon,
   LocationPinIcon,
+  LockIcon,
   MailIcon,
   PlaneIcon,
 } from "@/components/icons";
@@ -245,6 +252,65 @@ export default function DesignPreviewPage() {
         </Section>
 
         {/* ============================================================ */}
+        <Section
+          title="SettingsRow"
+          description="Authed-app list rows. Group inside Card with a hairline divider className. See design-system.md §12k."
+        >
+          <Card
+            padding="none"
+            className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border-soft)]"
+          >
+            <SettingsRow
+              href="/design"
+              icon={<IdCardIcon size={18} />}
+              title="Personal information"
+              description="Passport · Date of birth · Contact"
+            />
+            <SettingsRow
+              href="/design"
+              icon={<CreditCardIcon size={18} />}
+              title="Payment methods"
+              description="Visa ····4821 · Apple Pay"
+              trailing={
+                <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-surface-tile)] px-2 text-micro tabular-nums text-[var(--color-text-primary)]">
+                  2
+                </span>
+              }
+            />
+            <SettingsRow
+              href="/design"
+              icon={<LockIcon size={18} />}
+              title="Security & password"
+              description="2FA active · Updated 30 days ago"
+              trailing={
+                <StatusPill tone="success" size="sm" leadingDot>
+                  Secure
+                </StatusPill>
+              }
+            />
+            <SettingsRow
+              href="/design"
+              icon={<BellIcon size={18} />}
+              title="Notifications"
+              description="Flight alerts · Gate changes · Security"
+              unread
+            />
+            <SettingsRow
+              href="/design"
+              icon={<BookmarkIcon size={18} />}
+              title="Saved places"
+              description="7 lounges, cafés and services"
+            />
+            <SettingsRow
+              href="/design"
+              icon={<LifeBuoyIcon size={18} />}
+              title="Help & support"
+              description="Concierge · Lost & found · Feedback"
+            />
+          </Card>
+        </Section>
+
+        {/* ============================================================ */}
         <Section title="Skeleton" description="Loading placeholders.">
           <Card>
             <div className="flex flex-col gap-2" aria-busy>
@@ -328,6 +394,21 @@ export default function DesignPreviewPage() {
                 destination="SFO"
                 flightNumber="AC123"
                 subtitle="Vancouver → San Francisco"
+              />
+            </Card>
+          </SubSection>
+
+          <SubSection title="RouteTimeline">
+            <Card>
+              <RouteTimeline
+                origin={{ code: "YVR", city: "Vancouver", time: "14:35" }}
+                destination={{
+                  code: "NRT",
+                  city: "Tokyo",
+                  time: "17:20",
+                  offset: "+1",
+                }}
+                duration="10h 45 · Nonstop"
               />
             </Card>
           </SubSection>
