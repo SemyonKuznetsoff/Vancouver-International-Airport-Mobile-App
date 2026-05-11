@@ -129,11 +129,19 @@ matches that you flag in the PR description.
 ## 8. Button rules
 
 - Use the `<Button>` component for every CTA. Do not build raw `<button>`s
-  for primary actions.
+  for any pill-shaped action.
 - Variants:
   - `primary` — full-width, 54px tall, navy pill, white text, trailing icon
     optional. One per screen.
-  - `ghost` — 44px text-link style for "I already have an account" etc.
+  - `secondary` — 52px tall, surface-elevated fill with hairline border,
+    supports `leadingIcon`. Use for a **peer alternative** action — e.g.
+    "Sign in with email" next to a stack of OAuth options. Not the main
+    path; not a text link.
+  - `ghost` — 44px text-link style for "I already have an account",
+    "Set up later", etc.
+- Never create a one-off pill button inside a page file. If you reach for
+  a custom `<button className="h-[...] rounded-[var(--radius-pill)] ...">`,
+  promote it to a Button variant first.
 - Touch target minimum: 44×44. Buttons hit this by default; raw `<button>`s
   must opt in (`h-11 w-11` or larger).
 - Pass `href` to render as `<Link>` (client navigation). Otherwise it renders
@@ -272,12 +280,21 @@ Before writing JSX:
 After writing JSX:
 
 1. Run `npm run build`. Fix every error and every warning.
-2. Open the screen at 375px in DevTools — content fits, no horizontal scroll.
-3. Open at 1280px — column caps at 430px, centred.
-4. Tab through with the keyboard — every interactive element shows the
+2. Run `npm run check:design-system`. Migrate any reported violations before
+   summarising the work. The checker covers raw hex, inline px font sizes,
+   arbitrary leading / tracking / rounded values, `bg-white/N`, inline
+   shadows, `!important`, duplicated card chrome, icon-only buttons missing
+   `aria-label`, and `Loading...` / `Submitting...` text in page files.
+3. Before declaring the branch ready to merge, run
+   `npm run check:design-system:strict`. The strict mode exits non-zero on
+   any error-severity finding (warnings are non-blocking but should be
+   reviewed). **Run strict before every commit you intend to push.**
+4. Open the screen at 375px in DevTools — content fits, no horizontal scroll.
+5. Open at 1280px — column caps at 430px, centred.
+6. Tab through with the keyboard — every interactive element shows the
    navy focus ring.
-5. Toggle `prefers-reduced-motion` — no animations longer than instant.
-6. Cross-check: no inline shadows, no off-scale spacing, no raw hex, no
+7. Toggle `prefers-reduced-motion` — no animations longer than instant.
+8. Cross-check: no inline shadows, no off-scale spacing, no raw hex, no
    `!important`, no missing `aria-label` on icon-only controls.
-7. Summarise files created + changed for the user.
-8. Do not commit unless asked.
+9. Summarise files created + changed for the user.
+10. Do not commit unless asked.

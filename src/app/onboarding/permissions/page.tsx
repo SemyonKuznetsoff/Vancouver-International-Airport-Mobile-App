@@ -24,7 +24,7 @@ export default function PermissionsPage() {
             <br />
             <em>alerts.</em>
           </Heading>
-          <p className="text-[14px] leading-[1.55] text-[var(--color-text-secondary)]">
+          <p className="text-body text-[var(--color-text-secondary)]">
             Turn these on for smoother guidance. You can change them anytime.
           </p>
         </section>
@@ -48,7 +48,7 @@ export default function PermissionsPage() {
           />
         </section>
 
-        <p className="mt-8 inline-flex items-start gap-2 text-[11px] leading-[1.5] text-[var(--color-text-secondary)]">
+        <p className="mt-8 inline-flex items-start gap-2 text-label text-[var(--color-text-secondary)]">
           <LockIcon size={12} />
           <span>Your location and notifications stay on this device.</span>
         </p>

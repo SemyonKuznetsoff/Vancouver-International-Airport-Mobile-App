@@ -36,7 +36,7 @@ export default function OnboardingPage() {
             <br />
             <em>calmly guided.</em>
           </Heading>
-          <p className="text-[14px] leading-[1.55] text-[var(--color-text-secondary)]">
+          <p className="text-body text-[var(--color-text-secondary)]">
             YVR helps you move through the airport with less guesswork.
           </p>
         </section>
