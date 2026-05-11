@@ -44,6 +44,103 @@ When new routes are added, append rows to this table in the same PR.
 
 ---
 
+## 2a. Onboarding screen patterns
+
+The canonical layouts for the onboarding flow (`/`, `/onboarding/sign-in`,
+`/onboarding/permissions`). Copying any of these into a future onboarding
+screen should produce a screen that feels like the same product. These
+rules were finalised after the May 2026 onboarding consistency audit; the
+three current screens are the reference implementations.
+
+### Top rhythm
+
+- Non-root step screens use `<ScreenHeader>` followed by **`mt-8` (32px)**
+  on the first eyebrow + heading section.
+- `mt-12` (48px) after a `<ScreenHeader>` is **not** the default. Use it
+  only with a one-line justification in the PR description (e.g. a screen
+  with no eyebrow whose hero needs extra drop).
+- The root welcome screen (`/`) uses `pt-2` from `<BrandMark>` and `mt-8`
+  to its first content section.
+
+### Bottom CTA group
+
+Pin the CTAs with this pattern, identically across all three onboarding
+screens:
+
+```tsx
+<div className="mt-auto flex flex-col gap-3 pt-8 pb-2">
+  <Button variant="primary" …>{primaryLabel}</Button>
+  <Button variant="ghost" …>{escapeLabel}</Button>
+</div>
+```
+
+- `mt-auto` pushes the group to the bottom of the column.
+- `pt-8` (32px) guarantees breathing room above on short viewports.
+- `gap-3` (12px) is the primary/ghost stack rhythm.
+- `pb-2` (8px) sits above `AppShell`'s
+  `max(env(safe-area-inset-bottom), 16px)` — do **not** re-add safe-area
+  padding here.
+- The pattern is **primary + ghost**: one navy pill for the main action,
+  one text-link for the escape path. Skip the ghost only when the screen
+  has no escape (e.g. a forced confirmation — none today).
+- **Do not** invent bespoke spring spacers
+  (`<div className="min-h-N max-h-N flex-grow" />`, fixed-height shims).
+  They drift between screens; `mt-auto` does not.
+
+### Trust line
+
+One canonical pattern, applied identically across screens:
+
+```tsx
+<p className="inline-flex items-center gap-2 text-label text-[var(--color-text-secondary)]">
+  <ShieldCheckIcon size={12} />
+  <span>{copy}</span>
+</p>
+```
+
+- 12px leading icon (`ShieldCheckIcon`, `LockIcon`, etc. from
+  `icons.tsx`).
+- `gap-2` (8px), `items-center`, `text-label` — do **not** override the
+  role's tracking.
+- Copy is **factual and short** — one line at 375px, no marketing
+  reassurance. See `content-guide.md` §6 for wording rules.
+- If a third trust line lands, promote a `<TrustLine icon={…}>{…}</TrustLine>`
+  primitive that bakes this composition. Until then, keep the inline form
+  identical across the two onboarding instances.
+
+### Divider label ("Or")
+
+Inline labels inside a hairline divider use `<Eyebrow tone="secondary">`,
+not a hand-rolled `<span>` with manual tracking:
+
+```tsx
+<div className="mt-8 flex items-center gap-3">
+  <span className="h-px flex-1 bg-[var(--color-border)]" />
+  <Eyebrow tone="secondary">Or</Eyebrow>
+  <span className="h-px flex-1 bg-[var(--color-border)]" />
+</div>
+```
+
+- Never combine `text-micro` with `tracking-[0.22em]` to imitate eyebrow
+  styling — that fights the type-role system.
+- If the existing eyebrow size doesn't fit a future case, propose a new
+  role token; don't paper over it inline.
+
+### Icon-chip chrome inside cards
+
+- Any 28px / 40px icon chip inside a card or row uses
+  `<IconTile size={N}>{icon}</IconTile>`, the single source for icon-chip
+  chrome. `BrandMark`, `EmptyState`, and `PermissionCard` all consume it.
+- **Do not** hand-roll
+  `inline-flex h-N w-N rounded-2xl bg-[var(--color-surface-elevated)]`
+  inside a card. `rounded-2xl` (16px) is off the radius-token scale; the
+  IconTile primitive paints the chip at the documented chip radius (10px)
+  and stays in sync if the token retunes.
+- If a future card needs a softer corner on its tile, add a `radius` prop
+  to `IconTile` rather than inlining the override.
+
+---
+
 ## 3. Spacing scale
 
 **Allowed values only:**

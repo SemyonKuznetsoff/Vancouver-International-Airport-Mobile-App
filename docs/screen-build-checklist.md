@@ -151,6 +151,22 @@ When adding or revising a primitive:
 - [ ] Toggles use `role="switch" aria-checked aria-label`.
 - [ ] Avoid one-off styles. If you reach for a custom value, ask whether it
       should become a token.
+- [ ] **Onboarding step screens use `mt-8` after `<ScreenHeader>`.**
+      `mt-12` is not the default; use only with a one-line PR
+      justification. See `design-system.md` §2a.
+- [ ] **Onboarding bottom CTA group uses
+      `mt-auto flex flex-col gap-3 pt-8 pb-2`** with a primary + ghost
+      stack. No bespoke `min-h-N max-h-N flex-grow` spacers, no fixed
+      shim divs. See `design-system.md` §2a.
+- [ ] **Trust microcopy uses
+      `inline-flex items-center gap-2 text-label text-[var(--color-text-secondary)]`**
+      with a 12px leading icon and no tracking override. See
+      `design-system.md` §2a.
+- [ ] **Inline divider labels use `<Eyebrow tone="secondary">`,**
+      never a `<span>` with `text-micro` + manual tracking. See
+      `design-system.md` §2a.
+- [ ] **Icon chips inside cards use `<IconTile size={N}>`,** never a
+      hand-rolled `rounded-2xl` chip. See `design-system.md` §2a.
 
 ---
 

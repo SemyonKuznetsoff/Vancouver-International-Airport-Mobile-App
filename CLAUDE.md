@@ -220,7 +220,13 @@ Reuse, before you build new:
 | Permission row with toggle | `PermissionCard` |
 | On/off switch (any setting) | `Toggle` |
 | Auth provider row | `AuthOption` + `AuthOptionGroup` |
+| Icon chip inside a card or row | `IconTile` |
 | Inline SVG | add to `icons.tsx`, never import external images |
+
+For onboarding-screen composition (top rhythm after `<ScreenHeader>`,
+bottom CTA group, trust line, divider label, icon-chip chrome) follow
+the canonical patterns in `docs/design-system.md` §2a — those screens
+are the reference implementations.
 
 If a screen needs something that doesn't fit, propose a new primitive in
 `docs/design-system.md` first — do not invent one-off styles in a page file.
@@ -242,6 +248,13 @@ If a screen needs something that doesn't fit, propose a new primitive in
 - ❌ Do not render the Figma phone bezel chrome.
 - ❌ Do not use `live filter: blur`. Use radial gradients.
 - ❌ Do not author off-scale spacing.
+- ❌ Do not hand-roll an icon chip inside a card
+  (`inline-flex h-N w-N rounded-2xl bg-[var(--color-surface-elevated)]`).
+  Use `<IconTile size={N}>` — the single source for icon-chip chrome.
+- ❌ Do not invent bespoke bottom-CTA spacers
+  (`min-h-N max-h-N flex-grow`, fixed-height shims). Onboarding screens
+  use `mt-auto flex flex-col gap-3 pt-8 pb-2` — see
+  `docs/design-system.md` §2a.
 - ❌ Do not add `!important` to override Heading or Button — extend the
   component instead.
 - ❌ Do not change pixel output of `/`, `/onboarding/sign-in`, or
