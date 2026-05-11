@@ -27,6 +27,34 @@
   --color-action-primary: #1d3557;
   --color-action-primary-fg: #ffffff;
 
+  /* Hero surface — dark teal identity card used on Profile and future
+     premium / membership hero panels. Foreground tokens carry inverse
+     text + an inner glass fill that sits *on* the hero surface, not on
+     the aurora. */
+  --color-surface-hero-start: #0e4a4e;
+  --color-surface-hero-end: #0a3a3d;
+  --color-surface-hero-fg: #ffffff;
+  --color-surface-hero-fg-muted: rgba(255, 255, 255, 0.65);
+  --color-surface-hero-fg-soft: rgba(255, 255, 255, 0.55);
+  --color-surface-hero-tile: rgba(255, 255, 255, 0.08);
+  --color-surface-hero-tile-border: rgba(255, 255, 255, 0.1);
+  --color-surface-hero-chip: rgba(255, 255, 255, 0.1);
+  --color-surface-hero-chip-border: rgba(255, 255, 255, 0.16);
+  --color-surface-hero-avatar: rgba(255, 255, 255, 0.12);
+  --color-surface-hero-avatar-border: rgba(255, 255, 255, 0.18);
+
+  /* Membership tier accents — used only inside the hero surface to badge
+     an external loyalty tier (Aeroplan Gold today; Star Alliance Gold,
+     etc. in future). Not a status colour. */
+  --color-hero-tier-gold-bg: rgba(200, 164, 92, 0.15);
+  --color-hero-tier-gold-border: rgba(200, 164, 92, 0.4);
+  --color-hero-tier-gold-fg: #e1c685;
+
+  /* Warm tile fill — used for the leading IconTile inside settings/vault
+     rows. Distinct from `--color-surface-elevated` (translucent over
+     aurora) — this tone sits inside a solid card and reads warm. */
+  --color-surface-tile: rgba(31, 53, 87, 0.06);
+
   /* Control surfaces — composed from semantic text token + alpha */
   --color-track-off: color-mix(
     in srgb,
