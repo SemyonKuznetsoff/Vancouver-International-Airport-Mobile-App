@@ -68,7 +68,7 @@ export default function SignInPage() {
           <Button variant="ghost" href="/onboarding/permissions">
             Continue as guest
           </Button>
-          <p className="inline-flex items-center gap-1.5 text-label tracking-[0.025em] text-[var(--color-text-secondary)]">
+          <p className="inline-flex items-center gap-2 text-label text-[var(--color-text-secondary)]">
             <ShieldCheckIcon size={12} />
             <span>Stored on your device · Never shared with airlines</span>
           </p>

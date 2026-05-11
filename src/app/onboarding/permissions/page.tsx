@@ -48,7 +48,7 @@ export default function PermissionsPage() {
           />
         </section>
 
-        <p className="mt-8 inline-flex items-start gap-2 text-label text-[var(--color-text-secondary)]">
+        <p className="mt-8 inline-flex items-center gap-2 text-label text-[var(--color-text-secondary)]">
           <LockIcon size={12} />
           <span>Your location and notifications stay on this device.</span>
         </p>
