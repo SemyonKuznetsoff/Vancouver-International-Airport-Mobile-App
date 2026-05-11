@@ -55,6 +55,28 @@ declare its **three states** before declaring done:
       appropriate variant. `info` / `success` / `neutral` default to
       polite announcement; `warning` / `danger` opt in to
       `role="alert"` only when the message is time-critical.
+- [ ] **Travel data uses travel atoms.** Every gate, boarding time,
+      security wait, parking %, distance, walking time, countdown,
+      flight status, airport-code pair, and live-data freshness
+      indicator must render via the §12h primitives (`<StatusPill>`,
+      `<LiveIndicator>`, `<MetricBlock>`, `<CountdownBlock>`,
+      `<AirportCodePair>`, `<GateDisplay>`). Never inline a gate
+      number with bespoke typography, never roll a custom status
+      pill, never type `→` by hand inside a heading.
+- [ ] **No one-off inputs inside pages.** Every text input goes
+      through `<TextField>`; every search input goes through
+      `<SearchField>`; every toggleable filter pill goes through
+      `<ChipFilter>`; every helper / validation message goes through
+      `<FieldMessage>`. Grep your diff for `<input ` and
+      `<button role="search"` — there should be none outside the
+      form primitives.
+- [ ] **Every form defines its empty / error / loading states.**
+      Submitting → `<Button loading>`. Async validation in flight →
+      `aria-busy` on the field's wrapper. Submission failed → inline
+      `<FieldMessage tone="error">` per field, or a top-of-form
+      `<InlineAlert variant="danger">` for root-cause errors. Server
+      returned no results → `<EmptyState>` named for the query.
+      Never show a blank form on error.
 
 ## Component state coverage
 
@@ -100,7 +122,10 @@ When adding or revising a primitive:
 - [ ] Use `<Toggle>` for any on/off switch (permissions, notifications,
       accessibility settings). Never roll a bespoke `<button role="switch">`.
 - [ ] Use `<Button>` for every CTA. Use `variant="primary"` for the one
-      main action, `variant="ghost"` for the secondary text link.
+      main action, `variant="secondary"` for a peer-alternative pill
+      action (e.g. "Sign in with email" next to OAuth options), and
+      `variant="ghost"` for the secondary text-link CTA. Never roll a
+      one-off pill button inside a page file.
 - [ ] Use token classes for color and shadow:
       `text-[var(--color-text-primary)]`, not raw hex.
       `shadow-[var(--shadow-card)]`, not custom shadow values.
@@ -132,6 +157,12 @@ When adding or revising a primitive:
 ## After coding
 
 - [ ] Run `npm run build`. Fix every error and warning.
+- [ ] Run `npm run check:design-system`. Fix every error-severity finding.
+      Warnings (heuristic / convention) should be reviewed but are
+      non-blocking.
+- [ ] Before merge, run `npm run check:design-system:strict`. This exits
+      non-zero on any error and is intended for CI gating once wired up.
+      Strict mode treats warnings as informational.
 - [ ] Open the page at **375px** in DevTools — content fits, no
       horizontal scroll, nothing overlaps the home-indicator safe area.
 - [ ] Open the page at **1280px** — column caps at 430px, centred,

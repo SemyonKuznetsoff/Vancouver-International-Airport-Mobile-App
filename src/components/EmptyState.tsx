@@ -44,7 +44,7 @@ export function EmptyState({
       <div className="flex flex-col items-center gap-4 text-center">
         {icon ? <IconTile size={40}>{icon}</IconTile> : null}
         <div className="flex flex-col gap-2">
-          <h2 className="text-[15px] font-semibold leading-[1.4] text-[var(--color-text-primary)]">
+          <h2 className="text-section-title text-[var(--color-text-primary)]">
             {title}
           </h2>
           {description ? (
