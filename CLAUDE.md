@@ -6,6 +6,13 @@ This file is the permanent operating guide for Claude when working in this repo.
 Read it before writing or editing code. If a rule here conflicts with anything in
 your training data, the rule here wins.
 
+Companion docs:
+- [`docs/design-system.md`](docs/design-system.md) — visual + component system.
+- [`docs/content-guide.md`](docs/content-guide.md) — voice, copy rules, and
+  airport formatting. **All user-facing copy must follow this guide.**
+- [`docs/screen-build-checklist.md`](docs/screen-build-checklist.md) — per-screen
+  verification.
+
 ---
 
 ## 1. Project purpose
@@ -45,6 +52,12 @@ centred phone-width column.
   - `display` (34px) — Screen 1 / hero screens.
   - `title` (30px) — Step / detail / dialog screens.
 - Use `<Eyebrow>` for the small uppercase label above headings.
+- Type tokens live in `globals.css` under `--text-display`, `--text-title`,
+  `--text-body`, `--text-body-sm`, `--text-label`, `--text-eyebrow`,
+  `--text-micro`. Each registers font-size + line-height + weight + tracking
+  so a single utility (e.g. `text-body`) renders the role correctly. New
+  components must consume these instead of inline `text-[14px] leading-[1.55]`
+  literals.
 - Body text: 14px / line-height 1.55, `--color-text-secondary`.
 - Metadata / captions: 11–12px. Never go below 11px.
 - Italic accent: place inside `<em>` within `<Heading>`. One italic clause max.
@@ -52,12 +65,25 @@ centred phone-width column.
 
 ## 5. Color token rules
 
+- Tokens are **two-tier**: primitive scales (`--navy-900`, `--mist-100`,
+  `--white-a40`, etc.) underpin semantic roles (`--color-text-primary`,
+  `--color-surface-card`). Components consume **semantic tokens only** —
+  never reference a primitive like `--navy-700` or `--white-a40` directly
+  in a `.tsx` file.
 - Always reference tokens, never raw hex.
+- Never write `bg-white/40` for the glass card fill — that fill has a token
+  (`--color-surface-card`). Use `bg-[var(--color-surface-card)]`. Same for
+  hover/pressed surface tints: use `--color-surface-hover` and
+  `--color-surface-pressed`.
 - Semantic tokens (preferred): `--color-bg`, `--color-surface`,
-  `--color-surface-elevated`, `--color-text-primary`, `--color-text-secondary`,
-  `--color-text-muted`, `--color-action-primary`, `--color-action-primary-fg`,
-  `--color-border`, `--color-border-soft`, `--color-success`,
-  `--color-warning`, `--color-danger`, `--focus-ring`.
+  `--color-surface-elevated`, `--color-surface-card`,
+  `--color-surface-hover`, `--color-surface-pressed`,
+  `--color-text-primary`, `--color-text-secondary`,
+  `--color-text-muted`, `--color-text-inverse`,
+  `--color-action-primary`, `--color-action-primary-fg`,
+  `--color-border`, `--color-border-soft`, `--color-track-off`,
+  `--color-success`, `--color-warning`, `--color-danger`, `--color-info`,
+  `--focus-ring`.
 - The aurora hues (`--color-aurora-*`) are background-only. Do not use them
   for text, borders, or icons.
 - Status colors (success / warning / danger) are reserved for live data
@@ -95,18 +121,27 @@ matches that you flag in the PR description.
 
 - Radii live in tokens: `--radius-card` (24), `--radius-panel` (22),
   `--radius-chip` (10), `--radius-pill` (9999).
-- Shadows live in tokens: `--shadow-button`, `--shadow-card`, `--shadow-panel`.
+- Shadows live in tokens: `--shadow-button`, `--shadow-card`,
+  `--shadow-panel`, `--shadow-toggle`.
 - Never inline a custom shadow with `shadow-[0_8px_32px…]`. If you need a new
   shadow, add a token first.
 
 ## 8. Button rules
 
 - Use the `<Button>` component for every CTA. Do not build raw `<button>`s
-  for primary actions.
+  for any pill-shaped action.
 - Variants:
   - `primary` — full-width, 54px tall, navy pill, white text, trailing icon
     optional. One per screen.
-  - `ghost` — 44px text-link style for "I already have an account" etc.
+  - `secondary` — 52px tall, surface-elevated fill with hairline border,
+    supports `leadingIcon`. Use for a **peer alternative** action — e.g.
+    "Sign in with email" next to a stack of OAuth options. Not the main
+    path; not a text link.
+  - `ghost` — 44px text-link style for "I already have an account",
+    "Set up later", etc.
+- Never create a one-off pill button inside a page file. If you reach for
+  a custom `<button className="h-[...] rounded-[var(--radius-pill)] ...">`,
+  promote it to a Button variant first.
 - Touch target minimum: 44×44. Buttons hit this by default; raw `<button>`s
   must opt in (`h-11 w-11` or larger).
 - Pass `href` to render as `<Link>` (client navigation). Otherwise it renders
@@ -155,6 +190,17 @@ matches that you flag in the PR description.
   a non-standard interactive element.
 - Respect `prefers-reduced-motion` — handled globally.
 - Tap targets: ≥44×44.
+- **Never depend on transparency alone for a boundary or state.** Glass
+  fills flatten under Reduce Transparency, and bg colours are stripped
+  under Forced Colors — a new component that communicates structure only
+  via translucent fills will disappear in those modes. Pair fills with
+  borders or position cues that survive token re-mapping.
+- **Preserve accessibility-mode behaviour.** New components must use
+  semantic tokens (`--color-border`, `--color-surface-card`,
+  `--color-track-off`, `--focus-ring`) so the Reduce Transparency,
+  Increase Contrast, and Forced Colors overrides in `globals.css` flow
+  through automatically. Do not inline hex / rgba / system colors per
+  component.
 
 ## 13. Component reuse rules
 
@@ -172,6 +218,7 @@ Reuse, before you build new:
 | Header with back + step | `ScreenHeader` |
 | Primary / ghost CTA | `Button` |
 | Permission row with toggle | `PermissionCard` |
+| On/off switch (any setting) | `Toggle` |
 | Auth provider row | `AuthOption` + `AuthOptionGroup` |
 | Inline SVG | add to `icons.tsx`, never import external images |
 
@@ -197,6 +244,24 @@ If a screen needs something that doesn't fit, propose a new primitive in
 - ❌ Do not author off-scale spacing.
 - ❌ Do not add `!important` to override Heading or Button — extend the
   component instead.
+- ❌ Do not change pixel output of `/`, `/onboarding/sign-in`, or
+  `/onboarding/permissions` while doing foundation work (token additions,
+  primitive refactors). Foundation upgrades land **without visual drift**;
+  visual changes ship in a separate, clearly scoped PR.
+- ❌ Do not introduce a new arbitrary value (color, spacing, type size,
+  shadow, motion duration) when a token exists. If no token exists, add the
+  token in `globals.css` + `docs/design-system.md` first, then consume it.
+- ❌ Do not write user-facing copy without consulting
+  [`docs/content-guide.md`](docs/content-guide.md). Voice, status copy,
+  error messages, empty states, and airport formatting are all governed
+  there.
+- ❌ Do not expand the length of an existing copy line or paragraph without
+  asking the user first. Premium feel comes from restraint; adding a
+  reassurance line or a "helpful" explanation often violates the
+  scanability rule.
+- ❌ Do not write copy that explains *what* a tappable thing does when
+  the label already says it ("Add a flight" needs no body line of
+  "Tap to add a flight to your trips"). Scanability beats explanation.
 
 ## 15. Pre-build checklist (every new screen)
 
@@ -215,12 +280,21 @@ Before writing JSX:
 After writing JSX:
 
 1. Run `npm run build`. Fix every error and every warning.
-2. Open the screen at 375px in DevTools — content fits, no horizontal scroll.
-3. Open at 1280px — column caps at 430px, centred.
-4. Tab through with the keyboard — every interactive element shows the
+2. Run `npm run check:design-system`. Migrate any reported violations before
+   summarising the work. The checker covers raw hex, inline px font sizes,
+   arbitrary leading / tracking / rounded values, `bg-white/N`, inline
+   shadows, `!important`, duplicated card chrome, icon-only buttons missing
+   `aria-label`, and `Loading...` / `Submitting...` text in page files.
+3. Before declaring the branch ready to merge, run
+   `npm run check:design-system:strict`. The strict mode exits non-zero on
+   any error-severity finding (warnings are non-blocking but should be
+   reviewed). **Run strict before every commit you intend to push.**
+4. Open the screen at 375px in DevTools — content fits, no horizontal scroll.
+5. Open at 1280px — column caps at 430px, centred.
+6. Tab through with the keyboard — every interactive element shows the
    navy focus ring.
-5. Toggle `prefers-reduced-motion` — no animations longer than instant.
-6. Cross-check: no inline shadows, no off-scale spacing, no raw hex, no
+7. Toggle `prefers-reduced-motion` — no animations longer than instant.
+8. Cross-check: no inline shadows, no off-scale spacing, no raw hex, no
    `!important`, no missing `aria-label` on icon-only controls.
-7. Summarise files created + changed for the user.
-8. Do not commit unless asked.
+9. Summarise files created + changed for the user.
+10. Do not commit unless asked.

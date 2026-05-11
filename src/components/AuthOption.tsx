@@ -1,5 +1,6 @@
 "use client";
 
+import { Card } from "./Card";
 import { ChevronRightIcon } from "./icons";
 
 type AuthOptionProps = {
@@ -27,13 +28,13 @@ export function AuthOption({
       type="button"
       onClick={onClick}
       aria-label={ariaLabel ?? label}
-      className="flex h-[58px] w-full items-center justify-between gap-3 px-5 text-left transition-colors duration-150 hover:bg-white/30 active:bg-white/40"
+      className="flex h-[58px] w-full items-center justify-between gap-3 px-5 text-left transition-colors duration-150 hover:bg-[var(--color-surface-hover)] active:bg-[var(--color-surface-pressed)]"
     >
       <span className="flex items-center gap-3">
         <span className="inline-flex w-[22px] shrink-0 items-center justify-center text-[var(--color-text-primary)]">
           {leading}
         </span>
-        <span className="text-[14px] font-medium leading-[1.5] text-[var(--color-text-primary)]">
+        <span className="text-body font-medium text-[var(--color-text-primary)]">
           {label}
         </span>
       </span>
@@ -54,14 +55,19 @@ type AuthOptionGroupProps = {
 };
 
 /**
- * Glassy card that groups AuthOption rows with hairline dividers between them.
+ * Glassy card that groups AuthOption rows with hairline dividers between
+ * them. Composes `<Card padding="none">` for the standard card chrome
+ * (fill, border, radius, shadow) and layers on `overflow-hidden` (so
+ * hover backgrounds stay inside the rounded edge) plus a sibling-divider
+ * selector.
  */
 export function AuthOptionGroup({ children }: AuthOptionGroupProps) {
   return (
-    <div
-      className="overflow-hidden rounded-[var(--radius-panel)] border border-[var(--color-border)] bg-white/40 shadow-[var(--shadow-card)] [&>*+*]:border-t [&>*+*]:border-[var(--color-border)]"
+    <Card
+      padding="none"
+      className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border)]"
     >
       {children}
-    </div>
+    </Card>
   );
 }

@@ -41,16 +41,16 @@ export function FeatureListItem({
   return (
     <li className="flex h-16 items-center justify-between border-b border-[var(--color-border-hairline)]">
       <div className="flex flex-col gap-[2px] pr-4">
-        <p className="text-[14px] font-medium leading-[1.5] text-[var(--color-text-primary)]">
+        <p className="text-body font-medium text-[var(--color-text-primary)]">
           {title}
         </p>
-        <p className="text-[13px] leading-[1.5] text-[var(--color-text-secondary)]">
+        <p className="text-body-sm font-normal text-[var(--color-text-secondary)]">
           {description}
         </p>
       </div>
       <span
         aria-hidden
-        className="shrink-0 text-[11px] leading-[1.5] tracking-[0.05em] text-[var(--color-text-secondary)]"
+        className="shrink-0 text-label tracking-[0.05em] text-[var(--color-text-secondary)]"
       >
         {label}
       </span>

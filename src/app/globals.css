@@ -5,9 +5,12 @@
   /* Surfaces */
   --color-bg: #e2eef0;
   --color-surface: #e2eef0;
-  --color-surface-base: #e2eef0; /* legacy alias of --color-bg */
   --color-surface-elevated: rgba(255, 255, 255, 0.6);
   --color-surface-overlay: rgba(255, 255, 255, 0.5);
+  --color-surface-card: rgba(255, 255, 255, 0.4);
+  --color-surface-hover: rgba(255, 255, 255, 0.3);
+  --color-surface-pressed: rgba(255, 255, 255, 0.4);
+  --color-surface-elevated-hover: rgba(255, 255, 255, 0.7);
 
   /* Text */
   --color-text-primary: #1d3557;
@@ -24,10 +27,46 @@
   --color-action-primary: #1d3557;
   --color-action-primary-fg: #ffffff;
 
+  /* Control surfaces — composed from semantic text token + alpha */
+  --color-track-off: color-mix(
+    in srgb,
+    var(--color-text-secondary) 40%,
+    transparent
+  );
+
+  /* Opacity scalars (interaction state) */
+  --opacity-disabled: 0.5;
+  --opacity-muted: 0.6;
+  --opacity-overlay: 0.5;
+
   /* Status — reserved for live data states only */
   --color-success: #0a8754;
   --color-warning: #c97a16;
   --color-danger: #b3261e;
+  --color-info: #1f5fb1;
+
+  /* Status surface trios (bg / border / fg) — consumed by InlineAlert,
+     ErrorState badges, status banners. Each trio is a solid background,
+     a mid-light border, and a high-contrast foreground. */
+  --color-success-bg: #ebfaf3;
+  --color-success-border: #6cd09b;
+  --color-success-fg: #086d44;
+
+  --color-warning-bg: #fdf5e7;
+  --color-warning-border: #eab441;
+  --color-warning-fg: #80500c;
+
+  --color-danger-bg: #fcebea;
+  --color-danger-border: #e6776f;
+  --color-danger-fg: #791812;
+
+  --color-info-bg: #ebf3ff;
+  --color-info-border: #5d96f0;
+  --color-info-fg: #143c70;
+
+  --color-neutral-bg: #eef5f7;
+  --color-neutral-border: #a4b9cb;
+  --color-neutral-fg: #3a6a8a;
 
   /* Aurora accents — background only */
   --color-aurora-sky: #8ec5ff;
@@ -44,13 +83,89 @@
   --shadow-button: 0 6px 18px -8px rgba(29, 53, 87, 0.45);
   --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   --shadow-panel: 0 12px 40px -4px rgba(31, 38, 135, 0.12);
+  --shadow-toggle: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
 
   /* Focus */
   --focus-ring: 2px solid #1d3557;
 
-  /* Typography */
+  /* Typography family */
   --font-sans: var(--font-jakarta), system-ui, -apple-system, "Segoe UI",
     sans-serif;
+
+  /* ---------- Numeric type scale ----------
+     Stored in rem so OS-level "larger text" preferences and browser
+     font-size settings scale the entire type system. Root remains the
+     default 16px → values render identically to the previous px sizes. */
+  --font-size-100: 0.625rem;   /* 10 */
+  --font-size-200: 0.6875rem;  /* 11 */
+  --font-size-300: 0.8125rem;  /* 13 */
+  --font-size-400: 0.875rem;   /* 14 */
+  --font-size-500: 0.9375rem;  /* 15 */
+  --font-size-600: 1.875rem;   /* 30 */
+  --font-size-700: 2.125rem;   /* 34 */
+
+  /* Numeric font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ---------- Type-role tokens ----------
+     Each role registers font-size, line-height, weight, and tracking
+     together. Components consume `text-display`, `text-body`, etc. —
+     not the raw `--font-size-*` primitives. */
+
+  --text-display: var(--font-size-700);
+  --text-display--line-height: 1.05;
+  --text-display--font-weight: var(--font-weight-semibold);
+  --text-display--letter-spacing: -0.025em;
+
+  --text-title: var(--font-size-600);
+  --text-title--line-height: 1.1;
+  --text-title--font-weight: var(--font-weight-semibold);
+  --text-title--letter-spacing: -0.025em;
+
+  --text-body: var(--font-size-400);
+  --text-body--line-height: 1.55;
+  --text-body--font-weight: var(--font-weight-regular);
+
+  --text-body-sm: var(--font-size-300);
+  --text-body-sm--line-height: 1.55;
+  --text-body-sm--font-weight: var(--font-weight-medium);
+
+  --text-label: var(--font-size-200);
+  --text-label--line-height: 1.5;
+  --text-label--font-weight: var(--font-weight-regular);
+
+  --text-eyebrow: var(--font-size-200);
+  --text-eyebrow--line-height: 1.5;
+  --text-eyebrow--font-weight: var(--font-weight-regular);
+  --text-eyebrow--letter-spacing: 0.22em;
+
+  --text-micro: var(--font-size-100);
+  --text-micro--line-height: 1.5;
+  --text-micro--font-weight: var(--font-weight-semibold);
+  --text-micro--letter-spacing: 0.16em;
+
+  --text-section-title: var(--font-size-500);
+  --text-section-title--line-height: 1.4;
+  --text-section-title--font-weight: var(--font-weight-semibold);
+
+  /* ---------- Spacing scale ----------
+     The approved rhythm. Accessible as CSS vars from any component via
+     arbitrary-value utilities (e.g. `gap-[var(--space-3)]`). The
+     existing Tailwind step utilities (`gap-3`, `mt-8`, etc.) remain
+     equivalent and stay in use until refactor. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
 }
 
 /* Mobile-first viewport behavior */

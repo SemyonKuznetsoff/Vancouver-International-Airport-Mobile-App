@@ -59,6 +59,60 @@ export function ChevronRightIcon(props: IconProps) {
   );
 }
 
+export function SearchIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.5-3.5" />
+    </svg>
+  );
+}
+
+export function CloseIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M6 6l12 12M18 6 6 18" />
+    </svg>
+  );
+}
+
+export function HomeIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M3 10.5 12 3l9 7.5V20a1.5 1.5 0 0 1-1.5 1.5h-4V14h-7v7.5h-4A1.5 1.5 0 0 1 3 20Z" />
+    </svg>
+  );
+}
+
+export function MapIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2Z" />
+      <path d="M9 4v14M15 6v14" />
+    </svg>
+  );
+}
+
+export function ServicesIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="4" y="4" width="7" height="7" rx="1.5" />
+      <rect x="13" y="4" width="7" height="7" rx="1.5" />
+      <rect x="4" y="13" width="7" height="7" rx="1.5" />
+      <rect x="13" y="13" width="7" height="7" rx="1.5" />
+    </svg>
+  );
+}
+
+export function ProfileIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+    </svg>
+  );
+}
+
 export function MailIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
@@ -153,5 +207,23 @@ export function AeroplanBadge({ size = 22 }: { size?: number }) {
     >
       A
     </span>
+  );
+}
+
+/**
+ * Calm three-quarter arc spinner. Drives the loading state on `<Button>`.
+ *
+ * Uses Tailwind's `animate-spin` which the global
+ * `prefers-reduced-motion: reduce` rule collapses to ~0ms duration —
+ * the arc renders as a static SVG in that mode, still readable as a
+ * loading indicator.
+ */
+export function SpinnerIcon(props: IconProps) {
+  const { className = "animate-spin", ...rest } = props;
+  return (
+    <svg {...strokeProps({ ...rest, className })}>
+      <circle cx="12" cy="12" r="9" opacity="0.25" />
+      <path d="M21 12a9 9 0 0 0-9-9" />
+    </svg>
   );
 }

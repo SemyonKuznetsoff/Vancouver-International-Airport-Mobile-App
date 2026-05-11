@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Card } from "./Card";
+import { Toggle } from "./Toggle";
 
 type PermissionCardProps = {
   icon: React.ReactNode;
@@ -10,6 +11,7 @@ type PermissionCardProps = {
   footerLabel: string;
   defaultOn?: boolean;
   toggleAriaLabel: string;
+  className?: string;
 };
 
 export function PermissionCard({
@@ -19,11 +21,12 @@ export function PermissionCard({
   footerLabel,
   defaultOn = true,
   toggleAriaLabel,
+  className = "",
 }: PermissionCardProps) {
   const [on, setOn] = useState(defaultOn);
 
   return (
-    <Card as="article">
+    <Card as="article" className={className}>
       <div className="flex items-start gap-4">
         <span
           aria-hidden
@@ -34,17 +37,21 @@ export function PermissionCard({
 
         <div className="flex flex-1 flex-col gap-3">
           <div className="flex items-start justify-between gap-3">
-            <h2 className="max-w-[160px] text-[15px] font-semibold leading-[1.4] text-[var(--color-text-primary)]">
+            <h2 className="max-w-[160px] text-section-title text-[var(--color-text-primary)]">
               {title}
             </h2>
-            <Toggle on={on} onChange={setOn} ariaLabel={toggleAriaLabel} />
+            <Toggle
+              checked={on}
+              onChange={setOn}
+              ariaLabel={toggleAriaLabel}
+            />
           </div>
 
-          <p className="text-[13px] font-medium leading-[1.55] text-[var(--color-text-secondary)]">
+          <p className="text-body-sm text-[var(--color-text-secondary)]">
             {description}
           </p>
 
-          <p className="mt-2 inline-flex items-center gap-2 text-[10px] font-semibold uppercase leading-[1.5] tracking-[0.16em] text-[var(--color-text-secondary)]">
+          <p className="mt-2 inline-flex items-center gap-2 text-micro uppercase text-[var(--color-text-secondary)]">
             <span
               aria-hidden
               className="inline-block h-1 w-1 rounded-full bg-[var(--color-aurora-mint)]"
@@ -54,35 +61,5 @@ export function PermissionCard({
         </div>
       </div>
     </Card>
-  );
-}
-
-type ToggleProps = {
-  on: boolean;
-  onChange: (next: boolean) => void;
-  ariaLabel: string;
-};
-
-function Toggle({ on, onChange, ariaLabel }: ToggleProps) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={on}
-      aria-label={ariaLabel}
-      onClick={() => onChange(!on)}
-      className={`relative inline-flex h-[26px] w-11 shrink-0 cursor-pointer items-center rounded-full transition-colors duration-150 ${
-        on
-          ? "bg-[var(--color-action-primary)]"
-          : "bg-[var(--color-text-secondary)]/40"
-      }`}
-    >
-      <span
-        aria-hidden
-        className={`block h-5 w-5 rounded-full bg-white shadow-[0_2px_6px_0_rgba(0,0,0,0.18)] transition-transform duration-150 ${
-          on ? "translate-x-[21px]" : "translate-x-[3px]"
-        }`}
-      />
-    </button>
   );
 }
