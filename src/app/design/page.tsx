@@ -48,6 +48,7 @@ import {
   ArrowRightIcon,
   BellIcon,
   BookmarkIcon,
+  ClockIcon,
   CreditCardIcon,
   GoogleIcon,
   IdCardIcon,
@@ -84,26 +85,55 @@ export default function DesignPreviewPage() {
 
         {/* ============================================================ */}
         <Section title="Typography roles">
-          <Stack>
-            <Heading>Display heading</Heading>
-            <Heading size="title">Title heading</Heading>
-            <h2 className="text-section-title text-[var(--color-text-primary)]">
-              Section title
-            </h2>
-            <p className="text-body text-[var(--color-text-primary)]">
-              Body — flights, gates, maps, and alerts in one quiet place.
-            </p>
+          <SubSection title="Default surface (aurora / glass card)">
+            <Stack>
+              <Heading>Display heading</Heading>
+              <Heading size="title">Title heading</Heading>
+              <h2 className="text-section-title text-[var(--color-text-primary)]">
+                Section title
+              </h2>
+              <p className="text-body text-[var(--color-text-primary)]">
+                Body — flights, gates, maps, and alerts in one quiet place.
+              </p>
+              <p className="text-body-sm text-[var(--color-text-secondary)]">
+                Body small — secondary copy inside cards.
+              </p>
+              <p className="text-label text-[var(--color-text-secondary)]">
+                Label — helper / caption / form labels (11px).
+              </p>
+              <Eyebrow>Eyebrow — uppercase tracked label</Eyebrow>
+              <p className="text-micro uppercase text-[var(--color-text-secondary)]">
+                Micro — footer micro-label
+              </p>
+            </Stack>
+          </SubSection>
+
+          <SubSection title="Hero tone (dark teal hero surface)">
             <p className="text-body-sm text-[var(--color-text-secondary)]">
-              Body small — secondary copy inside cards.
+              `tone=&quot;hero&quot;` on `&lt;Heading&gt;` and `&lt;Eyebrow&gt;` maps the
+              foreground to the `--color-surface-hero-*` tokens. Use only on the
+              dark hero surface (Profile identity card, Saved Trips header).
             </p>
-            <p className="text-label text-[var(--color-text-secondary)]">
-              Label — helper / caption / form labels (11px).
-            </p>
-            <Eyebrow>Eyebrow — uppercase tracked label</Eyebrow>
-            <p className="text-micro uppercase text-[var(--color-text-secondary)]">
-              Micro — footer micro-label
-            </p>
-          </Stack>
+            <div
+              className="flex flex-col gap-2 rounded-[var(--radius-card)] p-5"
+              style={{
+                backgroundImage:
+                  "linear-gradient(180deg, var(--color-surface-hero-start) 0%, var(--color-surface-hero-end) 100%)",
+              }}
+            >
+              <Eyebrow tone="hero">Your Travel Vault</Eyebrow>
+              <Heading size="title" tone="hero">
+                Saved Trips
+              </Heading>
+              <p className="text-body text-[var(--color-surface-hero-fg-muted)]">
+                Welcome back, Alex — your next journey is ready.
+              </p>
+              <p className="mt-2 inline-flex items-center gap-1 text-label tabular-nums text-[var(--color-surface-hero-fg-muted)]">
+                <ClockIcon size={12} />
+                <span>10:45 → 05:30 · Gate Intl · —</span>
+              </p>
+            </div>
+          </SubSection>
         </Section>
 
         {/* ============================================================ */}

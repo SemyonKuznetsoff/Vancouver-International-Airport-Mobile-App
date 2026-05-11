@@ -1,4 +1,4 @@
-# YVR Concierge — Design System
+ # YVR Concierge — Design System
 
 The single source of truth for the YVR app's visual language. If this doc
 disagrees with the code, the doc wins — fix the code.
@@ -427,6 +427,43 @@ maps `[&_em]` to `font-normal italic`, which also resets the role token's
 
 **Body min:** 13px. Below that, the text is metadata — keep it short and
 high-contrast.
+
+### Hero tone (inverse surface)
+
+The dark teal hero surface (Profile identity card, Saved Trips header)
+inverts the default text colour. `<Heading>` and `<Eyebrow>` expose a
+`tone="hero"` prop that maps the foreground onto the §5 hero tokens —
+`--color-surface-hero-fg` for the heading and
+`--color-surface-hero-fg-muted` for the eyebrow:
+
+```tsx
+<header className="… (gradient using --color-surface-hero-* tokens) …">
+  <Eyebrow tone="hero">Your Travel Vault</Eyebrow>
+  <Heading size="title" tone="hero">Saved Trips</Heading>
+  <p className="text-body text-[var(--color-surface-hero-fg-muted)]">
+    Welcome back, Alex — your next journey is ready.
+  </p>
+</header>
+```
+
+| Component | Default tone | Hero tone consumes |
+|---|---|---|
+| `<Heading>` | `tone="primary"` → `--color-text-primary` | `tone="hero"` → `--color-surface-hero-fg` |
+| `<Eyebrow>` | `tone="primary"` / `tone="secondary"` | `tone="hero"` → `--color-surface-hero-fg-muted` |
+
+**Use `tone="hero"` only on a hero-surface background.** It is not a
+generic "light text" toggle. On the aurora background or inside a glass
+`<Card>`, hero-toned text will fail contrast. The intended surfaces are
+documented in §5 (`--color-surface-hero-*` tokens) and §2b (authenticated
+screen patterns). The reference implementation is the Saved Trips header
+([src/app/profile/saved-trips/page.tsx](../src/app/profile/saved-trips/page.tsx))
+where the eyebrow + heading sit on the dark travel-vault gradient.
+
+Trailing body copy on a hero surface still uses an inline
+`text-body text-[var(--color-surface-hero-fg-muted)]` cluster — it's a
+single-line supporting paragraph rather than a heading role, so a
+component-level `tone` prop would be over-engineering for a one-line
+caption.
 
 > `FeatureList` currently uses 14 / 1.5 and 13 / 1.5 line-heights —
 > slightly tighter than the body / body-sm role tokens. It is intentionally
@@ -2010,8 +2047,8 @@ follow the migration discipline in §12f.
 | `AuroraBackground` | stable | Static radial-gradient aurora. | — | — | `aria-hidden` (decorative). |
 | `BrandMark` | stable | YVR Concierge lockup. | — | — | `aria-label="YVR Concierge"`. |
 | `ScreenHeader` | stable | Back chip + step label / trailing content. | — | — | Back link has `aria-label` (default "Go back"). |
-| `Heading` | stable | Display / title headings. | `display`, `title` | `display`, `title` (via `size`) | One `<h1>` per page (default `as="h1"`); consumer picks `as` for subsequent. |
-| `Eyebrow` | stable | Small uppercase label. | `primary`, `secondary` (via `tone`) | — | Decorative; pair with a `<Heading>`. |
+| `Heading` | stable | Display / title headings. | `display`, `title`; `tone="primary" \| "hero"` | `display`, `title` (via `size`) | One `<h1>` per page (default `as="h1"`); consumer picks `as` for subsequent. `tone="hero"` only on a hero surface. |
+| `Eyebrow` | stable | Small uppercase label. | `tone="primary" \| "secondary" \| "hero"` | — | Decorative; pair with a `<Heading>`. `tone="hero"` only on a hero surface. |
 | `Card` | stable | Single source of glass-card chrome. | — | `none`, `compact`, `default`, `lg` (via `padding`) | Non-interactive by default; consumer adds role if needed. |
 | `Button` | stable | Primary / ghost CTA. | `primary`, `ghost` | — | Tap target ≥ 44; icon-only requires `aria-label`. Loading sets `aria-busy`. |
 | `Toggle` | stable | Accessible on/off switch. | — | — | `role="switch" aria-checked` + required `ariaLabel`. `aria-busy` while pending. |
@@ -2982,8 +3019,8 @@ visibly changing existing screens.**
 | `AuroraBackground` | `src/components/AuroraBackground.tsx` | Static radial-gradient aurora. |
 | `ScreenHeader` | `src/components/ScreenHeader.tsx` | Back button + step label row. |
 | `BrandMark` | `src/components/BrandMark.tsx` | Plane chip + "YVR Concierge" lockup. |
-| `Eyebrow` | `src/components/Eyebrow.tsx` | Small uppercase label. |
-| `Heading` | `src/components/Heading.tsx` | `display` / `title` sizes. |
+| `Eyebrow` | `src/components/Eyebrow.tsx` | Small uppercase label. `tone="primary" \| "secondary" \| "hero"`. |
+| `Heading` | `src/components/Heading.tsx` | `display` / `title` sizes. `tone="primary" \| "hero"`. |
 | `Card` | `src/components/Card.tsx` | Glass card primitive. |
 | `Button` | `src/components/Button.tsx` | `primary` / `ghost` variants. |
 | `IconTile` | `src/components/IconTile.tsx` | Generic translucent chip. |
@@ -3011,7 +3048,7 @@ visibly changing existing screens.**
 | `LargeTitleHeader` | `src/components/LargeTitleHeader.tsx` | iOS-style display title with optional back chip + trailing slot. |
 | `StickyBottomCTA` | `src/components/StickyBottomCTA.tsx` | Sticky bottom action(s) inside a scroll container. |
 | `SettingsRow` | `src/components/SettingsRow.tsx` | Authed-app settings / vault list row. Composes `<IconTile>` + `ChevronRightIcon`. Group rows inside a `<Card padding="none">` with hairline dividers. See §12k and §2b. |
-| `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`, `SettingsIcon`, `SparkleIcon`, `SyncIcon`, `NavigationIcon`, `IdCardIcon`, `CreditCardIcon`, `SlidersIcon`, `BookmarkIcon`, `LifeBuoyIcon`). |
+| `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`, `SettingsIcon`, `SparkleIcon`, `SyncIcon`, `NavigationIcon`, `IdCardIcon`, `CreditCardIcon`, `SlidersIcon`, `BookmarkIcon`, `LifeBuoyIcon`, `ClockIcon`). |
 
 ---
 
