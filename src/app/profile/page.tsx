@@ -258,6 +258,12 @@ function VaultSection() {
         className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border-soft)]"
       >
         <SettingsRow
+          href="/profile/saved-trips"
+          icon={<PlaneIcon size={18} />}
+          title="Saved trips"
+          description="Your next journey · 2 saved"
+        />
+        <SettingsRow
           href="/profile/personal"
           icon={<IdCardIcon size={18} />}
           title="Personal information"

@@ -1,7 +1,15 @@
+type Tone = "primary" | "secondary" | "hero";
+
 type EyebrowProps = {
   children: React.ReactNode;
-  tone?: "primary" | "secondary";
+  tone?: Tone;
   className?: string;
+};
+
+const toneClasses: Record<Tone, string> = {
+  primary: "text-[var(--color-text-primary)]",
+  secondary: "text-[var(--color-text-secondary)]",
+  hero: "text-[var(--color-surface-hero-fg-muted)]",
 };
 
 /**
@@ -9,20 +17,19 @@ type EyebrowProps = {
  *
  * Size, line-height, and tracking come from the `--text-eyebrow` role token
  * in globals.css.
+ *
+ * Tone: pass `tone="hero"` when the eyebrow sits on the dark teal hero
+ * surface (e.g. Saved Trips hero band) — uses
+ * `--color-surface-hero-fg-muted` for legible-but-quiet on-dark contrast.
  */
 export function Eyebrow({
   children,
   tone = "primary",
   className = "",
 }: EyebrowProps) {
-  const color =
-    tone === "primary"
-      ? "text-[var(--color-text-primary)]"
-      : "text-[var(--color-text-secondary)]";
-
   return (
     <p
-      className={`text-eyebrow uppercase ${color} ${className}`.trim()}
+      className={`text-eyebrow uppercase ${toneClasses[tone]} ${className}`.trim()}
     >
       {children}
     </p>
