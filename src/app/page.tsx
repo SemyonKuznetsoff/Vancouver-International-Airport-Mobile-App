@@ -45,9 +45,7 @@ export default function OnboardingPage() {
           <FeatureList items={features} />
         </section>
 
-        <div className="min-h-8 max-h-16 flex-grow" aria-hidden />
-
-        <div className="flex flex-col gap-3 pb-2">
+        <div className="mt-auto flex flex-col gap-3 pt-8 pb-2">
           <Button
             href="/onboarding/sign-in"
             variant="primary"

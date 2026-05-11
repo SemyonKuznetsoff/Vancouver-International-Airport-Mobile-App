@@ -17,7 +17,7 @@ export default function PermissionsPage() {
       <main className="flex flex-1 flex-col px-6">
         <ScreenHeader backHref="/onboarding/sign-in" step="Step 3 of 3" />
 
-        <section className="mt-12 flex flex-col gap-4">
+        <section className="mt-8 flex flex-col gap-4">
           <Eyebrow>Smart Guidance</Eyebrow>
           <Heading size="title">
             Set up helpful
