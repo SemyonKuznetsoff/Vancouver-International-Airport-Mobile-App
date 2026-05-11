@@ -1,6 +1,7 @@
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
+import { GateDisplay } from "@/components/GateDisplay";
 import { IconTile } from "@/components/IconTile";
 import { LargeTitleHeader } from "@/components/LargeTitleHeader";
 import { LiveIndicator } from "@/components/LiveIndicator";
@@ -209,11 +210,7 @@ function NextTripCard() {
       </div>
 
       <div className="mx-4 mt-4 flex items-center justify-between gap-4 rounded-[var(--radius-chip)] bg-[var(--color-surface-tile)] px-4 py-3">
-        <MetricBlock
-          label="Gate"
-          value={`${trip.terminal} ${trip.gate}`}
-          align="left"
-        />
+        <GateDisplay gate={trip.gate} terminal={trip.terminal} />
         <span aria-hidden className="h-6 w-px bg-[var(--color-border-soft)]" />
         <MetricBlock label="Boarding" value={trip.boarding} align="left" />
         <span aria-hidden className="h-6 w-px bg-[var(--color-border-soft)]" />

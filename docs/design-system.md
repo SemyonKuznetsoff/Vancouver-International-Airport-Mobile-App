@@ -248,9 +248,9 @@ Use `<Card padding="none">` and compose the trip card content inside:
     <RouteTimeline origin={origin} destination={destination} duration="10h 45 · Nonstop" />
   </div>
   <div className="mx-4 mt-4 flex … bg-[var(--color-surface-tile)] …">
-    <MetricBlock label="Gate" value="Intl D73" />
-    <MetricBlock label="Boarding" value="13:55" />
-    <MetricBlock label="Seat" value="14A" />
+    <GateDisplay gate="D73" terminal="Intl" />
+    <MetricBlock label="Boarding" value="13:55" align="left" />
+    <MetricBlock label="Seat" value="14A" align="left" />
   </div>
   <div className="flex flex-col gap-2 px-4 pt-4 pb-4">
     <Button variant="primary" leadingIcon={<NavigationIcon size={16} />} href="…">Navigate to gate</Button>
@@ -261,9 +261,18 @@ Use `<Card padding="none">` and compose the trip card content inside:
 
 - Route visualisation uses `<RouteTimeline>` (not `<AirportCodePair>`).
   See §12h for when to pick which.
-- Gate / Boarding / Seat strip uses three `<MetricBlock align="left">`
-  with `--color-surface-tile` as the strip fill and `--color-border-soft`
-  vertical dividers.
+- Gate / Boarding / Seat strip uses **`<GateDisplay>`** for the gate
+  column and `<MetricBlock align="left">` for Boarding + Seat, with
+  `--color-surface-tile` as the strip fill and `--color-border-soft`
+  vertical dividers. `<GateDisplay>` is **required** for every gate
+  value — never pass a gate identifier to `<MetricBlock>` (that would
+  put "GATE" on the bottom and lose the `terminal` prop). `<MetricBlock>`
+  stays the right primitive for general metrics like times, durations,
+  percentages, and seat numbers.
+- `<RouteTimeline>` and `<GateDisplay>` are designed to **compose
+  together** inside a hero trip card: the timeline carries the
+  origin → destination story, the gate strip below carries the boarding
+  detail. See the example above and §12h for the atom rules.
 - **CTAs stack vertically** inside the card: `Button variant="primary"`
   above `Button variant="ghost"`, full-width each. The Figma reference
   shows a side-by-side primary + secondary pair at ~46px height; we use
@@ -2128,6 +2137,12 @@ visible. No extra component logic.
 "security wait is 8 min." `CountdownBlock` is the **time-until** form
 — "boarding in 42 min." Pick by which one a user would say aloud.
 
+**Never use `MetricBlock` for gate values.** Gates are not general
+metrics — they carry a `terminal` prop and a canonical "GATE" eyebrow.
+Use `<GateDisplay>` instead (see below). The lint check can't catch
+this swap because both primitives consume valid tokens; treat it as a
+contract violation on review.
+
 ### CountdownBlock
 
 ```tsx
@@ -2261,6 +2276,15 @@ visual rhythm.
 **Anatomy.** Eyebrow `GATE` (top) → value (large, tabular-nums,
 uppercase) → optional support line at `text-label`.
 
+**Required for every gate value.** Anywhere the app shows a gate
+identifier — flight card, boarding pass, next-trip strip, journey
+timeline — render it through `<GateDisplay>`. Do not pass a gate to
+`<MetricBlock>`, do not inline `<p>Gate D73</p>`, do not concatenate
+terminal + gate into a single string. `<GateDisplay>` and
+`<RouteTimeline>` are designed to compose inside a hero trip card —
+timeline carries origin → destination, GateDisplay carries the gate
+column of the boarding strip.
+
 ### Do / Don't (cross-cutting)
 
 **Do**
@@ -2288,6 +2312,9 @@ uppercase) → optional support line at `text-label`.
 
 // ❌ Inlining the gate as bare text inside a card body.
 <p className="text-lg">Gate D73</p>
+
+// ❌ Rendering the gate through MetricBlock.
+<MetricBlock label="Gate" value="Intl D73" />   // use <GateDisplay terminal="Intl" gate="D73" />
 
 // ❌ Using → "by hand" inside a heading.
 <h2 className="text-2xl">YVR → SFO</h2>
