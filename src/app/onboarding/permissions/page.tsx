@@ -32,11 +32,11 @@ export default function PermissionsPage() {
         <section className="mt-8 flex flex-col gap-4">
           <PermissionCard
             icon={<LocationPinIcon size={18} />}
-            title="Guide me through YVR"
+            title="Find my way"
             description="Step-by-step directions to gates, lounges, food, and services."
             footerLabel="Location while using app"
             toggleAriaLabel="Enable wayfinding guidance"
-            defaultOn
+            defaultOn={false}
           />
           <PermissionCard
             icon={<BellIcon size={18} />}
@@ -44,7 +44,7 @@ export default function PermissionsPage() {
             description="Gate changes, boarding reminders, delays, and security wait alerts."
             footerLabel="Notifications"
             toggleAriaLabel="Enable flight updates"
-            defaultOn
+            defaultOn={false}
           />
         </section>
 
