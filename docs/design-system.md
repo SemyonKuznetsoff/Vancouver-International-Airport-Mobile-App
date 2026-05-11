@@ -2301,26 +2301,40 @@ visual rhythm.
 <GateDisplay gate="D73" />
 <GateDisplay gate="D73" terminal="M" helper="Domestic" />
 <GateDisplay gate="A1" terminal="A" helper="Pre-clearance" />
+<GateDisplay size="compact" gate="—" terminal="Intl" />
 ```
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `gate` | `string` | (required) | The bare gate identifier — `"D73"`, not `"Gate D73"`. The component renders the "GATE" eyebrow. |
-| `terminal` | `string` | — | Rendered as `"Terminal <X>"`. |
-| `helper` | `string` | — | Appended after `Terminal X` with ` · `. |
+| `gate` | `string` | (required) | The bare gate identifier — `"D73"`, not `"Gate D73"`. The component renders the "GATE" eyebrow (default) or the `Gate` prefix (compact). Use `"—"` for a TBD gate. |
+| `terminal` | `string` | — | Default size renders as `"Terminal <X>"` on the support line. Compact joins terminal + gate inline (`Gate Intl · —`). |
+| `helper` | `string` | — | Appended after the terminal join with ` · `. |
+| `size` | `"default" \| "compact"` | `"default"` | Picks the layout. See sizes below. |
 | `className` | `string` | `""` | Composition hook. |
 
-**Anatomy.** Eyebrow `GATE` (top) → value (large, tabular-nums,
-uppercase) → optional support line at `text-label`.
+**Anatomy (default).** Eyebrow `GATE` (top) → value (large, tabular-nums,
+uppercase) → optional support line at `text-label`. Use on the boarding
+strip, hero trip card, and boarding-pass detail.
+
+**Anatomy (compact).** Single inline line at `text-label` /
+`tabular-nums` / `text-secondary`:
+`Gate <terminal · gate · helper>`. The `Gate` word stays as the prefix
+so the row reads naturally in a screen-reader linear walk. Use inside
+small list-card meta rows (e.g. saved-journey card) where the default's
+three-line stack would overwhelm the row. When both terminal and gate
+are passed, the join order is `terminal · gate` so a known terminal
+with a TBD gate still surfaces useful information (`Gate Intl · —`).
 
 **Required for every gate value.** Anywhere the app shows a gate
 identifier — flight card, boarding pass, next-trip strip, journey
-timeline — render it through `<GateDisplay>`. Do not pass a gate to
-`<MetricBlock>`, do not inline `<p>Gate D73</p>`, do not concatenate
-terminal + gate into a single string. `<GateDisplay>` and
-`<RouteTimeline>` are designed to compose inside a hero trip card —
-timeline carries origin → destination, GateDisplay carries the gate
-column of the boarding strip.
+timeline, saved-journey meta row — render it through `<GateDisplay>`.
+Do not pass a gate to `<MetricBlock>`, do not inline `<p>Gate D73</p>`,
+do not concatenate terminal + gate into a single string at the call
+site. Pick `size="default"` when the gate is a primary card metric and
+`size="compact"` when it sits among other facts in a single-line meta
+row. `<GateDisplay>` and `<RouteTimeline>` are designed to compose
+inside a hero trip card — timeline carries origin → destination,
+GateDisplay carries the gate column of the boarding strip.
 
 ### Do / Don't (cross-cutting)
 
