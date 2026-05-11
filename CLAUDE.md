@@ -280,12 +280,21 @@ Before writing JSX:
 After writing JSX:
 
 1. Run `npm run build`. Fix every error and every warning.
-2. Open the screen at 375px in DevTools — content fits, no horizontal scroll.
-3. Open at 1280px — column caps at 430px, centred.
-4. Tab through with the keyboard — every interactive element shows the
+2. Run `npm run check:design-system`. Migrate any reported violations before
+   summarising the work. The checker covers raw hex, inline px font sizes,
+   arbitrary leading / tracking / rounded values, `bg-white/N`, inline
+   shadows, `!important`, duplicated card chrome, icon-only buttons missing
+   `aria-label`, and `Loading...` / `Submitting...` text in page files.
+3. Before declaring the branch ready to merge, run
+   `npm run check:design-system:strict`. The strict mode exits non-zero on
+   any error-severity finding (warnings are non-blocking but should be
+   reviewed). **Run strict before every commit you intend to push.**
+4. Open the screen at 375px in DevTools — content fits, no horizontal scroll.
+5. Open at 1280px — column caps at 430px, centred.
+6. Tab through with the keyboard — every interactive element shows the
    navy focus ring.
-5. Toggle `prefers-reduced-motion` — no animations longer than instant.
-6. Cross-check: no inline shadows, no off-scale spacing, no raw hex, no
+7. Toggle `prefers-reduced-motion` — no animations longer than instant.
+8. Cross-check: no inline shadows, no off-scale spacing, no raw hex, no
    `!important`, no missing `aria-label` on icon-only controls.
-7. Summarise files created + changed for the user.
-8. Do not commit unless asked.
+9. Summarise files created + changed for the user.
+10. Do not commit unless asked.

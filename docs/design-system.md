@@ -1950,6 +1950,500 @@ uppercase) → optional support line at `text-label`.
 
 ---
 
+## 12i. Form & search primitives
+
+Four primitives cover **every** input, search, and filter pattern. No
+screen may roll its own `<input>`, `<button role="search">`, or
+toggle-pill — use these atoms or extend them here first.
+
+```
+TextField     →  text/email/password/number entry, with label + validation
+SearchField   →  app-level search (flights, places, services)
+ChipFilter    →  multi-select filter pill (Departures / Food / Standard)
+FieldMessage  →  helper / error / success / warning message below a field
+```
+
+### TextField
+
+```tsx
+<TextField
+  label="Email"
+  type="email"
+  placeholder="you@example.com"
+  value={email}
+  onChange={setEmail}
+  helperText="We'll send your boarding pass here."
+  required
+  leadingIcon={<MailIcon size={16} />}
+/>
+
+<TextField
+  label="Flight number"
+  value={flight}
+  onChange={setFlight}
+  errorText="That flight number isn't recognised."
+  autoComplete="off"
+  inputMode="text"
+/>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `label` | `string` | — | Renders above the field at `text-label`; bound to the input via `htmlFor`. |
+| `placeholder` | `string` | — | Shown when empty; `text-muted` colour. |
+| `value` | `string` | — | Controlled. Pair with `onChange`. |
+| `defaultValue` | `string` | — | Uncontrolled initial value. Don't combine with `value`. |
+| `helperText` | `string` | — | Neutral hint below the field. Hidden when `errorText` is set. |
+| `errorText` | `string` | — | Validation error. Sets `aria-invalid`, `aria-describedby`, and triggers `FieldMessage` with `tone="error"`. |
+| `leadingIcon` / `trailingIcon` | `ReactNode` | — | 16–18px icons rendered in the input row. |
+| `disabled` | `boolean` | `false` | `opacity-[var(--opacity-disabled)] pointer-events-none` + native `disabled`. |
+| `required` | `boolean` | `false` | Adds a danger-tinted ` *` after the label and `aria-required`. |
+| `onChange` | `(next: string) => void` | — | Receives the next string (not the event). |
+| `id` / `name` / `type` / `inputMode` / `autoComplete` | native input attrs | — | Pass-through. `id` defaults to a `useId()`-generated value. |
+
+**States**
+
+| State | Visual cue | A11y |
+|---|---|---|
+| Default | `--color-border` on `--color-surface-elevated`. | — |
+| Focused | Border transitions to `--color-action-primary` via `:focus-within`. | Native focus (caret + screen-reader announce). |
+| Filled | Same chrome as default; the value carries the state. | — |
+| Error | `--color-danger` border. `FieldMessage` below with `role="alert"`. | `aria-invalid="true"` + `aria-describedby`. |
+| Disabled | Wrapper at `--opacity-disabled`, no pointer events. | Native `disabled` on input. |
+
+**Anatomy.** Label (optional) → 52px input row with border + leading/trailing
+icon slots → `FieldMessage` (helper or error). All horizontal padding is
+`px-4` (16px); gap between icon and input is `gap-3` (12px). Input text
+uses the `text-body` role.
+
+### SearchField
+
+```tsx
+<SearchField
+  placeholder="Search flights, gates, places"
+  value={query}
+  onChange={setQuery}
+  ariaLabel="Search YVR"
+/>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `placeholder` | `string` | `"Search"` | — |
+| `value` | `string` | `""` | Controlled. |
+| `onChange` | `(next: string) => void` | — | Receives the next string. |
+| `onClear` | `() => void` | — | Optional clear-only callback. Clear always also fires `onChange("")`. |
+| `disabled` | `boolean` | `false` | Same dim pattern as TextField. |
+| `ariaLabel` | `string` | `"Search"` | Bound to the input. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** Pill-shaped (`--radius-pill`) input row, 52px tall, leading
+`SearchIcon` (18px) at `text-secondary`, then the input, then a
+44×44 clear button that appears only when the field has content. Wrapper
+is `role="search"`; the input is `type="search" role="searchbox"`.
+
+**Why a separate primitive from TextField.** Search has a distinct
+iOS-native chrome (pill, leading magnifier, clear button) and a
+different a11y posture (`role="search"` region). Forcing it through
+TextField would dilute both. They share the same surface tokens so the
+visual relationship is preserved.
+
+### ChipFilter
+
+```tsx
+<div role="group" aria-label="Filter results" className="flex flex-wrap gap-2">
+  <ChipFilter selected={dep} onToggle={setDep}>Departures</ChipFilter>
+  <ChipFilter selected={arr} onToggle={setArr}>Arrivals</ChipFilter>
+  <ChipFilter selected={lay} onToggle={setLay}>Layovers</ChipFilter>
+</div>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `selected` | `boolean` | (required) | Controlled. |
+| `onToggle` | `(next: boolean) => void` | (required) | Receives the next state. |
+| `disabled` | `boolean` | `false` | — |
+| `children` | `ReactNode` | (required) | The chip label. Sentence case. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** 44px tall pill (`--radius-pill`) with `text-body-sm
+font-medium` label. Selected state fills with `--color-action-primary`
+and inverts text to `--color-action-primary-fg`. Unselected state uses
+`--color-surface-elevated` with `--color-border` hairline.
+
+**A11y.** Each chip is a real `<button>` with `aria-pressed`. The chip
+row should be wrapped in a `<div role="group" aria-label="…">` by the
+consumer so screen readers identify the filter cluster.
+
+**Use cases.** Departures / Arrivals; Food / Shops / Services;
+Standard / Accessible / Family; On time / Delayed / Cancelled.
+
+### FieldMessage
+
+```tsx
+<FieldMessage tone="neutral">We'll send your boarding pass here.</FieldMessage>
+<FieldMessage tone="error">Enter a valid email.</FieldMessage>
+<FieldMessage tone="success">Saved.</FieldMessage>
+<FieldMessage tone="warning">This number looks unusual — double-check.</FieldMessage>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `tone` | `"neutral" \| "error" \| "success" \| "warning"` | `"neutral"` | Maps to text colour from the status fg tokens. |
+| `children` | `ReactNode` | (required) | The message. Keep it short and verb-first per content-guide §4. |
+| `id` | `string` | — | When set, `TextField` wires `aria-describedby` to this id. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** A single `<p>` at `text-label`. Error tone adds
+`role="alert"` so screen readers announce validation results politely.
+
+### Form anatomy
+
+```
+┌───────────────────────────────────────┐
+│  Label                              * │   ← text-label, optional " *" if required
+├───────────────────────────────────────┤
+│ ◌  Input value                     ✕ │   ← 52px row, leading + trailing icon slots
+├───────────────────────────────────────┤
+│  Helper / error message               │   ← FieldMessage, optional
+└───────────────────────────────────────┘
+```
+
+Vertical rhythm between sibling fields: `gap-4` (16px) inside a form
+section, `gap-6` (24px) between sections.
+
+### Validation rules
+
+- **Inline error first.** `TextField` shows the error directly under
+  the field via `errorText`. The parent form does not also surface the
+  same error in a banner unless multiple fields share one root cause.
+- **Verb-first error labels.** "Enter your email" not "Email is
+  required." "Use a valid flight number" not "Invalid input."
+- **No technical codes.** Never surface "HTTP 422", "ValidationError",
+  or stack traces. Translate at the form layer.
+- **Validate on blur or submit, not keystroke.** Aggressive
+  validation on every keystroke harasses the user; the exception is
+  patterns that can short-circuit (e.g. the user typed `"foo bar"`
+  into a flight-number field — that's clearly wrong).
+- **Required fields** get a danger-tinted ` *` after the label and
+  `aria-required`. The required indicator is **not** the error
+  indicator — the field is only in error after the user has attempted
+  to submit or blurred while empty.
+- **Success tone** is for confirmed-saved feedback ("Saved.") — not
+  for "looks valid so far." Reserve restraint.
+
+### Search rules
+
+- **Always passive.** Search runs after a debounce or on submit; never
+  fire a fetch per keystroke. The user sees a `<Skeleton>` row layout
+  while results load.
+- **Empty result is an `<EmptyState>`**, not a blank list. Title
+  reflects the query ("Nothing matched 'ramen'") and the CTA clears
+  the filter.
+- **Clear button is always present when filled.** Tap target 44×44.
+  Clearing returns the input to its empty state and refocuses the
+  input.
+- **Search region is `role="search"`.** Single search region per
+  screen.
+
+### Chip-filter rules
+
+- **Selection is multi by default.** Each chip toggles independently.
+  Single-select chip groups need a different primitive (future
+  `SegmentedControl`).
+- **Chip rows can scroll horizontally.** Use `flex flex-nowrap
+  overflow-x-auto` on the wrapping div; chips are `shrink-0` already.
+- **Active chip count visible somewhere.** When more than 3 chips are
+  selected, surface a "Clear all" ghost button next to the chip row so
+  the user can reset without untoggling each.
+
+### Accessibility quick-rules
+
+- Every `TextField` has a `<label>` bound by `htmlFor`. If a visible
+  label isn't needed (e.g. a search-only screen), pass `ariaLabel` to
+  `<SearchField>` and omit the label on `<TextField>` only when an
+  adjacent visual context already labels it (rare).
+- Error messages set `role="alert"` automatically via `FieldMessage`.
+- Disabled inputs are not focusable; do not communicate "disabled"
+  with colour alone — the opacity dim is the system-wide cue.
+- Touch targets ≥ 44×44 for chips and clear buttons.
+- Inputs honour `prefers-reduced-motion: reduce` automatically — the
+  border-color transition collapses to ~0ms via the global rule.
+
+---
+
+## 12j. Navigation & app shell
+
+Four primitives govern the app's chrome: two shells (one per app phase),
+a tab bar, a sticky bottom CTA, and a large-title header. The onboarding
+flow and the authenticated app use **different shells** — never mix them.
+
+```
+AppShell           →  onboarding chrome (no tab bar, page-length flow)
+AppShellAuthed     →  authenticated chrome (with tab bar, internal scroll)
+BottomTabBar       →  five-tab bottom navigation, safe-area-aware
+LargeTitleHeader   →  iOS-style display title + optional back + trailing
+StickyBottomCTA    →  pinned bottom action for forms / detail screens
+```
+
+### AppShell vs AppShellAuthed
+
+The two shells have intentionally different layouts.
+
+| Concern | `AppShell` (onboarding) | `AppShellAuthed` (main app) |
+|---|---|---|
+| Height | `min-h-dvh` — at least viewport, grows for tall content. | `h-dvh` — exactly viewport; main scrolls internally. |
+| Background | `<AuroraBackground />` | `<AuroraBackground />` (same hues). |
+| Top safe area | `paddingTop: max(env(safe-area-inset-top), 16px)` on the inner. | Same — applied to `<main>`. |
+| Bottom safe area | `paddingBottom: max(env(safe-area-inset-bottom), 16px)` on the inner. | **Owned by `<BottomTabBar>`** via `paddingBottom: env(safe-area-inset-bottom)`. Consumers must not re-add. |
+| Bottom CTA pattern | `mt-auto` on the CTA group inside content, or a constrained spacer (`min-h-8 max-h-16 flex-grow`). | `<StickyBottomCTA>` inside `<main>` (sticky bottom-0). Tab bar stays below. |
+| Tab bar | None. | `<BottomTabBar>` rendered as last child of the shell. |
+
+**Never apply `AppShellAuthed` to onboarding screens.** The five tabs
+would surface routes that don't exist for unauthenticated users and
+break the onboarding's single-CTA focus.
+
+### BottomTabBar
+
+```tsx
+<AppShellAuthed badges={{ flights: true }}>
+  <LargeTitleHeader title="Home" />
+  …content…
+</AppShellAuthed>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `activeHref` | `string` | `usePathname()` | Override active-tab detection. The component checks `active === tab.href` and `active.startsWith(tab.href + "/")` so nested routes light up the parent tab. |
+| `badges` | `Partial<Record<TabKey, boolean>>` | — | Per-tab dot toggle. `TabKey` is `"home" \| "flights" \| "map" \| "services" \| "profile"`. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** 56px tall row (`h-14`) + `env(safe-area-inset-bottom)`.
+Top border at `--color-border`. Background `--color-surface-card`.
+Five evenly-spaced tabs (`flex-1` each). Each tab: 22px icon + `text-micro
+uppercase` label, vertical stack. Active tab uses `--color-action-primary`;
+inactive uses `--color-text-secondary` with hover to `--color-text-primary`.
+
+**Badge dot.** 6px filled `--color-danger` dot positioned at the top-right
+of the active icon (right ~28% of the tab width). Decorative; the change
+of state should be announced by the relevant screen, not the tab itself.
+
+**Tabs.** Hard-coded: Home, Flights, Map, Services, Profile. Adding or
+reordering tabs is a design-system change, not a screen change.
+
+**A11y.** `<nav aria-label="Main">` wrapper. Each `<Link>` carries
+`aria-current="page"` when active and `aria-label={label}` so the
+uppercase label and the icon are not double-announced.
+
+### LargeTitleHeader
+
+```tsx
+<LargeTitleHeader title="Home" subtitle="Tuesday · YVR" />
+
+<LargeTitleHeader
+  title={<>Your <em>journey.</em></>}
+  subtitle="Today's flight + ground plan"
+  trailing={<NotificationButton />}
+/>
+
+<LargeTitleHeader
+  title="Flight detail"
+  backHref="/flights"
+/>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `title` | `ReactNode` | (required) | Display heading. Pass `<em>…</em>` for an italic accent. |
+| `subtitle` | `string` | — | Single body line beneath the title. |
+| `backHref` | `Route \| URL` | — | When present, renders the 44×44 back chip on the left. |
+| `backLabel` | `string` | `"Go back"` | `aria-label` for the back chip. |
+| `trailing` | `ReactNode` | — | Optional content (icon button, ghost CTA) on the right of the top row. |
+| `className` | `string` | `""` | Composition hook. |
+
+**Anatomy.** Optional top row (back chip + trailing slot), then a
+display-size `<Heading>` and optional subtitle. The title block sits
+`mt-6` below the top row, or `pt-8` when no top row is present.
+
+**v1 is non-collapsing.** The title doesn't shrink on scroll. The future
+collapse variant will reuse this API and layer in scroll-driven opacity
+crossfade per §12e (large-title collapsing header contract).
+
+**When to use which header.**
+
+| Header | When |
+|---|---|
+| `<LargeTitleHeader>` | Authenticated-app screens (Home, Flights, Map, Services, Profile). Title is content-first. |
+| `<ScreenHeader>` | Step screens with a back chip + step label, no large title. Used by onboarding (`/onboarding/sign-in`, `/onboarding/permissions`). |
+
+### StickyBottomCTA
+
+```tsx
+<AppShellAuthed>
+  <LargeTitleHeader title="Add flight" backHref="/flights" />
+  <section className="px-6 pb-32 pt-6">
+    <TextField label="Flight number" … />
+    …
+  </section>
+  <StickyBottomCTA
+    primaryAction={{ label: "Add flight", onClick: submit, loading: submitting }}
+    secondaryAction={{ label: "Cancel", href: "/flights" }}
+  />
+</AppShellAuthed>
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `primaryAction` | `Action` | (required) | Renders as `<Button variant="primary">`. |
+| `secondaryAction` | `Action` | — | Renders as `<Button variant="ghost">`. |
+| `showFade` | `boolean` | `true` | When true, the wrapper carries a top-to-bottom gradient from transparent → `--color-bg` so scrolling content fades into the sticky region. |
+| `className` | `string` | `""` | Composition hook. |
+
+`Action` is `{ label, href?, onClick?, trailingIcon?, loading?, disabled? }`
+matching the Button surface.
+
+**Anatomy.** `position: sticky bottom-0` inside the scroll container.
+The wrapper carries a gradient background (or solid `--color-bg` when
+`showFade={false}`), padding-top 32px (or 16px without fade), padding-x
+24px, and `paddingBottom: max(env(safe-area-inset-bottom), 8px)` so the
+buttons stay above the home indicator.
+
+**Z-index.** `z-10` within the scroll container. Sits above scrolling
+content; the BottomTabBar (when present) lives outside `<main>` and is
+unaffected.
+
+**Layout requirement.** The screen's content must reserve bottom space
+(e.g. `pb-32`) so the last row isn't visually hidden behind the sticky
+CTA when scrolled to the very bottom.
+
+### Safe-area behaviour summary
+
+| Edge | Owner |
+|---|---|
+| Top inset | Both shells apply `paddingTop: max(env(safe-area-inset-top), 16px)` to their inner content area. |
+| Bottom inset (onboarding) | `<AppShell>` applies it to the inner content area. |
+| Bottom inset (authenticated) | `<BottomTabBar>` applies it on itself. `<AppShellAuthed>` does **not** also add it (avoid double-counting). |
+| Bottom inset (sticky CTA) | `<StickyBottomCTA>` applies it on its own wrapper. When a screen has both `<BottomTabBar>` and `<StickyBottomCTA>`, hide the tab bar via `<AppShellAuthed hideTabBar>` while the CTA is present — sticky CTAs and tab bars don't stack. |
+| Left / right insets | Both shells apply `paddingLeft/Right: env(safe-area-inset-left/right)` to the inner content area. |
+
+### Do / Don't (navigation)
+
+**Do**
+
+```tsx
+// Authenticated screen with large title + tab bar.
+<AppShellAuthed badges={{ flights: hasNewAlert }}>
+  <LargeTitleHeader title="Home" />
+  <section className="px-6 pt-6">…</section>
+</AppShellAuthed>
+
+// Form-style detail screen with sticky CTA, tab bar hidden.
+<AppShellAuthed hideTabBar>
+  <LargeTitleHeader title="Add flight" backHref="/flights" />
+  <section className="px-6 pb-32 pt-6">…fields…</section>
+  <StickyBottomCTA primaryAction={…} />
+</AppShellAuthed>
+```
+
+**Don't**
+
+```tsx
+// ❌ Tab bar on an onboarding screen.
+<AppShell>
+  <BottomTabBar />
+  …
+</AppShell>
+
+// ❌ Sticky CTA stacked on top of tab bar.
+<AppShellAuthed>
+  …
+  <StickyBottomCTA … />   {/* tab bar is still showing — visual clash */}
+</AppShellAuthed>
+
+// ❌ Adding paddingBottom for safe area inside AppShellAuthed.
+<AppShellAuthed>
+  <main className="pb-[env(safe-area-inset-bottom)]">  {/* BottomTabBar owns this */}
+    …
+  </main>
+</AppShellAuthed>
+
+// ❌ Inlining a custom bottom tab bar.
+<nav className="fixed bottom-0 h-16 …">…</nav>
+```
+
+---
+
+## 12k. Design preview route
+
+**`/design`** — a development manifest of every reusable primitive,
+variant, and state. Lives at [src/app/design/page.tsx](../src/app/design/page.tsx).
+
+### Why it exists
+
+- One scrollable surface that proves every primitive renders correctly
+  before you build a real screen.
+- Visual contract for the design system: if a primitive isn't on this
+  page, the system doesn't fully own it.
+- Snapshot target — when visual regression testing lands, this page is
+  what Playwright will photograph at 375px and 1280px across all
+  accessibility-mode emulations.
+
+### How to use it
+
+1. **Before building a new screen**, open `http://localhost:3000/design`
+   in DevTools mobile mode (375px). Confirm every primitive your new
+   screen will use renders the way you expect.
+2. **Toggle DevTools accessibility-mode emulators** against this page:
+   `prefers-reduced-motion`, `prefers-reduced-transparency`,
+   `prefers-contrast: more`, `forced-colors: active`. Each variant
+   should remain legible and structurally identical.
+3. **After adding or modifying a primitive**, add a section to the
+   preview that demonstrates the new variant or state. The page is the
+   primitive's first consumer.
+4. **Tab through the page** with the keyboard. Every interactive
+   element (Toggle, Button, ChipFilter, AuthOption row, SearchField
+   clear button, BottomTabBar link) should show the global navy focus
+   ring.
+
+### What it is not
+
+- **Not part of production navigation.** No page links to `/design`.
+  It's reachable only by typing the URL.
+- **Not a Storybook replacement** — it's a single page, not isolated
+  component stories. For per-component state matrices and prop
+  documentation, this design-system.md is the source of truth.
+- **Not gated server-side** by default. If you want the route to 404
+  in production builds, add `notFound()` from `next/navigation` at the
+  top of the page guarded by `process.env.NODE_ENV === "production"`.
+
+### Path note
+
+The route lives at `/design`, **not** `/_design`. Next.js App Router
+treats any folder prefixed with `_` as a **private folder** and does
+not generate a route for it — a `src/app/_design/page.tsx` would be
+file-system colocation only, not a navigable URL. The preview is most
+useful when it's navigable.
+
+### Before-build checklist
+
+Before building any new screen, work through `/design` and confirm:
+
+- [ ] The typography roles you plan to use render at the expected
+      size + weight + tracking.
+- [ ] The colour tokens / status surface trios you plan to consume
+      render with adequate contrast against the page background.
+- [ ] The Button / Toggle / ChipFilter states you'll need (loading,
+      disabled, busy, selected) exist and look right.
+- [ ] If your screen shows live data, the travel atoms you'll consume
+      (StatusPill, GateDisplay, AirportCodePair, CountdownBlock, etc.)
+      look correct for the data shape.
+- [ ] If your screen accepts input, TextField / SearchField / ChipFilter
+      / FieldMessage states match the visual you have in mind.
+- [ ] If you'll need a primitive that isn't on the page, **add the
+      primitive and a preview entry before building the screen.**
+
+---
+
 ## 13. Foundation refactor rules
 
 Foundation work upgrades tokens, primitives, and conventions **without
@@ -2000,7 +2494,15 @@ visibly changing existing screens.**
 | `CountdownBlock` | `src/components/CountdownBlock.tsx` | Label-first time-relative metric ("Boarding in 42 min"). Travel atom. |
 | `AirportCodePair` | `src/components/AirportCodePair.tsx` | "YVR → SFO" header with optional flight + city pair. Travel atom. |
 | `GateDisplay` | `src/components/GateDisplay.tsx` | "GATE / D73" with optional terminal + helper. Travel atom. |
-| `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`). |
+| `TextField` | `src/components/TextField.tsx` | Label + 52px input + helper / error message. Form atom. |
+| `SearchField` | `src/components/SearchField.tsx` | Pill-shaped search input with clear button. Form atom. |
+| `ChipFilter` | `src/components/ChipFilter.tsx` | Toggleable filter pill. Form atom. |
+| `FieldMessage` | `src/components/FieldMessage.tsx` | Helper / error / success / warning message under a field. Form atom. |
+| `AppShellAuthed` | `src/components/AppShellAuthed.tsx` | App shell for logged-in app. Reserves bottom for `BottomTabBar`. |
+| `BottomTabBar` | `src/components/BottomTabBar.tsx` | Five-tab bottom nav (Home, Flights, Map, Services, Profile). Safe-area aware. |
+| `LargeTitleHeader` | `src/components/LargeTitleHeader.tsx` | iOS-style display title with optional back chip + trailing slot. |
+| `StickyBottomCTA` | `src/components/StickyBottomCTA.tsx` | Sticky bottom action(s) inside a scroll container. |
+| `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`). |
 
 ---
 

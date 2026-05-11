@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check:design-system": "node scripts/check-design-system.mjs"
+    "check:design-system": "node scripts/check-design-system.mjs",
+    "check:design-system:strict": "node scripts/check-design-system.mjs --strict"
   },
   "dependencies": {
     "next": "16.2.6",

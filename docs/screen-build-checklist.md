@@ -63,6 +63,20 @@ declare its **three states** before declaring done:
       `<AirportCodePair>`, `<GateDisplay>`). Never inline a gate
       number with bespoke typography, never roll a custom status
       pill, never type `→` by hand inside a heading.
+- [ ] **No one-off inputs inside pages.** Every text input goes
+      through `<TextField>`; every search input goes through
+      `<SearchField>`; every toggleable filter pill goes through
+      `<ChipFilter>`; every helper / validation message goes through
+      `<FieldMessage>`. Grep your diff for `<input ` and
+      `<button role="search"` — there should be none outside the
+      form primitives.
+- [ ] **Every form defines its empty / error / loading states.**
+      Submitting → `<Button loading>`. Async validation in flight →
+      `aria-busy` on the field's wrapper. Submission failed → inline
+      `<FieldMessage tone="error">` per field, or a top-of-form
+      `<InlineAlert variant="danger">` for root-cause errors. Server
+      returned no results → `<EmptyState>` named for the query.
+      Never show a blank form on error.
 
 ## Component state coverage
 
@@ -143,6 +157,12 @@ When adding or revising a primitive:
 ## After coding
 
 - [ ] Run `npm run build`. Fix every error and warning.
+- [ ] Run `npm run check:design-system`. Fix every error-severity finding.
+      Warnings (heuristic / convention) should be reviewed but are
+      non-blocking.
+- [ ] Before merge, run `npm run check:design-system:strict`. This exits
+      non-zero on any error and is intended for CI gating once wired up.
+      Strict mode treats warnings as informational.
 - [ ] Open the page at **375px** in DevTools — content fits, no
       horizontal scroll, nothing overlaps the home-indicator safe area.
 - [ ] Open the page at **1280px** — column caps at 430px, centred,
