@@ -4,6 +4,12 @@ type EyebrowProps = {
   className?: string;
 };
 
+/**
+ * Small uppercase label that sits above a Heading or in a screen step row.
+ *
+ * Size, line-height, and tracking come from the `--text-eyebrow` role token
+ * in globals.css.
+ */
 export function Eyebrow({
   children,
   tone = "primary",
@@ -16,7 +22,7 @@ export function Eyebrow({
 
   return (
     <p
-      className={`text-[11px] leading-[1.5] uppercase tracking-[0.22em] ${color} ${className}`.trim()}
+      className={`text-eyebrow uppercase ${color} ${className}`.trim()}
     >
       {children}
     </p>
