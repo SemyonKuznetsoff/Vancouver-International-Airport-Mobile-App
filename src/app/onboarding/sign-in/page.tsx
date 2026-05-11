@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
 import { AuthOption, AuthOptionGroup } from "@/components/AuthOption";
+import { Button } from "@/components/Button";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Heading } from "@/components/Heading";
 import { ScreenHeader } from "@/components/ScreenHeader";
@@ -18,15 +18,15 @@ export default function SignInPage() {
       <main className="flex flex-1 flex-col px-6">
         <ScreenHeader backHref="/" step="Step 2 of 3" />
 
-        <section className="mt-12 flex flex-col gap-4">
+        <section className="mt-8 flex flex-col gap-4">
           <Eyebrow>Personal Concierge</Eyebrow>
           <Heading size="title">
-            Continue your
+            Keep your
             <br />
-            <em>journey.</em>
+            <em>trip ready.</em>
           </Heading>
           <p className="text-[14px] leading-[1.55] text-[var(--color-text-secondary)]">
-            Sign in to sync trips, boarding passes, and preferences.
+            Sign in to sync flights, boarding passes, and preferences.
           </p>
         </section>
 
@@ -65,15 +65,12 @@ export default function SignInPage() {
         </button>
 
         <div className="mt-auto flex flex-col items-center gap-3 pt-8 pb-2">
-          <Link
-            href="/onboarding/permissions"
-            className="text-[13px] font-medium leading-[1.5] text-[var(--color-text-primary)] underline underline-offset-2"
-          >
+          <Button variant="ghost" href="/onboarding/permissions">
             Continue as guest
-          </Link>
+          </Button>
           <p className="inline-flex items-center gap-1.5 text-[11px] leading-[1.5] tracking-[0.025em] text-[var(--color-text-secondary)]">
             <ShieldCheckIcon size={12} />
-            <span>Secured by YVR · Your data stays private</span>
+            <span>Stored on your device · Never shared with airlines</span>
           </p>
         </div>
       </main>
