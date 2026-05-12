@@ -124,6 +124,26 @@ export function LoungesIcon(props: IconProps) {
   );
 }
 
+export function ShareIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <circle cx="6" cy="12" r="2.5" />
+      <circle cx="18" cy="6" r="2.5" />
+      <circle cx="18" cy="18" r="2.5" />
+      <path d="m8.2 11 7.6-4M8.2 13l7.6 4" />
+    </svg>
+  );
+}
+
+export function FootstepsIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M7 4c2 0 3 1.5 3 3.5 0 2-1.2 4-3 4.5-1.4.4-2.5-.4-2.5-2 0-2 1-6 2.5-6Z" />
+      <path d="M16 12c2 0 3 1.5 3 3.5 0 2-1.2 4-3 4.5-1.4.4-2.5-.4-2.5-2 0-2 1-6 2.5-6Z" />
+    </svg>
+  );
+}
+
 export function TicketIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
