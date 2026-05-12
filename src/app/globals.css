@@ -12,6 +12,31 @@
   --color-surface-pressed: rgba(255, 255, 255, 0.4);
   --color-surface-elevated-hover: rgba(255, 255, 255, 0.7);
 
+  /* Warm page surface — opt-in alternate background used by Home via
+     `<AppShellAuthed tone="warm">`. Pair with `<Card tone="solid">` for
+     inner surfaces. Avoid on aurora screens — mixing fights atmosphere. */
+  --color-bg-warm: #f5f4ef;
+
+  /* Solid-surface tokens — opt-in via `<Card tone="solid">` for screens
+     on warm bg. Default glass surface stays canonical on aurora screens. */
+  --color-surface-solid: #ffffff;
+  --color-border-solid: #eae6e1;
+  --shadow-card-solid: 0 8px 24px -12px rgba(10, 90, 102, 0.12);
+
+  /* Floating navigation tokens — dark pill bottom nav per Figma.
+     Warm-near-black surface + teal-pill active state. */
+  --color-nav-surface: #1a1918;
+  --color-nav-surface-fg: rgba(245, 244, 239, 0.55);
+  --color-nav-surface-fg-active: #f5f4ef;
+  --color-nav-active-bg: #0a5a66;
+  --shadow-nav: 0 10px 30px -8px rgba(10, 25, 24, 0.45);
+
+  /* Heavy drop shadow for the Home Add Trip search composite — sits
+     against the hero surface so it needs a true black drop, not the
+     warm teal-tinted card shadow. Matches the Figma `drop-shadow`
+     spec on node 82:2563. */
+  --shadow-hero-composite: 0 20px 24px -8px rgba(0, 0, 0, 0.4);
+
   /* Text */
   --color-text-primary: #1d3557;
   --color-text-secondary: #3a6a8a;
@@ -27,15 +52,23 @@
   --color-action-primary: #1d3557;
   --color-action-primary-fg: #ffffff;
 
-  /* Hero surface — dark teal identity card used on Profile and future
-     premium / membership hero panels. Foreground tokens carry inverse
-     text + an inner glass fill that sits *on* the hero surface, not on
-     the aurora. */
-  --color-surface-hero-start: #0e4a4e;
-  --color-surface-hero-end: #0a3a3d;
-  --color-surface-hero-fg: #ffffff;
-  --color-surface-hero-fg-muted: rgba(255, 255, 255, 0.65);
-  --color-surface-hero-fg-soft: rgba(255, 255, 255, 0.55);
+  /* Hero surface — dark teal identity card used on Profile, Saved Trips
+     header, Home hero, and the Departing CTA card. The gradient runs
+     from a brighter teal at the top-left (`--color-surface-hero-start`)
+     to a deeper teal at the bottom-right (`--color-surface-hero-end`)
+     via a soft mid-stop (`--color-surface-hero-mid`) so the surface
+     reads atmospheric, not flat. Values tuned to the No-Trip Home
+     Figma (`82:2547`). */
+  --color-surface-hero-start: #0a5a66;
+  --color-surface-hero-mid: #0e4e5a;
+  --color-surface-hero-end: #072e36;
+  --color-surface-hero-fg: #f5f4ef;
+  --color-surface-hero-fg-muted: rgba(245, 244, 239, 0.72);
+  --color-surface-hero-fg-soft: rgba(245, 244, 239, 0.55);
+  /* Italic / accent foreground on hero — cyan-teal used for the
+     italic accent phrase inside `<Heading tone="hero">` (e.g. the
+     "today?" phrase in the Home hero). */
+  --color-surface-hero-fg-accent: #9dd9e0;
   --color-surface-hero-tile: rgba(255, 255, 255, 0.08);
   --color-surface-hero-tile-border: rgba(255, 255, 255, 0.1);
   --color-surface-hero-chip: rgba(255, 255, 255, 0.1);
@@ -103,8 +136,10 @@
 
   /* Radii */
   --radius-chip: 10px;
+  --radius-button: 16px;
   --radius-panel: 22px;
   --radius-card: 24px;
+  --radius-hero: 36px;
   --radius-pill: 9999px;
 
   /* Shadows */
@@ -133,6 +168,7 @@
   --font-size-700: 2.125rem;   /* 34 */
 
   /* Numeric font weights */
+  --font-weight-light: 300;
   --font-weight-regular: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
@@ -161,14 +197,22 @@
   --text-body-sm--line-height: 1.55;
   --text-body-sm--font-weight: var(--font-weight-medium);
 
+  /* Emphasised variant of body-sm — same size/line-height, weight 600.
+     Replaces the recurring `text-body-sm font-semibold` inline pattern.
+     Used by small-card titles, body-sm CTA labels, and section-header
+     navigation links ("All", "Manage", "See all"). */
+  --text-body-sm-emphasis: var(--font-size-300);
+  --text-body-sm-emphasis--line-height: 1.55;
+  --text-body-sm-emphasis--font-weight: var(--font-weight-semibold);
+
   --text-label: var(--font-size-200);
   --text-label--line-height: 1.5;
   --text-label--font-weight: var(--font-weight-regular);
 
   --text-eyebrow: var(--font-size-200);
   --text-eyebrow--line-height: 1.5;
-  --text-eyebrow--font-weight: var(--font-weight-regular);
-  --text-eyebrow--letter-spacing: 0.22em;
+  --text-eyebrow--font-weight: var(--font-weight-bold);
+  --text-eyebrow--letter-spacing: 0.18em;
 
   --text-micro: var(--font-size-100);
   --text-micro--line-height: 1.5;
