@@ -167,6 +167,63 @@ export function ClockIcon(props: IconProps) {
   );
 }
 
+export function ParkingIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="4" y="4" width="16" height="16" rx="3" />
+      <path d="M10 17V8h3.5a2.5 2.5 0 0 1 0 5H10" />
+    </svg>
+  );
+}
+
+export function TrainIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="6" y="3" width="12" height="14" rx="3" />
+      <path d="M6 12h12M9 7h6" />
+      <circle cx="9.5" cy="14.5" r="0.6" />
+      <circle cx="14.5" cy="14.5" r="0.6" />
+      <path d="m8 20 2-3M16 20l-2-3" />
+    </svg>
+  );
+}
+
+export function ScanIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M4 8V6a2 2 0 0 1 2-2h2M16 4h2a2 2 0 0 1 2 2v2M20 16v2a2 2 0 0 1-2 2h-2M8 20H6a2 2 0 0 1-2-2v-2" />
+      <path d="M4 12h16" />
+    </svg>
+  );
+}
+
+export function AccessibilityIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <circle cx="12" cy="5" r="1.5" />
+      <path d="M12 8v4l3 .5M12 12l-2 5M15 12.5 17 17" />
+    </svg>
+  );
+}
+
+export function DiningIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M7 3v8M10 3v8M7 11v10M10 11h0M14 11V3M17 3c1.5 0 3 1.5 3 4v4h-3M17 11v10" />
+    </svg>
+  );
+}
+
+export function SignpostIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M12 3v18" />
+      <path d="M4 7h12l3 2.5-3 2.5H4Z" />
+      <path d="M20 14H8l-3 2.5L8 19h12Z" />
+    </svg>
+  );
+}
+
 export function SettingsIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
