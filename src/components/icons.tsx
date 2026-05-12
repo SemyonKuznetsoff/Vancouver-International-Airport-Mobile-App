@@ -96,10 +96,59 @@ export function MapIcon(props: IconProps) {
 export function ServicesIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
-      <rect x="4" y="4" width="7" height="7" rx="1.5" />
-      <rect x="13" y="4" width="7" height="7" rx="1.5" />
-      <rect x="4" y="13" width="7" height="7" rx="1.5" />
-      <rect x="13" y="13" width="7" height="7" rx="1.5" />
+      <path d="M12 3 3 7.5l9 4.5 9-4.5L12 3Z" />
+      <path d="m3 12 9 4.5L21 12" />
+      <path d="m3 16.5 9 4.5 9-4.5" />
+    </svg>
+  );
+}
+
+export function CarIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M5 17V12l2-5h10l2 5v5" />
+      <path d="M3 17h18" />
+      <circle cx="8" cy="17" r="1.5" />
+      <circle cx="16" cy="17" r="1.5" />
+    </svg>
+  );
+}
+
+export function LoungesIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3" />
+      <path d="M3 11h18a1 1 0 0 1 1 1v5H2v-5a1 1 0 0 1 1-1Z" />
+      <path d="M5 17v2M19 17v2" />
+    </svg>
+  );
+}
+
+export function ShareIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <circle cx="6" cy="12" r="2.5" />
+      <circle cx="18" cy="6" r="2.5" />
+      <circle cx="18" cy="18" r="2.5" />
+      <path d="m8.2 11 7.6-4M8.2 13l7.6 4" />
+    </svg>
+  );
+}
+
+export function FootstepsIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M7 4c2 0 3 1.5 3 3.5 0 2-1.2 4-3 4.5-1.4.4-2.5-.4-2.5-2 0-2 1-6 2.5-6Z" />
+      <path d="M16 12c2 0 3 1.5 3 3.5 0 2-1.2 4-3 4.5-1.4.4-2.5-.4-2.5-2 0-2 1-6 2.5-6Z" />
+    </svg>
+  );
+}
+
+export function TicketIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M4 9V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z" />
+      <path d="M13 5v2M13 11v2M13 17v-2" />
     </svg>
   );
 }

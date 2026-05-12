@@ -14,6 +14,7 @@ import {
   AccessibilityIcon,
   ArrowRightIcon,
   BellIcon,
+  CarIcon,
   ChevronRightIcon,
   DiningIcon,
   LifeBuoyIcon,
@@ -135,7 +136,7 @@ const intentSecondary: IntentCard[] = [
     href: "/home/pickup",
     title: "Pickup",
     description: "Drop-off · curbside",
-    icon: <MapIcon size={16} />,
+    icon: <CarIcon size={16} />,
   },
 ];
 
@@ -180,9 +181,9 @@ const services: ServiceRow[] = [
 
 export default function HomePage() {
   return (
-    <AppShellAuthed>
+    <AppShellAuthed tone="warm">
       <HomeHeader />
-      <div className="flex flex-col gap-8 px-6 pb-8">
+      <div className="flex flex-col gap-8 px-5 pb-4">
         <HeroAddTripCard status={airportStatus} />
         <LiveAtYvrSection metrics={liveMetrics} updated={airportStatus.updated} />
         <ImHereToSection
@@ -199,20 +200,20 @@ export default function HomePage() {
 
 function HomeHeader() {
   return (
-    <header className="flex items-center justify-between gap-3 px-6 pt-2 pb-4">
+    <header className="flex items-center justify-between gap-3 px-6 pt-2 pb-6">
       <BrandMark />
       <div className="flex items-center gap-2">
         <Link
           href="/profile/notifications"
           aria-label="Notifications"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--color-border-solid)] bg-[var(--color-surface-solid)] text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
         >
           <BellIcon size={16} />
         </Link>
         <Link
           href="/profile"
           aria-label="Open profile"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-action-primary)] text-[var(--color-action-primary-fg)] transition-colors duration-150 hover:opacity-90"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-nav-surface)] text-[var(--color-nav-surface-fg-active)] transition-opacity duration-150 hover:opacity-90"
         >
           <ProfileIcon size={16} />
         </Link>
@@ -231,7 +232,7 @@ function HeroAddTripCard({ status }: { status: AirportStatus }) {
         </span>
       </span>
 
-      <Heading size="display" tone="hero" className="mt-8">
+      <Heading size="display" tone="hero" weight="light" className="mt-8">
         Where to,
         <br />
         <em>today?</em>
@@ -262,7 +263,7 @@ function AddTripControl() {
       role="search"
       action="/trips/new"
       method="get"
-      className="mt-6 flex items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-bg)] p-1"
+      className="mt-6 flex items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-bg-warm)] p-1.5 shadow-[var(--shadow-hero-composite)]"
     >
       <label className="flex flex-1 items-center gap-2 px-3">
         <span
@@ -283,10 +284,14 @@ function AddTripControl() {
       <Link
         href="/trips/new"
         aria-label="Add a trip"
+<<<<<<< HEAD
+        className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-[var(--radius-button)] bg-[var(--color-nav-surface)] px-5 text-body-sm-emphasis text-[var(--color-nav-surface-fg-active)] transition-opacity duration-150 hover:opacity-90"
+=======
         className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-action-primary)] px-4 text-body-sm-emphasis text-[var(--color-action-primary-fg)] transition-opacity duration-150 hover:opacity-90"
+>>>>>>> origin/main
       >
         <span aria-hidden>+</span>
-        <span>Add trip</span>
+        <span>Add Trip</span>
       </Link>
     </form>
   );
@@ -304,7 +309,7 @@ function LiveAtYvrSection({
       aria-labelledby="live-at-yvr-heading"
       className="flex flex-col gap-3"
     >
-      <header className="flex items-center justify-between gap-3">
+      <header className="flex items-center justify-between gap-3 px-1">
         <div className="flex items-center gap-3">
           <Eyebrow tone="primary">
             <span id="live-at-yvr-heading">Live at YVR</span>
@@ -319,8 +324,9 @@ function LiveAtYvrSection({
       <Card
         as="article"
         padding="none"
+        tone="solid"
         aria-label="Live airport metrics"
-        className="grid grid-cols-3 divide-x divide-[var(--color-border-soft)]"
+        className="grid grid-cols-3 divide-x divide-[var(--color-border-solid)] overflow-hidden"
       >
         {metrics.map((metric) => (
           <LiveMetricColumn key={metric.id} metric={metric} />
@@ -337,7 +343,7 @@ function LiveMetricColumn({ metric }: { metric: LiveMetric }) {
       aria-label={`${metric.label} — ${metric.value}${metric.unit ?? ""}`}
       className="flex flex-col gap-2 px-4 py-4 transition-colors duration-150 hover:bg-[var(--color-surface-hover)]"
     >
-      <span className="inline-flex items-center gap-1 text-micro uppercase text-[var(--color-text-secondary)]">
+      <span className="inline-flex items-center gap-1.5 text-micro uppercase text-[var(--color-text-secondary)]">
         <span aria-hidden className="text-[var(--color-text-primary)]">
           {metric.icon}
         </span>
@@ -345,7 +351,7 @@ function LiveMetricColumn({ metric }: { metric: LiveMetric }) {
       </span>
       <MetricBlock
         value={
-          <span className="inline-flex items-baseline gap-1">
+          <span className="inline-flex items-baseline gap-1 font-light">
             <span>{metric.value}</span>
             {metric.unit ? (
               <span className="text-label text-[var(--color-text-secondary)]">
@@ -373,15 +379,12 @@ function ImHereToSection({
   explore: IntentCard;
 }) {
   return (
-    <section
-      aria-labelledby="intent-heading"
-      className="flex flex-col gap-4"
-    >
-      <Eyebrow tone="primary">
+    <section aria-labelledby="intent-heading" className="flex flex-col gap-4">
+      <Eyebrow tone="primary" className="px-1">
         <span id="intent-heading">I&rsquo;m here to</span>
       </Eyebrow>
 
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-[1.1fr_1fr] gap-3">
         <DepartingHeroCard card={departing} />
         <div className="flex flex-col gap-3">
           {secondary.map((card) => (
@@ -390,12 +393,7 @@ function ImHereToSection({
         </div>
       </div>
 
-      <SettingsRow
-        href={explore.href}
-        icon={explore.icon}
-        title={explore.title}
-        description={explore.description}
-      />
+      <ExploreRow card={explore} />
     </section>
   );
 }
@@ -409,7 +407,12 @@ function DepartingHeroCard({ card }: { card: IntentCard }) {
     >
       <HeroSurface
         as="div"
+<<<<<<< HEAD
+        radius="card"
+        className="flex h-full min-h-[196px] flex-col justify-between p-5 shadow-[var(--shadow-card-solid)]"
+=======
         className="flex h-full min-h-[196px] flex-col justify-between p-5"
+>>>>>>> origin/main
       >
         <div className="flex items-start justify-between">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-chip-border)] bg-[var(--color-surface-hero-chip)] text-[var(--color-surface-hero-fg)]">
@@ -437,7 +440,11 @@ function DepartingHeroCard({ card }: { card: IntentCard }) {
 
 function CompactIntentCard({ card }: { card: IntentCard }) {
   return (
+<<<<<<< HEAD
+    <Card padding="compact" tone="solid">
+=======
     <Card padding="compact">
+>>>>>>> origin/main
       <Link
         href={card.href}
         aria-label={`${card.title} — ${card.description}`}
@@ -459,9 +466,43 @@ function CompactIntentCard({ card }: { card: IntentCard }) {
   );
 }
 
+function ExploreRow({ card }: { card: IntentCard }) {
+  return (
+    <Card padding="none" tone="solid">
+      <Link
+        href={card.href}
+        aria-label={`${card.title} — ${card.description}`}
+        className="flex items-center gap-3 px-4 py-4"
+      >
+        <IconTile size={40} className="bg-[var(--color-surface-tile)]">
+          <span className="text-[var(--color-text-primary)]">{card.icon}</span>
+        </IconTile>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <p className="text-body-sm-emphasis text-[var(--color-text-primary)]">
+            {card.title}
+          </p>
+          <p className="text-label text-[var(--color-text-secondary)]">
+            {card.description}
+          </p>
+        </div>
+        <span
+          aria-hidden
+          className="inline-flex shrink-0 items-center text-[var(--color-text-muted)]"
+        >
+          <ChevronRightIcon size={16} />
+        </span>
+      </Link>
+    </Card>
+  );
+}
+
 function UnlockConciergeBanner() {
   return (
+<<<<<<< HEAD
+    <Card tone="solid">
+=======
     <Card>
+>>>>>>> origin/main
       <Link
         href="/trips/new"
         className="flex items-center gap-4"
@@ -497,7 +538,7 @@ function AirportServicesSection({ services }: { services: ServiceRow[] }) {
       aria-labelledby="airport-services-heading"
       className="flex flex-col gap-4"
     >
-      <header className="flex items-end justify-between gap-3">
+      <header className="flex items-end justify-between gap-3 px-1">
         <Eyebrow tone="primary">
           <span id="airport-services-heading">Airport services</span>
         </Eyebrow>
@@ -511,7 +552,8 @@ function AirportServicesSection({ services }: { services: ServiceRow[] }) {
 
       <Card
         padding="none"
-        className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border-soft)]"
+        tone="solid"
+        className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border-solid)]"
       >
         {services.map((service) => (
           <SettingsRow
