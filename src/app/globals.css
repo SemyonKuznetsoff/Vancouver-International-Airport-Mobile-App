@@ -12,6 +12,25 @@
   --color-surface-pressed: rgba(255, 255, 255, 0.4);
   --color-surface-elevated-hover: rgba(255, 255, 255, 0.7);
 
+  /* Map / parking utility surface — dark navy-teal background used by
+     immersive utility flows (Find My Car, terminal map, gate
+     wayfinding). Separate from the hero teal surface so utility
+     screens can read cooler / deeper without affecting hero cards on
+     warm screens. */
+  --color-surface-map: #0a1418;
+  --color-surface-map-elevated: #0e1c22;
+  --color-surface-map-card: rgba(15, 30, 36, 0.78);
+  --color-surface-map-border: rgba(127, 216, 196, 0.16);
+  --color-surface-map-fg: #ffffff;
+  --color-surface-map-fg-muted: #5b7984;
+  --color-surface-map-fg-soft: #4c6b76;
+  --color-map-mint: #7fd8c4;
+  --color-map-mint-bg: rgba(127, 216, 196, 0.18);
+  --color-map-mint-soft: rgba(127, 216, 196, 0.45);
+  --color-map-grid: rgba(127, 216, 196, 0.08);
+  --shadow-map-cta: 0 0 32px -4px rgba(127, 216, 196, 0.45);
+  --shadow-map-sheet: 0 -16px 32px -8px rgba(0, 0, 0, 0.55);
+
   /* Text */
   --color-text-primary: #1d3557;
   --color-text-secondary: #3a6a8a;
