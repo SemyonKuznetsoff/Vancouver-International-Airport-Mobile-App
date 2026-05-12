@@ -114,6 +114,16 @@ export function CarIcon(props: IconProps) {
   );
 }
 
+export function LoungesIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M4 11V8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3" />
+      <path d="M3 11h18a1 1 0 0 1 1 1v5H2v-5a1 1 0 0 1 1-1Z" />
+      <path d="M5 17v2M19 17v2" />
+    </svg>
+  );
+}
+
 export function TicketIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
