@@ -1,0 +1,537 @@
+import Link from "next/link";
+import { AppShellAuthed } from "@/components/AppShellAuthed";
+import { BrandMark } from "@/components/BrandMark";
+import { Button } from "@/components/Button";
+import { Card } from "@/components/Card";
+import { Eyebrow } from "@/components/Eyebrow";
+import { Heading } from "@/components/Heading";
+import { IconTile } from "@/components/IconTile";
+import { LiveIndicator } from "@/components/LiveIndicator";
+import { MetricBlock } from "@/components/MetricBlock";
+import { SettingsRow } from "@/components/SettingsRow";
+import { StatusPill } from "@/components/StatusPill";
+import {
+  AccessibilityIcon,
+  ArrowRightIcon,
+  BellIcon,
+  ChevronRightIcon,
+  DiningIcon,
+  LifeBuoyIcon,
+  MapIcon,
+  NavigationIcon,
+  ParkingIcon,
+  PlaneIcon,
+  ProfileIcon,
+  ScanIcon,
+  SearchIcon,
+  ShieldCheckIcon,
+  SignpostIcon,
+  SparkleIcon,
+  TrainIcon,
+} from "@/components/icons";
+
+type AirportStatus = {
+  airport: string;
+  temperature: string;
+  conditions: string;
+  overall: "On time" | "Boarding" | "Delayed";
+  updated: string;
+};
+
+type LiveMetric = {
+  id: string;
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  value: string;
+  unit?: string;
+  footer: React.ReactNode;
+};
+
+type IntentCard = {
+  id: string;
+  href: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+};
+
+type ServiceRow = {
+  id: string;
+  href: string;
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+};
+
+const airportStatus: AirportStatus = {
+  airport: "YVR",
+  temperature: "11°C",
+  conditions: "Calm",
+  overall: "On time",
+  updated: "just now",
+};
+
+const liveMetrics: LiveMetric[] = [
+  {
+    id: "security",
+    href: "/security",
+    label: "Security",
+    icon: <ShieldCheckIcon size={14} />,
+    value: "8",
+    unit: "min",
+    footer: (
+      <StatusPill tone="success" size="sm" leadingDot>
+        Low
+      </StatusPill>
+    ),
+  },
+  {
+    id: "parking",
+    href: "/parking",
+    label: "Parking",
+    icon: <ParkingIcon size={14} />,
+    value: "62",
+    unit: "%",
+    footer: (
+      <span className="text-micro uppercase text-[var(--color-text-primary)]">
+        P1 · P2 open
+      </span>
+    ),
+  },
+  {
+    id: "skytrain",
+    href: "/transport",
+    label: "SkyTrain",
+    icon: <TrainIcon size={14} />,
+    value: "4",
+    unit: "min",
+    footer: (
+      <span className="text-micro uppercase text-[var(--color-text-primary)]">
+        → Waterfront
+      </span>
+    ),
+  },
+];
+
+const intentDeparting: IntentCard = {
+  id: "departing",
+  href: "/home/departing",
+  title: "Departing",
+  description: "Check-in, gate and wayfinding",
+  icon: <PlaneIcon size={16} />,
+};
+
+const intentSecondary: IntentCard[] = [
+  {
+    id: "arriving",
+    href: "/home/arriving",
+    title: "Arriving",
+    description: "Bags · transit",
+    icon: <NavigationIcon size={16} />,
+  },
+  {
+    id: "pickup",
+    href: "/home/pickup",
+    title: "Pickup",
+    description: "Drop-off · curbside",
+    icon: <MapIcon size={16} />,
+  },
+];
+
+const exploreCard: IntentCard = {
+  id: "explore",
+  href: "/map",
+  title: "Explore the airport",
+  description: "Terminal map · 3 levels · indoor wayfinding",
+  icon: <SignpostIcon size={18} />,
+};
+
+const services: ServiceRow[] = [
+  {
+    id: "accessibility",
+    href: "/services/accessibility",
+    title: "Accessibility & Assistance",
+    description: "Mobility · sensory rooms",
+    icon: <AccessibilityIcon size={18} />,
+  },
+  {
+    id: "customer-care",
+    href: "/services/customer-care",
+    title: "Customer Care",
+    description: "24/7 · Level 3",
+    icon: <LifeBuoyIcon size={18} />,
+  },
+  {
+    id: "shops-dining",
+    href: "/services/shops-dining",
+    title: "Shops & Dining",
+    description: "180+ open now",
+    icon: <DiningIcon size={18} />,
+  },
+  {
+    id: "parking-transport",
+    href: "/services/parking-transport",
+    title: "Parking & Transport",
+    description: "P1 · P2 · SkyTrain",
+    icon: <MapIcon size={18} />,
+  },
+];
+
+export default function HomePage() {
+  return (
+    <AppShellAuthed>
+      <HomeHeader />
+      <div className="flex flex-col gap-8 px-6 pb-8">
+        <HeroAddTripCard status={airportStatus} />
+        <LiveAtYvrSection metrics={liveMetrics} updated={airportStatus.updated} />
+        <ImHereToSection
+          departing={intentDeparting}
+          secondary={intentSecondary}
+          explore={exploreCard}
+        />
+        <UnlockConciergeBanner />
+        <AirportServicesSection services={services} />
+      </div>
+    </AppShellAuthed>
+  );
+}
+
+function HomeHeader() {
+  return (
+    <header className="flex items-center justify-between gap-3 px-6 pt-2 pb-4">
+      <BrandMark />
+      <div className="flex items-center gap-2">
+        <Link
+          href="/profile/notifications"
+          aria-label="Notifications"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
+        >
+          <BellIcon size={16} />
+        </Link>
+        <Link
+          href="/profile"
+          aria-label="Open profile"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-action-primary)] text-[var(--color-action-primary-fg)] transition-colors duration-150 hover:opacity-90"
+        >
+          <ProfileIcon size={16} />
+        </Link>
+      </div>
+    </header>
+  );
+}
+
+function HeroAddTripCard({ status }: { status: AirportStatus }) {
+  return (
+    <section
+      aria-label="Plan today"
+      className="relative overflow-hidden rounded-[var(--radius-card)] p-6 text-[var(--color-surface-hero-fg)]"
+      style={{
+        backgroundImage:
+          "linear-gradient(135deg, var(--color-surface-hero-start) 0%, var(--color-surface-hero-end) 100%)",
+      }}
+    >
+      <span className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-chip-border)] bg-[var(--color-surface-hero-chip)] px-3 py-1 text-micro uppercase text-[var(--color-surface-hero-fg)]">
+        <SparkleIcon size={12} />
+        <span>
+          {status.airport} · {status.temperature} · {status.conditions}
+        </span>
+      </span>
+
+      <Heading size="display" tone="hero" className="mt-8">
+        Where to,
+        <br />
+        <em>today?</em>
+      </Heading>
+
+      <p className="mt-4 text-body text-[var(--color-surface-hero-fg-muted)]">
+        Add a trip and we&rsquo;ll guide every step — from curb to gate, calmly.
+      </p>
+
+      <AddTripControl />
+
+      <Link
+        href="/trips/import"
+        aria-label="Scan boarding pass or import a booking"
+        className="mt-4 inline-flex items-center gap-2 text-body-sm text-[var(--color-surface-hero-fg-muted)] transition-colors duration-150 hover:text-[var(--color-surface-hero-fg)]"
+      >
+        <ScanIcon size={14} />
+        <span>Scan boarding pass or import booking</span>
+        <ArrowRightIcon size={12} />
+      </Link>
+    </section>
+  );
+}
+
+function AddTripControl() {
+  return (
+    <form
+      role="search"
+      action="/trips/new"
+      method="get"
+      className="mt-6 flex items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-bg)] p-1"
+    >
+      <label className="flex flex-1 items-center gap-2 px-3">
+        <span
+          aria-hidden
+          className="inline-flex shrink-0 items-center text-[var(--color-text-secondary)]"
+        >
+          <SearchIcon size={16} />
+        </span>
+        <span className="sr-only">Add a trip — search by flight, airline, or city</span>
+        <input
+          type="search"
+          name="q"
+          placeholder="Flight, airline or city"
+          aria-label="Search by flight, airline or city"
+          className="h-11 w-full bg-transparent text-body-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
+        />
+      </label>
+      <Link
+        href="/trips/new"
+        aria-label="Add a trip"
+        className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-action-primary)] px-4 text-body-sm font-semibold text-[var(--color-action-primary-fg)] transition-opacity duration-150 hover:opacity-90"
+      >
+        <span aria-hidden>+</span>
+        <span>Add trip</span>
+      </Link>
+    </form>
+  );
+}
+
+function LiveAtYvrSection({
+  metrics,
+  updated,
+}: {
+  metrics: LiveMetric[];
+  updated: string;
+}) {
+  return (
+    <section
+      aria-labelledby="live-at-yvr-heading"
+      className="flex flex-col gap-3"
+    >
+      <header className="flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Eyebrow tone="primary">
+            <span id="live-at-yvr-heading">Live at YVR</span>
+          </Eyebrow>
+          <LiveIndicator status="live" label="On time" />
+        </div>
+        <span className="text-label text-[var(--color-text-muted)]">
+          Updated · {updated}
+        </span>
+      </header>
+
+      <Card
+        as="article"
+        padding="none"
+        aria-label="Live airport metrics"
+        className="grid grid-cols-3 divide-x divide-[var(--color-border-soft)]"
+      >
+        {metrics.map((metric) => (
+          <LiveMetricColumn key={metric.id} metric={metric} />
+        ))}
+      </Card>
+    </section>
+  );
+}
+
+function LiveMetricColumn({ metric }: { metric: LiveMetric }) {
+  return (
+    <Link
+      href={metric.href}
+      aria-label={`${metric.label} — ${metric.value}${metric.unit ?? ""}`}
+      className="flex flex-col gap-2 px-4 py-4 transition-colors duration-150 hover:bg-[var(--color-surface-hover)]"
+    >
+      <span className="inline-flex items-center gap-1 text-micro uppercase text-[var(--color-text-secondary)]">
+        <span aria-hidden className="text-[var(--color-text-primary)]">
+          {metric.icon}
+        </span>
+        <span>{metric.label}</span>
+      </span>
+      <MetricBlock
+        value={
+          <span className="inline-flex items-baseline gap-1">
+            <span>{metric.value}</span>
+            {metric.unit ? (
+              <span className="text-label text-[var(--color-text-secondary)]">
+                {metric.unit}
+              </span>
+            ) : null}
+          </span>
+        }
+        label=""
+        align="left"
+      />
+      <span className="inline-flex items-center">{metric.footer}</span>
+    </Link>
+  );
+}
+
+function ImHereToSection({
+  departing,
+  secondary,
+  explore,
+}: {
+  departing: IntentCard;
+  secondary: IntentCard[];
+  explore: IntentCard;
+}) {
+  return (
+    <section
+      aria-labelledby="intent-heading"
+      className="flex flex-col gap-4"
+    >
+      <Eyebrow tone="primary">
+        <span id="intent-heading">I&rsquo;m here to</span>
+      </Eyebrow>
+
+      <div className="grid grid-cols-2 gap-3">
+        <DepartingHeroCard card={departing} />
+        <div className="flex flex-col gap-3">
+          {secondary.map((card) => (
+            <CompactIntentCard key={card.id} card={card} />
+          ))}
+        </div>
+      </div>
+
+      <SettingsRow
+        href={explore.href}
+        icon={explore.icon}
+        title={explore.title}
+        description={explore.description}
+      />
+    </section>
+  );
+}
+
+function DepartingHeroCard({ card }: { card: IntentCard }) {
+  return (
+    <Link
+      href={card.href}
+      aria-label={`${card.title} — ${card.description}`}
+      className="relative flex h-full min-h-[196px] flex-col justify-between overflow-hidden rounded-[var(--radius-card)] p-5 text-[var(--color-surface-hero-fg)] transition-opacity duration-150 hover:opacity-95"
+      style={{
+        backgroundImage:
+          "linear-gradient(135deg, var(--color-surface-hero-start) 0%, var(--color-surface-hero-end) 100%)",
+      }}
+    >
+      <div className="flex items-start justify-between">
+        <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-chip-border)] bg-[var(--color-surface-hero-chip)] text-[var(--color-surface-hero-fg)]">
+          {card.icon}
+        </span>
+        <span
+          aria-hidden
+          className="inline-flex items-center text-[var(--color-surface-hero-fg-muted)]"
+        >
+          <ArrowRightIcon size={16} />
+        </span>
+      </div>
+      <div className="flex flex-col gap-1">
+        <p className="text-section-title text-[var(--color-surface-hero-fg)]">
+          {card.title}
+        </p>
+        <p className="text-label text-[var(--color-surface-hero-fg-muted)]">
+          {card.description}
+        </p>
+      </div>
+    </Link>
+  );
+}
+
+function CompactIntentCard({ card }: { card: IntentCard }) {
+  return (
+    <Card as="article" padding="compact" aria-label={card.title}>
+      <Link
+        href={card.href}
+        aria-label={`${card.title} — ${card.description}`}
+        className="flex flex-col gap-3"
+      >
+        <IconTile size={32} className="bg-[var(--color-surface-tile)]">
+          <span className="text-[var(--color-text-primary)]">{card.icon}</span>
+        </IconTile>
+        <div className="flex flex-col gap-1">
+          <p className="text-body-sm font-semibold text-[var(--color-text-primary)]">
+            {card.title}
+          </p>
+          <p className="text-label text-[var(--color-text-secondary)]">
+            {card.description}
+          </p>
+        </div>
+      </Link>
+    </Card>
+  );
+}
+
+function UnlockConciergeBanner() {
+  return (
+    <Card as="section" aria-label="Unlock your concierge">
+      <Link
+        href="/trips/new"
+        className="flex items-center gap-4"
+        aria-label="Add a trip to unlock concierge features"
+      >
+        <IconTile size={40} className="bg-[var(--color-surface-tile)]">
+          <span className="text-[var(--color-text-primary)]">
+            <SparkleIcon size={16} />
+          </span>
+        </IconTile>
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <p className="text-body-sm font-semibold text-[var(--color-text-primary)]">
+            Unlock your concierge
+          </p>
+          <p className="text-label text-[var(--color-text-secondary)]">
+            Gate updates, walk-time, security ETA — all unlocked when a trip is linked.
+          </p>
+        </div>
+        <span
+          aria-hidden
+          className="inline-flex shrink-0 items-center text-[var(--color-text-muted)]"
+        >
+          <ChevronRightIcon size={16} />
+        </span>
+      </Link>
+    </Card>
+  );
+}
+
+function AirportServicesSection({ services }: { services: ServiceRow[] }) {
+  return (
+    <section
+      aria-labelledby="airport-services-heading"
+      className="flex flex-col gap-4"
+    >
+      <header className="flex items-end justify-between gap-3">
+        <Eyebrow tone="primary">
+          <span id="airport-services-heading">Airport services</span>
+        </Eyebrow>
+        <Link
+          href="/services"
+          className="text-body-sm font-semibold text-[var(--color-text-primary)] hover:text-[var(--color-text-secondary)]"
+        >
+          All
+        </Link>
+      </header>
+
+      <Card
+        padding="none"
+        className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border-soft)]"
+      >
+        {services.map((service) => (
+          <SettingsRow
+            key={service.id}
+            href={service.href}
+            icon={service.icon}
+            title={service.title}
+            description={service.description}
+          />
+        ))}
+      </Card>
+
+      <Button variant="ghost" href="/services">
+        Open the full directory
+      </Button>
+    </section>
+  );
+}

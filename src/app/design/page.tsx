@@ -29,6 +29,7 @@ import { Eyebrow } from "@/components/Eyebrow";
 import { FieldMessage } from "@/components/FieldMessage";
 import { GateDisplay } from "@/components/GateDisplay";
 import { Heading } from "@/components/Heading";
+import { IconTile } from "@/components/IconTile";
 import { InlineAlert } from "@/components/InlineAlert";
 import { LargeTitleHeader } from "@/components/LargeTitleHeader";
 import { LiveIndicator } from "@/components/LiveIndicator";
@@ -43,6 +44,7 @@ import { StickyBottomCTA } from "@/components/StickyBottomCTA";
 import { TextField } from "@/components/TextField";
 import { Toggle } from "@/components/Toggle";
 import {
+  AccessibilityIcon,
   AeroplanBadge,
   AppleIcon,
   ArrowRightIcon,
@@ -50,13 +52,18 @@ import {
   BookmarkIcon,
   ClockIcon,
   CreditCardIcon,
+  DiningIcon,
   GoogleIcon,
   IdCardIcon,
   LifeBuoyIcon,
   LocationPinIcon,
   LockIcon,
   MailIcon,
+  ParkingIcon,
   PlaneIcon,
+  ScanIcon,
+  SignpostIcon,
+  TrainIcon,
 } from "@/components/icons";
 
 export default function DesignPreviewPage() {
@@ -338,6 +345,45 @@ export default function DesignPreviewPage() {
               description="Concierge · Lost & found · Feedback"
             />
           </Card>
+        </Section>
+
+        {/* ============================================================ */}
+        <Section
+          title="Home screen icons"
+          description="New glyphs introduced for the No Trip Home pattern. Render inside an IconTile or directly in 12 – 18px contexts. See design-system.md §2b."
+        >
+          <ul className="grid grid-cols-3 gap-3">
+            {[
+              { id: "parking", label: "Parking", icon: <ParkingIcon size={18} /> },
+              { id: "train", label: "SkyTrain", icon: <TrainIcon size={18} /> },
+              { id: "scan", label: "Scan / import", icon: <ScanIcon size={18} /> },
+              {
+                id: "accessibility",
+                label: "Accessibility",
+                icon: <AccessibilityIcon size={18} />,
+              },
+              { id: "dining", label: "Dining", icon: <DiningIcon size={18} /> },
+              {
+                id: "signpost",
+                label: "Wayfinding",
+                icon: <SignpostIcon size={18} />,
+              },
+            ].map((entry) => (
+              <li
+                key={entry.id}
+                className="flex flex-col items-start gap-2"
+              >
+                <IconTile size={40} className="bg-[var(--color-surface-tile)]">
+                  <span className="text-[var(--color-text-primary)]">
+                    {entry.icon}
+                  </span>
+                </IconTile>
+                <p className="text-label text-[var(--color-text-secondary)]">
+                  {entry.label}
+                </p>
+              </li>
+            ))}
+          </ul>
         </Section>
 
         {/* ============================================================ */}

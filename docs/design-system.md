@@ -39,7 +39,16 @@ disagrees with the code, the doc wins — fix the code.
 | `/` (Welcome) | n/a | `/onboarding/sign-in` |
 | `/onboarding/sign-in` | `/` | `/onboarding/permissions` (guest) |
 | `/onboarding/permissions` | `/onboarding/sign-in` | `/` (start app) |
-| `/profile` (Profile main) | n/a — tab root | `/profile/settings`, `/profile/personal`, `/profile/payment`, `/profile/security`, `/profile/preferences`, `/profile/notifications`, `/profile/vault`, `/saved`, `/support`, `/flights/<id>`, `/flights/<id>/navigate` (placeholders today) |
+| `/home` (Home — No Trip state) | n/a — tab root | `/trips/new`, `/trips/import`, `/security`, `/parking`, `/transport`, `/home/departing`, `/home/arriving`, `/home/pickup`, `/map`, `/services`, `/services/<category>`, `/profile`, `/profile/notifications` (placeholders today) |
+| `/profile` (Profile main) | n/a — tab root | `/profile/saved-trips`, `/profile/settings`, `/profile/personal`, `/profile/payment`, `/profile/security`, `/profile/preferences`, `/profile/notifications`, `/profile/vault`, `/saved`, `/support`, `/flights/<id>`, `/flights/<id>/navigate` (placeholders today) |
+| `/profile/saved-trips` (Saved Trips) | `/profile` | `/flights/<id>`, `/flights/<id>/navigate`, `/profile/saved-trips/all` (placeholders today) |
+
+**Onboarding root vs. authenticated Home.** `/` is still the onboarding /
+welcome flow for unauthenticated users. `/home` is the **authenticated
+Home tab root** — specifically the "No Trip yet" state. Eventually
+authenticated users should be redirected from `/` to `/home`; until that
+gate exists, both routes coexist and the BottomTabBar's Home tab points
+at `/home`.
 
 When new routes are added, append rows to this table in the same PR.
 
@@ -301,6 +310,82 @@ A small centred app-version line at the bottom of the screen renders as:
 
 `tabular-nums` keeps the version numerals from shimmying when the build
 rolls.
+
+### No Trip Home pattern
+
+`/home` is the **authenticated Home tab root** when the user has no
+active saved trip. The screen's only job is to answer one question:
+*"What can I do before I have a trip saved?"* — and the layout is
+calibrated to that single question. The reference implementation is
+[src/app/home/page.tsx](../src/app/home/page.tsx). Future tab roots
+(Flights, Map, Services) should copy this skeleton.
+
+**Hierarchy.** Top-to-bottom strictly follows this order:
+
+1. **Add or import a trip.** The hero card is the screen's single
+   primary action surface. It contains a context chip (weather /
+   airport conditions), the screen's `<h1>` (`Heading size="display"
+   tone="hero">`), a one-line supporting paragraph, the
+   search + Add Trip composite, and a ghost "Scan boarding pass or
+   import booking" link. No other section may compete with this card
+   for attention.
+2. **Live YVR status.** A single row of three live metric columns
+   inside one `<Card padding="none">` — Security, Parking, SkyTrain.
+   Every value uses `<MetricBlock>`. The section eyebrow pairs with
+   a `<LiveIndicator status="live" label="…">` and a right-aligned
+   "Updated · just now" `text-label` timestamp.
+3. **Common airport tasks** — the "I'm here to" grid (one dark hero
+   CTA + two compact tiles + a wide explore-the-airport
+   `<SettingsRow>`), then an optional unlock-concierge banner that
+   re-routes to Add Trip, then the airport-services list rendered as a
+   `<Card padding="none">` group of `<SettingsRow>`s.
+
+**Rules.** The Home screen MUST NOT:
+
+- Surface promotional content above the main action.
+- Place a duplicate Add Trip CTA in the hero (the search composite is the
+  single CTA).
+- Render an `<EmptyState>` as the main content — the hero card *is* the
+  no-trip empty state.
+- Use status tones (`success` / `warning` / `danger`) decoratively
+  outside live data (Security "Low" status, parking availability,
+  SkyTrain next-train timing).
+
+**Known Home-specific composition patterns (current one-offs).** These
+are documented exceptions until promotion paths land. New screens may
+copy them, but only on equivalent surfaces — do not export them to
+on-aurora contexts.
+
+- **Hero search + Add Trip composite.** `SearchField` has no
+  trailing-CTA slot today, so the hero's "Flight, airline or city"
+  input + "+ Add Trip" pill is composed inline inside a
+  `rounded-[var(--radius-panel)]` wrapper on the mist surface. Allowed
+  on `/home` for now. **Future improvement:** extend `SearchField` with
+  a `trailingAction` slot, then refactor `/home` onto the canonical
+  primitive.
+- **Header notification + avatar chips.** The 44×44 round chips at the
+  top-right (bell + avatar) are composed inline in `/home`, mirroring
+  the settings gear in Profile main and the back chip in Saved Trips.
+  **Future improvement:** promote to a `HeaderIconButton` primitive
+  once a fourth consumer needs it.
+- **Hero-surface icon chips.** The 36×36 rounded-pill chip on the
+  Departing CTA hero card and the live-sync pill on Saved Trips share
+  the same hero-token chrome (`--color-surface-hero-chip*` +
+  `--radius-pill`). **Future improvement:** extend `IconTile` with
+  `tone="hero"` + `radius="pill"` so hero-surface chips consume the
+  canonical primitive.
+
+**Loading / empty / error.**
+
+- *Loading:* swap each section's payload for matching `<Skeleton>`
+  blocks; wrap each section in `aria-busy={loading}`. The hero's
+  heading text stays visible — it's product copy, not data.
+- *Empty:* the screen's reason-to-exist. The hero card *is* the empty
+  state; do not nest a generic `<EmptyState>`.
+- *Error (live YVR feed unreachable):* swap the live-metric `<Card>`
+  for `<InlineAlert variant="warning" description="We can't reach live
+  airport data right now." action={…} />`. Hero and intent grid stay
+  rendered.
 
 ---
 
@@ -3062,7 +3147,7 @@ visibly changing existing screens.**
 | `LargeTitleHeader` | `src/components/LargeTitleHeader.tsx` | iOS-style display title with optional back chip + trailing slot. |
 | `StickyBottomCTA` | `src/components/StickyBottomCTA.tsx` | Sticky bottom action(s) inside a scroll container. |
 | `SettingsRow` | `src/components/SettingsRow.tsx` | Authed-app settings / vault list row. Composes `<IconTile>` + `ChevronRightIcon`. Group rows inside a `<Card padding="none">` with hairline dividers. See §12k and §2b. |
-| `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`, `SettingsIcon`, `SparkleIcon`, `SyncIcon`, `NavigationIcon`, `IdCardIcon`, `CreditCardIcon`, `SlidersIcon`, `BookmarkIcon`, `LifeBuoyIcon`, `ClockIcon`). |
+| `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`, `SettingsIcon`, `SparkleIcon`, `SyncIcon`, `NavigationIcon`, `IdCardIcon`, `CreditCardIcon`, `SlidersIcon`, `BookmarkIcon`, `LifeBuoyIcon`, `ClockIcon`, `ParkingIcon`, `TrainIcon`, `ScanIcon`, `AccessibilityIcon`, `DiningIcon`, `SignpostIcon`). |
 
 ---
 

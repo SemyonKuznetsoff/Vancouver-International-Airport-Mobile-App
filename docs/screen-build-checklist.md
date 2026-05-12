@@ -72,6 +72,36 @@ ones above.
       pairs are not supported by the current Button system; if a future
       screen needs them, propose `Button size="compact"` first.
 
+### Home-style tab roots (`/home`, future `/flights`, `/map`, `/services`)
+
+Use the **No Trip Home pattern** (`design-system.md` §2b) when building
+an authenticated *tab root* whose primary purpose is "what can the user
+do right now?". `/home` is the reference implementation.
+
+- [ ] **Shell is `<AppShellAuthed>`** and `<BottomTabBar>` is owned by
+      the shell. The tab matching the route lights up automatically via
+      `usePathname()` — do not pass `activeHref`.
+- [ ] **One main action at the top of the screen.** The screen has
+      exactly one primary CTA, and it lives at the top of the content
+      column inside the hero card. No competing CTA above it, no
+      promotional banner, no secondary CTA in the hero footer.
+- [ ] **Live airport data uses the travel atoms.** Every live value
+      (security wait, parking availability, SkyTrain timing, security
+      status badges) renders through `<MetricBlock>`, `<StatusPill>`,
+      and `<LiveIndicator>` — never inline `text-[NNpx]` digits, never
+      hand-rolled status chips. Refer to `design-system.md` §12h.
+- [ ] **No promotional content above the main action.** Tier
+      upgrade nudges, marketing banners, and cross-sell tiles belong
+      below the hero, the live-status strip, and the common-task grid
+      (in that order). If a banner needs to sit higher, it must be
+      time-critical live data (gate change, security closure) and use
+      `<InlineAlert role="alert">`.
+- [ ] **Empty-state policy.** The screen itself can *be* an empty
+      state (e.g. `/home` is the no-trip empty state — the hero card is
+      the action surface). Do not nest an additional `<EmptyState>` as
+      the main content. Use `<EmptyState>` only for nested feeds that
+      are themselves empty (e.g. "No saved journeys" inside a section).
+
 ## Live-data screens
 
 Any screen whose primary content depends on a remote fetch must
