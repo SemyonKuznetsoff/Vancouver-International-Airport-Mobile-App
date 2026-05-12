@@ -203,22 +203,57 @@ If this lockup appears on a second authed screen, promote it to a
 `HeaderIconButton` primitive — until then, keep the inline form identical
 to the Profile example so the chrome stays consistent.
 
-### Profile identity hero card
+### Hero surface (Profile identity, Home hero, Saved Trips header)
 
-The dark teal identity card on `/profile` is **screen-local** today: it
-composes inline using the §5 hero-surface semantic tokens
-(`--color-surface-hero-*`) plus glass tile children for the four stat
-pills inside. It is **not** a `<Card>` — Card hard-codes the glass fill.
+The dark teal panel that anchors `/profile`, `/profile/saved-trips`,
+and `/home` lives on the same surface family. Use the `<HeroSurface>`
+primitive — it bakes the canonical chrome (configurable radius + hero
+gradient + hero foreground) in one place:
 
-If a second hero card appears (e.g. a "Membership" panel on a future
-screen), promote the inline composition to a `<HeroCard>` primitive
-before duplicating the gradient. Until then:
+```tsx
+<HeroSurface as="section" className="p-6">
+  <Eyebrow tone="hero">Your Travel Vault</Eyebrow>
+  <Heading size="display" tone="hero" weight="light">
+    Where to,
+    <br />
+    <em>today?</em>
+  </Heading>
+</HeroSurface>
+```
 
-- Use the `--color-surface-hero-*` tokens for the gradient, foreground,
-  inner glass tiles, chip borders, and avatar surface.
-- Use `--color-hero-tier-gold-*` for a loyalty-tier chip. Never use the
-  status tones (`success` / `warning` / `danger`) decoratively — status
-  is reserved for live data per §5.
+Wrap an interactive hero inside a `<Link>` so the link owns the
+landmark:
+
+```tsx
+<Link href={…} aria-label={…} className="block transition-opacity hover:opacity-95">
+  <HeroSurface as="div" radius="card" className="flex h-full min-h-[196px] flex-col justify-between p-5">
+    …
+  </HeroSurface>
+</Link>
+```
+
+**Radius defaults.** `radius="hero"` (36px, Home hero) is the premium
+default. `radius="card"` (24px) suits nested hero cards (Departing
+CTA). `radius="panel"` (22px) matches glass card chrome.
+`radius="none"` for full-bleed bands (Saved Trips header).
+
+**Inner content rules.**
+
+- Use `--color-surface-hero-fg`, `--color-surface-hero-fg-muted`, and
+  `--color-surface-hero-fg-soft` for typography.
+- Use `--color-surface-hero-chip*`, `--color-surface-hero-tile*`, and
+  `--color-surface-hero-avatar*` for inner chips, glass tiles, avatar.
+- Use `--color-hero-tier-gold-*` for a loyalty-tier chip — never status
+  tones for decoration.
+- Pair with `<Heading tone="hero">` and `<Eyebrow tone="hero">`. Use
+  `weight="light"` on display headings for the elegant hero render.
+
+Do **not** nest `<Card>` (any tone) inside `<HeroSurface>`.
+
+**Migration note.** `/profile` identity card and `/profile/saved-trips`
+header still paint the gradient inline (each with their own angle:
+`167deg` / `180deg`). They should migrate onto
+`<HeroSurface angle="…" radius="…">` in a follow-up consistency PR.
 
 ### Settings / vault row groups
 
@@ -466,6 +501,7 @@ At the default 16px root these resolve to the documented px values.
 
 | Token | Value | Used in |
 |---|---|---|
+| `--font-weight-light` | 300 | `<Heading weight="light">` (Home hero "Where to, today?"). Reserve for hero-context display headings where elegance > assertion. |
 | `--font-weight-regular` | 400 | body text |
 | `--font-weight-medium` | 500 | emphasised body, button labels |
 | `--font-weight-semibold` | 600 | headings, micro-labels |
@@ -491,6 +527,7 @@ without hard-coding weights:
 | Screen title | `--text-title` / `text-title` | 30 / 1.1 | 600 | -0.025em | `<Heading size="title">` |
 | Body | `--text-body` / `text-body` | 14 / 1.55 | 400 | 0 | screen body copy |
 | Body small (card text) | `--text-body-sm` / `text-body-sm` | 13 / 1.55 | 500 | 0 | inside `<Card>` |
+| Body small emphasised | `--text-body-sm-emphasis` / `text-body-sm-emphasis` | 13 / 1.55 | 600 | 0 | small-card titles (`CompactIntentCard`, `UnlockConciergeBanner`, intent rows), CTA labels at body-sm size (Home Add Trip pill, floating-nav active tab label), inline section-header navigation links (`All`, `Manage`, `See all`). Use this role instead of `text-body-sm font-semibold`. |
 | Label / caption | `--text-label` / `text-label` | 11 / 1.5 | 400 | 0 | metadata, captions |
 | Eyebrow | `--text-eyebrow` / `text-eyebrow` | 11 / 1.5 | 400 | +0.22em uppercase | `<Eyebrow>` |
 | Micro-label (uppercase) | `--text-micro` / `text-micro` | 10 / 1.5 | 600 | +0.16em uppercase | card footer labels |
@@ -616,6 +653,24 @@ it onto a semantic token.
 | `--color-surface-hover` | `--white-a30` | Hover tint on translucent rows (e.g. `AuthOption`, `SettingsRow`). |
 | `--color-surface-pressed` | `--white-a40` | Pressed tint on translucent rows. |
 | `--color-surface-tile` | `rgba(29,53,87, 0.06)` (navy @ 6%) | Warm inner-card tile fill. Use for the leading `<IconTile>` inside `<SettingsRow>`, the trip card's gate/boarding/seat strip, and the trip-card header airline chip. Distinct from `--color-surface-elevated`, which is translucent over aurora — this tone is meant to sit **inside** a card. |
+| `--color-bg-warm` | `#f5f4ef` | Warm-cream alternate page bg. Opt-in via `<AppShellAuthed tone="warm">` (Home). Pair with `<Card tone="solid">` for inner surfaces. |
+| `--color-surface-solid` | `#ffffff` | Opaque white card fill — `<Card tone="solid">`. |
+| `--color-border-solid` | `#eae6e1` | Warm hairline border paired with `--color-surface-solid`. |
+| `--shadow-card-solid` | `0 8px 24px -12px rgba(10,90,102, 0.12)` | Warm teal-tinted lift used by `<Card tone="solid">` and the Departing CTA. |
+
+### Semantic — Navigation
+
+Reserved for the floating dark pill bottom nav (`<BottomTabBar>`). Do
+not consume these tokens elsewhere.
+
+| Token | Value | Usage |
+|---|---|---|
+| `--color-nav-surface` | `#1a1918` | Floating bar fill (warm near-black). |
+| `--color-nav-surface-fg` | `rgba(245,244,239, 0.55)` | Inactive tab icon foreground. |
+| `--color-nav-surface-fg-active` | `#f5f4ef` | Active-pill text + dark profile/avatar chip text. |
+| `--color-nav-active-bg` | `#0a5a66` | Active-tab pill fill (teal). |
+| `--shadow-nav` | `0 10px 30px -8px rgba(10,25,24, 0.45)` | Drop shadow under the floating nav. |
+| `--shadow-hero-composite` | `0 20px 24px -8px rgba(0,0,0, 0.4)` | Heavy true-black drop used by the Home Add Trip search composite — sits against the hero surface so it needs a black shadow, not the warm teal-tinted card lift. |
 
 ### Semantic — Text
 
@@ -692,11 +747,13 @@ in the app — never inline `linear-gradient(…, #0e4a4e, …)` or raw
 
 | Token | Value | Usage |
 |---|---|---|
-| `--color-surface-hero-start` | `#0e4a4e` | Hero gradient start stop. |
-| `--color-surface-hero-end` | `#0a3a3d` | Hero gradient end stop. |
-| `--color-surface-hero-fg` | `#ffffff` | High-contrast text on the hero surface. |
-| `--color-surface-hero-fg-muted` | `rgba(255,255,255, 0.65)` | Secondary text on the hero surface (email, stat labels, `LiveIndicator` label). |
-| `--color-surface-hero-fg-soft` | `rgba(255,255,255, 0.55)` | Tertiary text on the hero surface (sync footnote). |
+| `--color-surface-hero-start` | `#0a5a66` | Hero gradient start stop (top-left). Brighter teal. |
+| `--color-surface-hero-mid` | `#0e4e5a` | Hero gradient mid-stop (~55%). Holds the middle of the ramp so the surface reads atmospheric instead of a hard two-stop fade. |
+| `--color-surface-hero-end` | `#072e36` | Hero gradient end stop (bottom-right). Deeper teal vignette. |
+| `--color-surface-hero-fg` | `#f5f4ef` | High-contrast text on the hero surface (warm cream — matches the Home / Saved Trips Figma). |
+| `--color-surface-hero-fg-muted` | `rgba(245,244,239, 0.72)` | Secondary text on the hero surface (email, stat labels, `LiveIndicator` label). |
+| `--color-surface-hero-fg-soft` | `rgba(245,244,239, 0.55)` | Tertiary text on the hero surface (sync footnote). |
+| `--color-surface-hero-fg-accent` | `#9dd9e0` | Cyan-teal accent foreground for italic-accent phrases inside `<Heading tone="hero">` (e.g. the Home hero's "today?"). `<Heading tone="hero">` automatically tints any inner `<em>` with this token. |
 | `--color-surface-hero-tile` | `rgba(255,255,255, 0.08)` | Inner glass tile fill on the hero (stat pills). |
 | `--color-surface-hero-tile-border` | `rgba(255,255,255, 0.1)` | Border on hero glass tiles. |
 | `--color-surface-hero-chip` | `rgba(255,255,255, 0.1)` | Membership chip fill on the hero. |
@@ -705,7 +762,7 @@ in the app — never inline `linear-gradient(…, #0e4a4e, …)` or raw
 | `--color-surface-hero-avatar-border` | `rgba(255,255,255, 0.18)` | Avatar tile border. |
 
 **Gradient lockup.** The hero surface is always painted as a
-`linear-gradient(167deg, var(--color-surface-hero-start) 8%, var(--color-surface-hero-end) 92%)`.
+`linear-gradient(<angle>, var(--color-surface-hero-start) 0%, var(--color-surface-hero-mid) 55%, var(--color-surface-hero-end) 100%)` (this is what `<HeroSurface>` bakes by default).
 Do not alter the angle or stops without updating this section.
 
 ### Semantic — Membership tier
@@ -755,6 +812,16 @@ comes from this component. Other primitives (e.g. `AuthOptionGroup`,
 - Padding: 20px (`p-5`) default. Use `padding="compact"` (16px) for dense
   lists, `padding="lg"` (24px) for hero cards, or `padding="none"` when
   children own their own padding.
+
+### Tone variants
+
+| Tone | Surface chrome | When to use |
+|---|---|---|
+| `glass` (default) | `--color-surface-card` (`white-a40`) + `--color-border` + `--shadow-card` | Aurora screens (Profile, Saved Trips, onboarding-adjacent surfaces). Default behaviour — no consumer changes required. |
+| `solid` | `--color-surface-solid` (`#fff`) + `--color-border-solid` (`#eae6e1`) + `--shadow-card-solid` (warm teal-tinted lift) | Screens that opt into `<AppShellAuthed tone="warm">` (Home today). |
+
+A solid card on aurora reads stark; a glass card on warm reads
+washed-out. Match the tone to the surrounding shell tone.
 
 ### Padding variants
 
@@ -2132,9 +2199,9 @@ follow the migration discipline in §12f.
 | `AuroraBackground` | stable | Static radial-gradient aurora. | — | — | `aria-hidden` (decorative). |
 | `BrandMark` | stable | YVR Concierge lockup. | — | — | `aria-label="YVR Concierge"`. |
 | `ScreenHeader` | stable | Back chip + step label / trailing content. | — | — | Back link has `aria-label` (default "Go back"). |
-| `Heading` | stable | Display / title headings. | `display`, `title`; `tone="primary" \| "hero"` | `display`, `title` (via `size`) | One `<h1>` per page (default `as="h1"`); consumer picks `as` for subsequent. `tone="hero"` only on a hero surface. |
+| `Heading` | stable | Display / title headings. | `display`, `title`; `tone="primary" \| "hero"`; `weight="default" \| "light"` | `display`, `title` (via `size`) | One `<h1>` per page (default `as="h1"`); consumer picks `as` for subsequent. `tone="hero"` only on a hero surface. `weight="light"` only on hero-context display headings (Home). |
 | `Eyebrow` | stable | Small uppercase label. | `tone="primary" \| "secondary" \| "hero"` | — | Decorative; pair with a `<Heading>`. `tone="hero"` only on a hero surface. |
-| `Card` | stable | Single source of glass-card chrome. | — | `none`, `compact`, `default`, `lg` (via `padding`) | Non-interactive by default; consumer adds role if needed. |
+| `Card` | stable | Single source of card chrome (glass + solid surfaces). | `tone="glass" \| "solid"` | `none`, `compact`, `default`, `lg` (via `padding`) | Non-interactive by default. Pick `solid` only on `<AppShellAuthed tone="warm">` screens. |
 | `Button` | stable | Primary / ghost CTA. | `primary`, `ghost` | — | Tap target ≥ 44; icon-only requires `aria-label`. Loading sets `aria-busy`. |
 | `Toggle` | stable | Accessible on/off switch. | — | — | `role="switch" aria-checked` + required `ariaLabel`. `aria-busy` while pending. |
 | `IconTile` | stable | Translucent icon chip. | — | numeric `size` | Decorative; the inner icon should be `aria-hidden`. |
@@ -2147,6 +2214,9 @@ follow the migration discipline in §12f.
 | `InlineAlert` | beta | Flat status banner. | `info`, `success`, `warning`, `danger`, `neutral` | — | `role` prop chooses `status` (default) or `alert`. |
 | `RouteTimeline` | beta | Split origin/destination + dashed centre line + plane glyph + duration. Travel atom. | — | — | `aria-label="<origin> to <destination>"` on the wrapper; dots / dashed line / icon are `aria-hidden`. |
 | `SettingsRow` | beta | Authed-app settings / vault list row (icon + title + description + optional trailing + chevron). | — | — | Renders as `<Link>` or `<button>` — global `:focus-visible` ring; chevron is `aria-hidden`; tap target ≥ 44px tall. |
+| `HeroSurface` | beta | Dark teal gradient panel — single source of hero chrome (configurable radius + hero gradient + hero foreground). | `as="section" \| "div" \| "article"`; `angle` (default `"135deg"`); `radius="hero" \| "card" \| "panel" \| "none"` (default `"hero"`) | — | Decorative chrome — accessibility lives on the wrapping `<Link>` or inner `<Heading tone="hero">`. Spreads native HTML attributes onto the rendered element. |
+| `AppShellAuthed` | stable | Authenticated-app shell. Floating `<BottomTabBar>` + tone-aware page bg. | `tone="aurora" \| "warm"`; `hideTabBar` | — | Sets `--color-bg-page` so the floating nav fades correctly. `aurora` keeps the radial gradient; `warm` swaps to opaque cream. |
+| `BottomTabBar` | stable | Floating dark pill bottom nav. Five fixed tabs; active tab renders as a teal pill with icon + label inline; inactive tabs render icon only. | — | — | `<nav aria-label="Main">`; each tab `<Link>` has `aria-current="page"` when active and `aria-label={label}` so inactive (icon-only) tabs still announce. |
 | `icons` (module) | stable | Inline SVG icon set incl. `SpinnerIcon`. | — | numeric `size` | All icons default to `aria-hidden`; meaningful icons get `aria-label` from the parent button. |
 
 Status legend:
@@ -2241,19 +2311,22 @@ visible. No extra component logic.
 <MetricBlock value="8 min" label="Security wait" />
 <MetricBlock value="72%" label="Parking" tone="warning" align="center" />
 <MetricBlock value="420 m" label="Walk to D73" helper="8 min walk" />
+<MetricBlock value="8" label="Security" hideLabel />
 ```
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `value` | `ReactNode` | (required) | Renders at `text-title tabular-nums`. Pass the formatted string ("8 min", "72%", "420 m") per content-guide §6. |
-| `label` | `string` | (required) | `text-micro uppercase`, secondary colour. |
+| `label` | `string` | (required) | `text-micro uppercase`, secondary colour. Always required, even when hidden — used as the accessible name. |
 | `helper` | `string` | — | Optional second line at `text-label` muted. |
 | `tone` | `"neutral" \| "success" \| "warning" \| "danger" \| "info"` | `"neutral"` | Tints **the value only**. Label + helper stay neutral. |
 | `align` | `"left" \| "center" \| "right"` | `"left"` | Useful when laying out a strip of metrics. |
+| `hideLabel` | `boolean` | `false` | Visually hide the rendered label when the surrounding context already carries it (e.g. the Live At YVR strip on `/home`). The accessible name moves to `aria-label` on the wrapper. |
 | `className` | `string` | `""` | Composition hook. |
 
 **Anatomy.** Value (top, large, tabular-nums) → label (small uppercase)
-→ optional helper. Value-first scanning.
+→ optional helper. Value-first scanning. When `hideLabel` is true, the
+label `<span>` isn't rendered; the accessible name moves to the wrapper.
 
 **When to use which.** `MetricBlock` is the **stand-alone metric** —
 "security wait is 8 min." `CountdownBlock` is the **time-until** form
@@ -2705,15 +2778,19 @@ The two shells have intentionally different layouts.
 | Concern | `AppShell` (onboarding) | `AppShellAuthed` (main app) |
 |---|---|---|
 | Height | `min-h-dvh` — at least viewport, grows for tall content. | `h-dvh` — exactly viewport; main scrolls internally. |
-| Background | `<AuroraBackground />` | `<AuroraBackground />` (same hues). |
+| Background | `<AuroraBackground />` (always). | Tone-aware: `tone="aurora"` (default) renders `<AuroraBackground />` on `--color-bg`; `tone="warm"` swaps to opaque `--color-bg-warm` with no aurora. The chosen tone is exposed via `--color-bg-page` so the floating nav fades to the right colour. |
 | Top safe area | `paddingTop: max(env(safe-area-inset-top), 16px)` on the inner. | Same — applied to `<main>`. |
-| Bottom safe area | `paddingBottom: max(env(safe-area-inset-bottom), 16px)` on the inner. | **Owned by `<BottomTabBar>`** via `paddingBottom: env(safe-area-inset-bottom)`. Consumers must not re-add. |
-| Bottom CTA pattern | `mt-auto` on the CTA group inside content, or a constrained spacer (`min-h-8 max-h-16 flex-grow`). | `<StickyBottomCTA>` inside `<main>` (sticky bottom-0). Tab bar stays below. |
-| Tab bar | None. | `<BottomTabBar>` rendered as last child of the shell. |
+| Bottom safe area | `paddingBottom: max(env(safe-area-inset-bottom), 16px)` on the inner. | `<main>` reserves `calc(96px + env(safe-area-inset-bottom))` so the floating nav clears the last content block. Consumers must not re-add bottom safe-area padding. |
+| Bottom CTA pattern | `mt-auto` on the CTA group inside content. | `<StickyBottomCTA>` inside `<main>` (sticky bottom-0). The floating nav still sits above; combine sparingly. |
+| Tab bar | None. | `<BottomTabBar>` — floating dark pill at `bottom-0`, with a gradient fade to `--color-bg-page`. |
 
-**Never apply `AppShellAuthed` to onboarding screens.** The five tabs
-would surface routes that don't exist for unauthenticated users and
-break the onboarding's single-CTA focus.
+**Tone choice.** Use `tone="aurora"` for screens whose content needs
+the cool atmospheric backdrop (Profile, Saved Trips, future Flights /
+Map lists). Use `tone="warm"` only when the screen content reads
+better on opaque warm-cream surface (Home today). Don't mix glass
+cards on warm.
+
+**Never apply `AppShellAuthed` to onboarding screens.**
 
 ### BottomTabBar
 
@@ -2730,22 +2807,40 @@ break the onboarding's single-CTA focus.
 | `badges` | `Partial<Record<TabKey, boolean>>` | — | Per-tab dot toggle. `TabKey` is `"home" \| "flights" \| "map" \| "services" \| "profile"`. |
 | `className` | `string` | `""` | Composition hook. |
 
-**Anatomy.** 56px tall row (`h-14`) + `env(safe-area-inset-bottom)`.
-Top border at `--color-border`. Background `--color-surface-card`.
-Five evenly-spaced tabs (`flex-1` each). Each tab: 22px icon + `text-micro
-uppercase` label, vertical stack. Active tab uses `--color-action-primary`;
-inactive uses `--color-text-secondary` with hover to `--color-text-primary`.
+**Anatomy.** Floating dark pill that sits above content. The outer
+wrapper is positioned absolutely (`bottom-0`) inside the
+`<AppShellAuthed>` column and paints a gradient fade
+(`linear-gradient(transparent → var(--color-bg-page))`) so scrolling
+content fades cleanly under the bar. The pill itself is
+`bg-[var(--color-nav-surface)]`, `rounded-[var(--radius-pill)]`, with
+`--shadow-nav` lift. Five tabs inside the pill, evenly spaced.
 
-**Badge dot.** 6px filled `--color-danger` dot positioned at the top-right
-of the active icon (right ~28% of the tab width). Decorative; the change
-of state should be announced by the relevant screen, not the tab itself.
+- **Active tab.** Teal pill (`--color-nav-active-bg`) with the 18px
+  icon + `text-body-sm-emphasis` label inline, foreground at
+  `--color-nav-surface-fg-active`. ~40px tall — the active pill is the
+  visual anchor.
+- **Inactive tab.** 40×40 round hit area containing the 18px icon only,
+  at `--color-nav-surface-fg` (muted off-white). Hovers up to the
+  active foreground.
 
-**Tabs.** Hard-coded: Home, Flights, Map, Services, Profile. Adding or
-reordering tabs is a design-system change, not a screen change.
+**Bg fade variable.** The fade consumes `--color-bg-page`, which
+`<AppShellAuthed>` sets to the resolved page bg (`--color-bg` on
+aurora, `--color-bg-warm` on warm). Pages outside the shell fall back
+to `--color-bg`.
 
-**A11y.** `<nav aria-label="Main">` wrapper. Each `<Link>` carries
-`aria-current="page"` when active and `aria-label={label}` so the
-uppercase label and the icon are not double-announced.
+**Badge dot.** 6px filled `--color-danger` dot at the top-right of the
+tab's icon.
+
+**Tabs.** Hard-coded: Home, Flights, Map, Services, Profile.
+
+**A11y.** `<nav aria-label="Main">` inside an outer positioning `<div>`.
+Each `<Link>` carries `aria-current="page"` when active and
+`aria-label={label}` — labels are essential because inactive tabs are
+icon-only. The outer wrapper is `pointer-events-none` with the inner
+nav re-enabling pointer events so the gradient fade doesn't trap
+touches.
+
+**Tap targets.** Active pill 40px × ≥80px. Inactive tabs 40×40.
 
 ### LargeTitleHeader
 
@@ -3128,11 +3223,12 @@ visibly changing existing screens.**
 | `SearchField` | `src/components/SearchField.tsx` | Pill-shaped search input with clear button. Form atom. |
 | `ChipFilter` | `src/components/ChipFilter.tsx` | Toggleable filter pill. Form atom. |
 | `FieldMessage` | `src/components/FieldMessage.tsx` | Helper / error / success / warning message under a field. Form atom. |
-| `AppShellAuthed` | `src/components/AppShellAuthed.tsx` | App shell for logged-in app. Reserves bottom for `BottomTabBar`. |
+| `AppShellAuthed` | `src/components/AppShellAuthed.tsx` | App shell for logged-in app. Tone-aware page bg (`aurora` / `warm`). Reserves bottom for the floating `BottomTabBar`. |
 | `BottomTabBar` | `src/components/BottomTabBar.tsx` | Five-tab bottom nav (Home, Flights, Map, Services, Profile). Safe-area aware. |
 | `LargeTitleHeader` | `src/components/LargeTitleHeader.tsx` | iOS-style display title with optional back chip + trailing slot. |
 | `StickyBottomCTA` | `src/components/StickyBottomCTA.tsx` | Sticky bottom action(s) inside a scroll container. |
 | `SettingsRow` | `src/components/SettingsRow.tsx` | Authed-app settings / vault list row. Composes `<IconTile>` + `ChevronRightIcon`. Group rows inside a `<Card padding="none">` with hairline dividers. See §12k and §2b. |
+| `HeroSurface` | `src/components/HeroSurface.tsx` | Dark teal gradient panel — single source of hero chrome (configurable radius + hero gradient + hero foreground). Pair with `<Heading tone="hero">` and `<Eyebrow tone="hero">`. See §2b. |
 | `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`, `SettingsIcon`, `SparkleIcon`, `SyncIcon`, `NavigationIcon`, `IdCardIcon`, `CreditCardIcon`, `SlidersIcon`, `BookmarkIcon`, `LifeBuoyIcon`, `ClockIcon`, `ParkingIcon`, `TrainIcon`, `ScanIcon`, `AccessibilityIcon`, `DiningIcon`, `SignpostIcon`). |
 
 ---

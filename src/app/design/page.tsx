@@ -29,6 +29,7 @@ import { Eyebrow } from "@/components/Eyebrow";
 import { FieldMessage } from "@/components/FieldMessage";
 import { GateDisplay } from "@/components/GateDisplay";
 import { Heading } from "@/components/Heading";
+import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
 import { InlineAlert } from "@/components/InlineAlert";
 import { LargeTitleHeader } from "@/components/LargeTitleHeader";
@@ -118,16 +119,11 @@ export default function DesignPreviewPage() {
           <SubSection title="Hero tone (dark teal hero surface)">
             <p className="text-body-sm text-[var(--color-text-secondary)]">
               `tone=&quot;hero&quot;` on `&lt;Heading&gt;` and `&lt;Eyebrow&gt;` maps the
-              foreground to the `--color-surface-hero-*` tokens. Use only on the
-              dark hero surface (Profile identity card, Saved Trips header).
+              foreground to the `--color-surface-hero-*` tokens. Paint the
+              surface with `&lt;HeroSurface&gt;`. `weight=&quot;light&quot;` on
+              `&lt;Heading&gt;` renders the Home hero direction.
             </p>
-            <div
-              className="flex flex-col gap-2 rounded-[var(--radius-card)] p-5"
-              style={{
-                backgroundImage:
-                  "linear-gradient(180deg, var(--color-surface-hero-start) 0%, var(--color-surface-hero-end) 100%)",
-              }}
-            >
+            <HeroSurface angle="180deg" radius="card" className="flex flex-col gap-2 p-5">
               <Eyebrow tone="hero">Your Travel Vault</Eyebrow>
               <Heading size="title" tone="hero">
                 Saved Trips
@@ -139,8 +135,35 @@ export default function DesignPreviewPage() {
                 <ClockIcon size={12} />
                 <span>10:45 → 05:30 · Gate Intl · —</span>
               </p>
-            </div>
+            </HeroSurface>
+            <HeroSurface className="flex flex-col gap-2 p-6">
+              <Eyebrow tone="hero">Today</Eyebrow>
+              <Heading size="display" tone="hero" weight="light">
+                Where to,
+                <br />
+                <em>today?</em>
+              </Heading>
+              <p className="text-body text-[var(--color-surface-hero-fg-muted)]">
+                `radius=&quot;hero&quot;` + `weight=&quot;light&quot;` — Home hero direction.
+              </p>
+            </HeroSurface>
           </SubSection>
+        </Section>
+
+        {/* ============================================================ */}
+        <Section
+          title="Card tone (solid)"
+          description="`tone=&quot;solid&quot;` opaque-white card chrome. Pair with `<AppShellAuthed tone=&quot;warm&quot;>` (Home). On aurora screens stick with `tone=&quot;glass&quot;` (default)."
+        >
+          <Card tone="solid">
+            <p className="text-body-sm-emphasis text-[var(--color-text-primary)]">
+              Live at YVR
+            </p>
+            <p className="mt-2 text-label text-[var(--color-text-secondary)]">
+              Opaque-white with a warm hairline and a warm teal-tinted lift —
+              reads on the warm cream page bg without fading into it.
+            </p>
+          </Card>
         </Section>
 
         {/* ============================================================ */}

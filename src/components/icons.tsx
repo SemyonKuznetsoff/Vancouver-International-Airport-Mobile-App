@@ -96,10 +96,29 @@ export function MapIcon(props: IconProps) {
 export function ServicesIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
-      <rect x="4" y="4" width="7" height="7" rx="1.5" />
-      <rect x="13" y="4" width="7" height="7" rx="1.5" />
-      <rect x="4" y="13" width="7" height="7" rx="1.5" />
-      <rect x="13" y="13" width="7" height="7" rx="1.5" />
+      <path d="M12 3 3 7.5l9 4.5 9-4.5L12 3Z" />
+      <path d="m3 12 9 4.5L21 12" />
+      <path d="m3 16.5 9 4.5 9-4.5" />
+    </svg>
+  );
+}
+
+export function CarIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M5 17V12l2-5h10l2 5v5" />
+      <path d="M3 17h18" />
+      <circle cx="8" cy="17" r="1.5" />
+      <circle cx="16" cy="17" r="1.5" />
+    </svg>
+  );
+}
+
+export function TicketIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M4 9V7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z" />
+      <path d="M13 5v2M13 11v2M13 17v-2" />
     </svg>
   );
 }
