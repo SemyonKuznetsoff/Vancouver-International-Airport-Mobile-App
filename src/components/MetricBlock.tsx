@@ -7,6 +7,14 @@ type MetricBlockProps = {
   helper?: string;
   tone?: Tone;
   align?: Align;
+  /**
+   * Hide the rendered label. Use when the surrounding context already
+   * carries the label (e.g. the Live At YVR strip on Home renders the
+   * label inline with an icon row above the value). The `label` prop is
+   * still required and used as the accessible name on the wrapper so
+   * screen readers continue to identify the metric.
+   */
+  hideLabel?: boolean;
   className?: string;
 };
 
@@ -45,18 +53,22 @@ export function MetricBlock({
   helper,
   tone = "neutral",
   align = "left",
+  hideLabel = false,
   className = "",
 }: MetricBlockProps) {
   return (
     <div
+      aria-label={hideLabel ? label : undefined}
       className={`inline-flex flex-col gap-1 ${alignClasses[align]} ${className}`.trim()}
     >
       <span className={`text-title tabular-nums ${valueTone[tone]}`}>
         {value}
       </span>
-      <span className="text-micro uppercase text-[var(--color-text-secondary)]">
-        {label}
-      </span>
+      {hideLabel ? null : (
+        <span className="text-micro uppercase text-[var(--color-text-secondary)]">
+          {label}
+        </span>
+      )}
       {helper ? (
         <span className="text-label text-[var(--color-text-muted)]">
           {helper}

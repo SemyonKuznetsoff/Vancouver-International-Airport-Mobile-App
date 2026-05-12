@@ -205,20 +205,57 @@ to the Profile example so the chrome stays consistent.
 
 ### Profile identity hero card
 
-The dark teal identity card on `/profile` is **screen-local** today: it
-composes inline using the §5 hero-surface semantic tokens
-(`--color-surface-hero-*`) plus glass tile children for the four stat
-pills inside. It is **not** a `<Card>` — Card hard-codes the glass fill.
+The dark teal identity card on `/profile`, the dark hero on
+`/home` ("Where to, today?"), the Departing CTA card on `/home`, and
+the Saved Trips header band all sit on the **hero surface**. Use the
+`<HeroSurface>` primitive for the chrome — it bakes
+`rounded-[var(--radius-card)]` + the canonical hero gradient + the
+`--color-surface-hero-fg` foreground colour in one place:
 
-If a second hero card appears (e.g. a "Membership" panel on a future
-screen), promote the inline composition to a `<HeroCard>` primitive
-before duplicating the gradient. Until then:
+```tsx
+<HeroSurface className="p-6">
+  <Heading size="display" tone="hero">Where to, …</Heading>
+  …
+</HeroSurface>
+```
 
-- Use the `--color-surface-hero-*` tokens for the gradient, foreground,
-  inner glass tiles, chip borders, and avatar surface.
+For interactive hero cards (e.g. the Departing CTA), wrap the surface
+inside a `<Link>` so the interaction lives on the link and `HeroSurface`
+renders as `as="div"`:
+
+```tsx
+<Link href={…} aria-label={…} className="block transition-opacity hover:opacity-95">
+  <HeroSurface as="div" className="flex h-full min-h-[196px] flex-col justify-between p-5">
+    …
+  </HeroSurface>
+</Link>
+```
+
+Inner content rules:
+
+- Use the `--color-surface-hero-fg`, `--color-surface-hero-fg-muted`,
+  and `--color-surface-hero-fg-soft` foreground tokens for typography.
+- Use the `--color-surface-hero-chip*`, `--color-surface-hero-tile*`,
+  and `--color-surface-hero-avatar*` tokens for inner chips, glass
+  tiles, and avatar surfaces.
 - Use `--color-hero-tier-gold-*` for a loyalty-tier chip. Never use the
-  status tones (`success` / `warning` / `danger`) decoratively — status
-  is reserved for live data per §5.
+  status tones (`success` / `warning` / `danger`) decoratively on a
+  hero — status is reserved for live data per §5.
+- Pair with `<Heading tone="hero">` and `<Eyebrow tone="hero">` for
+  the canonical heading + eyebrow rendering.
+
+Do **not** nest `<Card>` (glass chrome) inside a `<HeroSurface>` — the
+two surfaces are intentionally distinct.
+
+Migration note (current at-risk consumers):
+
+- `/profile` Profile identity card and `/profile/saved-trips` header
+  still paint the gradient inline (each with their own angle: `167deg`
+  and `180deg` respectively). They should be migrated onto
+  `<HeroSurface angle="…">` in a follow-up consistency PR.
+- `/design` Typography roles "Hero tone" preview also paints the
+  gradient inline; it can migrate to `<HeroSurface>` alongside the
+  consumers above.
 
 ### Settings / vault row groups
 
@@ -491,6 +528,7 @@ without hard-coding weights:
 | Screen title | `--text-title` / `text-title` | 30 / 1.1 | 600 | -0.025em | `<Heading size="title">` |
 | Body | `--text-body` / `text-body` | 14 / 1.55 | 400 | 0 | screen body copy |
 | Body small (card text) | `--text-body-sm` / `text-body-sm` | 13 / 1.55 | 500 | 0 | inside `<Card>` |
+| Body small emphasised | `--text-body-sm-emphasis` / `text-body-sm-emphasis` | 13 / 1.55 | 600 | 0 | small-card titles (`CompactIntentCard`, `UnlockConciergeBanner`), CTA labels at body-sm size (Home Add Trip pill), inline section-header navigation links (`All`, `Manage`, `See all`). Use this role instead of `text-body-sm font-semibold`. |
 | Label / caption | `--text-label` / `text-label` | 11 / 1.5 | 400 | 0 | metadata, captions |
 | Eyebrow | `--text-eyebrow` / `text-eyebrow` | 11 / 1.5 | 400 | +0.22em uppercase | `<Eyebrow>` |
 | Micro-label (uppercase) | `--text-micro` / `text-micro` | 10 / 1.5 | 600 | +0.16em uppercase | card footer labels |
@@ -2147,6 +2185,7 @@ follow the migration discipline in §12f.
 | `InlineAlert` | beta | Flat status banner. | `info`, `success`, `warning`, `danger`, `neutral` | — | `role` prop chooses `status` (default) or `alert`. |
 | `RouteTimeline` | beta | Split origin/destination + dashed centre line + plane glyph + duration. Travel atom. | — | — | `aria-label="<origin> to <destination>"` on the wrapper; dots / dashed line / icon are `aria-hidden`. |
 | `SettingsRow` | beta | Authed-app settings / vault list row (icon + title + description + optional trailing + chevron). | — | — | Renders as `<Link>` or `<button>` — global `:focus-visible` ring; chevron is `aria-hidden`; tap target ≥ 44px tall. |
+| `HeroSurface` | beta | Dark teal gradient panel — the single source of hero chrome (radius-card + hero gradient + hero foreground). | `as="section" \| "div" \| "article"`; `angle` (default `"135deg"`) | — | Decorative chrome — accessibility lives on the wrapping `<Link>` or the inner `<Heading tone="hero">`. Spreads native HTML attributes (e.g. `aria-label`, `id`) onto the rendered element. |
 | `icons` (module) | stable | Inline SVG icon set incl. `SpinnerIcon`. | — | numeric `size` | All icons default to `aria-hidden`; meaningful icons get `aria-label` from the parent button. |
 
 Status legend:
@@ -2241,19 +2280,23 @@ visible. No extra component logic.
 <MetricBlock value="8 min" label="Security wait" />
 <MetricBlock value="72%" label="Parking" tone="warning" align="center" />
 <MetricBlock value="420 m" label="Walk to D73" helper="8 min walk" />
+<MetricBlock value="8" label="Security" hideLabel />
 ```
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
 | `value` | `ReactNode` | (required) | Renders at `text-title tabular-nums`. Pass the formatted string ("8 min", "72%", "420 m") per content-guide §6. |
-| `label` | `string` | (required) | `text-micro uppercase`, secondary colour. |
+| `label` | `string` | (required) | `text-micro uppercase`, secondary colour. Always required, even when hidden — used as the accessible name. |
 | `helper` | `string` | — | Optional second line at `text-label` muted. |
 | `tone` | `"neutral" \| "success" \| "warning" \| "danger" \| "info"` | `"neutral"` | Tints **the value only**. Label + helper stay neutral. |
 | `align` | `"left" \| "center" \| "right"` | `"left"` | Useful when laying out a strip of metrics. |
+| `hideLabel` | `boolean` | `false` | Visually hide the rendered label when the surrounding context already carries it (e.g. the Live At YVR strip on `/home` renders an icon + label row above the value). The `label` prop is still required and is set as `aria-label` on the wrapper so screen readers continue to identify the metric. |
 | `className` | `string` | `""` | Composition hook. |
 
 **Anatomy.** Value (top, large, tabular-nums) → label (small uppercase)
-→ optional helper. Value-first scanning.
+→ optional helper. Value-first scanning. When `hideLabel` is true, the
+label `<span>` is not rendered; the value is the only visible element
+and the accessible name moves to the wrapper.
 
 **When to use which.** `MetricBlock` is the **stand-alone metric** —
 "security wait is 8 min." `CountdownBlock` is the **time-until** form
@@ -3147,6 +3190,7 @@ visibly changing existing screens.**
 | `LargeTitleHeader` | `src/components/LargeTitleHeader.tsx` | iOS-style display title with optional back chip + trailing slot. |
 | `StickyBottomCTA` | `src/components/StickyBottomCTA.tsx` | Sticky bottom action(s) inside a scroll container. |
 | `SettingsRow` | `src/components/SettingsRow.tsx` | Authed-app settings / vault list row. Composes `<IconTile>` + `ChevronRightIcon`. Group rows inside a `<Card padding="none">` with hairline dividers. See §12k and §2b. |
+| `HeroSurface` | `src/components/HeroSurface.tsx` | Dark teal gradient panel — the single source of hero chrome (radius-card + hero gradient + hero foreground). Consumer owns padding via `className`. Pair with `<Heading tone="hero">` / `<Eyebrow tone="hero">`. See §2b. |
 | `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`, `SettingsIcon`, `SparkleIcon`, `SyncIcon`, `NavigationIcon`, `IdCardIcon`, `CreditCardIcon`, `SlidersIcon`, `BookmarkIcon`, `LifeBuoyIcon`, `ClockIcon`, `ParkingIcon`, `TrainIcon`, `ScanIcon`, `AccessibilityIcon`, `DiningIcon`, `SignpostIcon`). |
 
 ---

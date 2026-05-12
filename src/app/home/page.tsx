@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { BrandMark } from "@/components/BrandMark";
-import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Heading } from "@/components/Heading";
+import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
 import { LiveIndicator } from "@/components/LiveIndicator";
 import { MetricBlock } from "@/components/MetricBlock";
@@ -223,14 +223,7 @@ function HomeHeader() {
 
 function HeroAddTripCard({ status }: { status: AirportStatus }) {
   return (
-    <section
-      aria-label="Plan today"
-      className="relative overflow-hidden rounded-[var(--radius-card)] p-6 text-[var(--color-surface-hero-fg)]"
-      style={{
-        backgroundImage:
-          "linear-gradient(135deg, var(--color-surface-hero-start) 0%, var(--color-surface-hero-end) 100%)",
-      }}
-    >
+    <HeroSurface as="section" aria-label="Plan today" className="p-6">
       <span className="inline-flex items-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-chip-border)] bg-[var(--color-surface-hero-chip)] px-3 py-1 text-micro uppercase text-[var(--color-surface-hero-fg)]">
         <SparkleIcon size={12} />
         <span>
@@ -259,7 +252,7 @@ function HeroAddTripCard({ status }: { status: AirportStatus }) {
         <span>Scan boarding pass or import booking</span>
         <ArrowRightIcon size={12} />
       </Link>
-    </section>
+    </HeroSurface>
   );
 }
 
@@ -290,7 +283,7 @@ function AddTripControl() {
       <Link
         href="/trips/new"
         aria-label="Add a trip"
-        className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-action-primary)] px-4 text-body-sm font-semibold text-[var(--color-action-primary-fg)] transition-opacity duration-150 hover:opacity-90"
+        className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-action-primary)] px-4 text-body-sm-emphasis text-[var(--color-action-primary-fg)] transition-opacity duration-150 hover:opacity-90"
       >
         <span aria-hidden>+</span>
         <span>Add trip</span>
@@ -361,7 +354,8 @@ function LiveMetricColumn({ metric }: { metric: LiveMetric }) {
             ) : null}
           </span>
         }
-        label=""
+        label={metric.label}
+        hideLabel
         align="left"
       />
       <span className="inline-flex items-center">{metric.footer}</span>
@@ -411,38 +405,39 @@ function DepartingHeroCard({ card }: { card: IntentCard }) {
     <Link
       href={card.href}
       aria-label={`${card.title} — ${card.description}`}
-      className="relative flex h-full min-h-[196px] flex-col justify-between overflow-hidden rounded-[var(--radius-card)] p-5 text-[var(--color-surface-hero-fg)] transition-opacity duration-150 hover:opacity-95"
-      style={{
-        backgroundImage:
-          "linear-gradient(135deg, var(--color-surface-hero-start) 0%, var(--color-surface-hero-end) 100%)",
-      }}
+      className="block transition-opacity duration-150 hover:opacity-95"
     >
-      <div className="flex items-start justify-between">
-        <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-chip-border)] bg-[var(--color-surface-hero-chip)] text-[var(--color-surface-hero-fg)]">
-          {card.icon}
-        </span>
-        <span
-          aria-hidden
-          className="inline-flex items-center text-[var(--color-surface-hero-fg-muted)]"
-        >
-          <ArrowRightIcon size={16} />
-        </span>
-      </div>
-      <div className="flex flex-col gap-1">
-        <p className="text-section-title text-[var(--color-surface-hero-fg)]">
-          {card.title}
-        </p>
-        <p className="text-label text-[var(--color-surface-hero-fg-muted)]">
-          {card.description}
-        </p>
-      </div>
+      <HeroSurface
+        as="div"
+        className="flex h-full min-h-[196px] flex-col justify-between p-5"
+      >
+        <div className="flex items-start justify-between">
+          <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-chip-border)] bg-[var(--color-surface-hero-chip)] text-[var(--color-surface-hero-fg)]">
+            {card.icon}
+          </span>
+          <span
+            aria-hidden
+            className="inline-flex items-center text-[var(--color-surface-hero-fg-muted)]"
+          >
+            <ArrowRightIcon size={16} />
+          </span>
+        </div>
+        <div className="flex flex-col gap-1">
+          <p className="text-section-title text-[var(--color-surface-hero-fg)]">
+            {card.title}
+          </p>
+          <p className="text-label text-[var(--color-surface-hero-fg-muted)]">
+            {card.description}
+          </p>
+        </div>
+      </HeroSurface>
     </Link>
   );
 }
 
 function CompactIntentCard({ card }: { card: IntentCard }) {
   return (
-    <Card as="article" padding="compact" aria-label={card.title}>
+    <Card padding="compact">
       <Link
         href={card.href}
         aria-label={`${card.title} — ${card.description}`}
@@ -452,7 +447,7 @@ function CompactIntentCard({ card }: { card: IntentCard }) {
           <span className="text-[var(--color-text-primary)]">{card.icon}</span>
         </IconTile>
         <div className="flex flex-col gap-1">
-          <p className="text-body-sm font-semibold text-[var(--color-text-primary)]">
+          <p className="text-body-sm-emphasis text-[var(--color-text-primary)]">
             {card.title}
           </p>
           <p className="text-label text-[var(--color-text-secondary)]">
@@ -466,7 +461,7 @@ function CompactIntentCard({ card }: { card: IntentCard }) {
 
 function UnlockConciergeBanner() {
   return (
-    <Card as="section" aria-label="Unlock your concierge">
+    <Card>
       <Link
         href="/trips/new"
         className="flex items-center gap-4"
@@ -478,7 +473,7 @@ function UnlockConciergeBanner() {
           </span>
         </IconTile>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <p className="text-body-sm font-semibold text-[var(--color-text-primary)]">
+          <p className="text-body-sm-emphasis text-[var(--color-text-primary)]">
             Unlock your concierge
           </p>
           <p className="text-label text-[var(--color-text-secondary)]">
@@ -508,7 +503,7 @@ function AirportServicesSection({ services }: { services: ServiceRow[] }) {
         </Eyebrow>
         <Link
           href="/services"
-          className="text-body-sm font-semibold text-[var(--color-text-primary)] hover:text-[var(--color-text-secondary)]"
+          className="text-body-sm-emphasis text-[var(--color-text-primary)] hover:text-[var(--color-text-secondary)]"
         >
           All
         </Link>
@@ -528,10 +523,6 @@ function AirportServicesSection({ services }: { services: ServiceRow[] }) {
           />
         ))}
       </Card>
-
-      <Button variant="ghost" href="/services">
-        Open the full directory
-      </Button>
     </section>
   );
 }
