@@ -1,19 +1,24 @@
 type Size = "display" | "title";
 type Tone = "primary" | "hero";
+type Weight = "default" | "light";
 
 type HeadingProps = {
   children: React.ReactNode;
   as?: "h1" | "h2" | "h3";
   size?: Size;
   /**
-   * Surface tone. `primary` (default) renders navy on the aurora background.
-   * `hero` renders the inverse foreground for use on the dark teal hero
-   * surface (Profile identity card, Saved Trips hero band) — consume the
-   * `--color-surface-hero-fg` token. Picks the tone via prop so component
-   * authors don't have to force-override the primary colour with an inline
-   * className.
+   * Surface tone. `primary` (default) renders navy on the aurora
+   * background. `hero` renders the inverse foreground for use on the
+   * dark teal hero surface — consumes `--color-surface-hero-fg`.
    */
   tone?: Tone;
+  /**
+   * Weight variant. `default` (semibold, role default) is the standard
+   * heading rendering. `light` (300) is the elegant lightweight
+   * rendering used on the Home hero ("Where to, today?") per the
+   * Figma direction. Reserve `light` for hero contexts.
+   */
+  weight?: Weight;
   className?: string;
 };
 
@@ -24,7 +29,16 @@ const sizeClasses: Record<Size, string> = {
 
 const toneClasses: Record<Tone, string> = {
   primary: "text-[var(--color-text-primary)]",
-  hero: "text-[var(--color-surface-hero-fg)]",
+  // Hero tone also tints any inner italic-accent `<em>` with the
+  // hero-accent foreground (cyan-teal), so the Figma's "today?" italic
+  // phrase renders in the correct accent colour without page-level
+  // overrides.
+  hero: "text-[var(--color-surface-hero-fg)] [&_em]:text-[var(--color-surface-hero-fg-accent)]",
+};
+
+const weightClasses: Record<Weight, string> = {
+  default: "",
+  light: "font-light",
 };
 
 /**
@@ -33,33 +47,29 @@ const toneClasses: Record<Tone, string> = {
  * - `display` (default, 34px) — hero screens like the welcome page.
  * - `title` (30px) — step screens like sign-in, permissions, settings.
  *
- * Size, line-height, weight, and tracking come from the `--text-display` /
- * `--text-title` role tokens in globals.css. Update those tokens to retune
- * the scale — do not override sizes inline on this component.
+ * Italic accent: wrap the accent phrase in `<em>`. The component
+ * styles em as normal-weight italic.
  *
- * Italic accent: wrap the accent phrase in `<em>`. The component styles
- * em as normal-weight italic so the role token's 600 weight is reset.
- *
- *   <Heading size="title">
- *     Continue your
+ *   <Heading size="display" tone="hero" weight="light">
+ *     Where to,
  *     <br />
- *     <em>journey.</em>
+ *     <em>today?</em>
  *   </Heading>
  *
- * Tone: pass `tone="hero"` when the heading sits on the dark teal hero
- * surface. The `--color-surface-hero-fg` token paints the foreground —
- * do not inline a colour override.
+ * `tone="hero"` on the dark teal surface, `weight="light"` for the
+ * elegant hero rendering. Default behaviour is unchanged.
  */
 export function Heading({
   children,
   as: Tag = "h1",
   size = "display",
   tone = "primary",
+  weight = "default",
   className = "",
 }: HeadingProps) {
   return (
     <Tag
-      className={`[&_em]:font-normal [&_em]:italic ${toneClasses[tone]} ${sizeClasses[size]} ${className}`.trim()}
+      className={`[&_em]:font-normal [&_em]:italic ${toneClasses[tone]} ${sizeClasses[size]} ${weightClasses[weight]} ${className}`.trim()}
     >
       {children}
     </Tag>

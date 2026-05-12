@@ -11,8 +11,12 @@ type MetricBlockProps = {
    * Hide the rendered label. Use when the surrounding context already
    * carries the label (e.g. the Live At YVR strip on Home renders the
    * label inline with an icon row above the value). The `label` prop is
+<<<<<<< HEAD
+   * still required and is set as `aria-label` on the wrapper.
+=======
    * still required and used as the accessible name on the wrapper so
    * screen readers continue to identify the metric.
+>>>>>>> origin/main
    */
   hideLabel?: boolean;
   className?: string;
@@ -33,19 +37,19 @@ const alignClasses: Record<Align, string> = {
 };
 
 /**
- * Single-metric block — large value over a small uppercase label, with an
- * optional helper line beneath. Numeric output uses `tabular-nums` so
- * adjacent metrics align on the digit grid (security wait shifting from
- * "8 min" to "12 min" doesn't shimmy).
+ * Single-metric block — large value over a small uppercase label, with
+ * an optional helper line beneath. Numeric output uses `tabular-nums`
+ * so adjacent metrics align on the digit grid.
  *
- * Use for: security wait, walking time, parking availability percentage,
- * distance to gate. Pair multiple blocks in a row with consistent `align`
- * for a clean metric strip.
+ * Use for: security wait, walking time, parking availability, distance
+ * to gate. Pair multiple blocks in a row with consistent `align` for a
+ * clean metric strip.
  *
- * Tone tints the value only — label and helper stay secondary / muted.
- * Reserve non-neutral tones for live data signals (`warning` for a long
- * security wait, `danger` for full parking, `success` for an "on track"
- * connection).
+ * Tone tints the value only — label and helper stay neutral. Reserve
+ * non-neutral tones for live data signals.
+ *
+ * `hideLabel` collapses the rendered label when the surrounding row
+ * already carries it. The accessible name moves to the wrapper.
  */
 export function MetricBlock({
   value,

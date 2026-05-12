@@ -35,10 +35,8 @@ const ALLOW = {
   // until replaced by licensed assets. See CLAUDE.md §8.
   "raw-hex": ["src/components/icons.tsx", "src/app/layout.tsx"],
 
-  // Type-role utilities cover almost every text rendering. Four files
+  // Type-role utilities cover almost every text rendering. Three files
   // carry intentional inline px sizes:
-  //   - BrandMark: bespoke uppercase brand lockup at 13px / 0.18em
-  //     tracking — not a body role.
   //   - Button: variant typography is coupled to variant chrome (15px
   //     primary, 13px ghost). Documented in Button.tsx header.
   //   - icons.tsx AeroplanBadge: 10px monogram inside a brand badge —
@@ -46,18 +44,14 @@ const ALLOW = {
   //   - AuthOption: row badge at 10px / 0.14em tracking — bespoke
   //     tighter tracking than text-micro provides.
   "arbitrary-text-px": [
-    "src/components/BrandMark.tsx",
     "src/components/Button.tsx",
     "src/components/icons.tsx",
     "src/components/AuthOption.tsx",
   ],
 
   // Inline `tracking-[Nem]` is acceptable in components where the role
-  // token's letter-spacing differs from the design intent. The four
-  // primitive files plus FeatureList (numbered-index tracking 0.05em)
-  // qualify.
+  // token's letter-spacing differs from the design intent.
   "arbitrary-tracking": [
-    "src/components/BrandMark.tsx",
     "src/components/Button.tsx",
     "src/components/AuthOption.tsx",
     "src/components/FeatureList.tsx",
