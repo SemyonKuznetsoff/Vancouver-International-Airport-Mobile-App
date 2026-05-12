@@ -205,6 +205,7 @@ to the Profile example so the chrome stays consistent.
 
 ### Hero surface (Profile identity, Home hero, Saved Trips header)
 
+<<<<<<< HEAD
 The dark teal panel that anchors `/profile`, `/profile/saved-trips`,
 and `/home` lives on the same surface family. Use the `<HeroSurface>`
 primitive — it bakes the canonical chrome (configurable radius + hero
@@ -227,11 +228,35 @@ landmark:
 ```tsx
 <Link href={…} aria-label={…} className="block transition-opacity hover:opacity-95">
   <HeroSurface as="div" radius="card" className="flex h-full min-h-[196px] flex-col justify-between p-5">
+=======
+The dark teal identity card on `/profile`, the dark hero on
+`/home` ("Where to, today?"), the Departing CTA card on `/home`, and
+the Saved Trips header band all sit on the **hero surface**. Use the
+`<HeroSurface>` primitive for the chrome — it bakes
+`rounded-[var(--radius-card)]` + the canonical hero gradient + the
+`--color-surface-hero-fg` foreground colour in one place:
+
+```tsx
+<HeroSurface className="p-6">
+  <Heading size="display" tone="hero">Where to, …</Heading>
+  …
+</HeroSurface>
+```
+
+For interactive hero cards (e.g. the Departing CTA), wrap the surface
+inside a `<Link>` so the interaction lives on the link and `HeroSurface`
+renders as `as="div"`:
+
+```tsx
+<Link href={…} aria-label={…} className="block transition-opacity hover:opacity-95">
+  <HeroSurface as="div" className="flex h-full min-h-[196px] flex-col justify-between p-5">
+>>>>>>> origin/main
     …
   </HeroSurface>
 </Link>
 ```
 
+<<<<<<< HEAD
 **Radius defaults.** `radius="hero"` (36px, Home hero) is the premium
 default. `radius="card"` (24px) suits nested hero cards (Departing
 CTA). `radius="panel"` (22px) matches glass card chrome.
@@ -254,6 +279,33 @@ Do **not** nest `<Card>` (any tone) inside `<HeroSurface>`.
 header still paint the gradient inline (each with their own angle:
 `167deg` / `180deg`). They should migrate onto
 `<HeroSurface angle="…" radius="…">` in a follow-up consistency PR.
+=======
+Inner content rules:
+
+- Use the `--color-surface-hero-fg`, `--color-surface-hero-fg-muted`,
+  and `--color-surface-hero-fg-soft` foreground tokens for typography.
+- Use the `--color-surface-hero-chip*`, `--color-surface-hero-tile*`,
+  and `--color-surface-hero-avatar*` tokens for inner chips, glass
+  tiles, and avatar surfaces.
+- Use `--color-hero-tier-gold-*` for a loyalty-tier chip. Never use the
+  status tones (`success` / `warning` / `danger`) decoratively on a
+  hero — status is reserved for live data per §5.
+- Pair with `<Heading tone="hero">` and `<Eyebrow tone="hero">` for
+  the canonical heading + eyebrow rendering.
+
+Do **not** nest `<Card>` (glass chrome) inside a `<HeroSurface>` — the
+two surfaces are intentionally distinct.
+
+Migration note (current at-risk consumers):
+
+- `/profile` Profile identity card and `/profile/saved-trips` header
+  still paint the gradient inline (each with their own angle: `167deg`
+  and `180deg` respectively). They should be migrated onto
+  `<HeroSurface angle="…">` in a follow-up consistency PR.
+- `/design` Typography roles "Hero tone" preview also paints the
+  gradient inline; it can migrate to `<HeroSurface>` alongside the
+  consumers above.
+>>>>>>> origin/main
 
 ### Settings / vault row groups
 
@@ -527,7 +579,11 @@ without hard-coding weights:
 | Screen title | `--text-title` / `text-title` | 30 / 1.1 | 600 | -0.025em | `<Heading size="title">` |
 | Body | `--text-body` / `text-body` | 14 / 1.55 | 400 | 0 | screen body copy |
 | Body small (card text) | `--text-body-sm` / `text-body-sm` | 13 / 1.55 | 500 | 0 | inside `<Card>` |
+<<<<<<< HEAD
 | Body small emphasised | `--text-body-sm-emphasis` / `text-body-sm-emphasis` | 13 / 1.55 | 600 | 0 | small-card titles (`CompactIntentCard`, `UnlockConciergeBanner`, intent rows), CTA labels at body-sm size (Home Add Trip pill, floating-nav active tab label), inline section-header navigation links (`All`, `Manage`, `See all`). Use this role instead of `text-body-sm font-semibold`. |
+=======
+| Body small emphasised | `--text-body-sm-emphasis` / `text-body-sm-emphasis` | 13 / 1.55 | 600 | 0 | small-card titles (`CompactIntentCard`, `UnlockConciergeBanner`), CTA labels at body-sm size (Home Add Trip pill), inline section-header navigation links (`All`, `Manage`, `See all`). Use this role instead of `text-body-sm font-semibold`. |
+>>>>>>> origin/main
 | Label / caption | `--text-label` / `text-label` | 11 / 1.5 | 400 | 0 | metadata, captions |
 | Eyebrow | `--text-eyebrow` / `text-eyebrow` | 11 / 1.5 | 400 | +0.22em uppercase | `<Eyebrow>` |
 | Micro-label (uppercase) | `--text-micro` / `text-micro` | 10 / 1.5 | 600 | +0.16em uppercase | card footer labels |
@@ -2214,9 +2270,13 @@ follow the migration discipline in §12f.
 | `InlineAlert` | beta | Flat status banner. | `info`, `success`, `warning`, `danger`, `neutral` | — | `role` prop chooses `status` (default) or `alert`. |
 | `RouteTimeline` | beta | Split origin/destination + dashed centre line + plane glyph + duration. Travel atom. | — | — | `aria-label="<origin> to <destination>"` on the wrapper; dots / dashed line / icon are `aria-hidden`. |
 | `SettingsRow` | beta | Authed-app settings / vault list row (icon + title + description + optional trailing + chevron). | — | — | Renders as `<Link>` or `<button>` — global `:focus-visible` ring; chevron is `aria-hidden`; tap target ≥ 44px tall. |
+<<<<<<< HEAD
 | `HeroSurface` | beta | Dark teal gradient panel — single source of hero chrome (configurable radius + hero gradient + hero foreground). | `as="section" \| "div" \| "article"`; `angle` (default `"135deg"`); `radius="hero" \| "card" \| "panel" \| "none"` (default `"hero"`) | — | Decorative chrome — accessibility lives on the wrapping `<Link>` or inner `<Heading tone="hero">`. Spreads native HTML attributes onto the rendered element. |
 | `AppShellAuthed` | stable | Authenticated-app shell. Floating `<BottomTabBar>` + tone-aware page bg. | `tone="aurora" \| "warm"`; `hideTabBar` | — | Sets `--color-bg-page` so the floating nav fades correctly. `aurora` keeps the radial gradient; `warm` swaps to opaque cream. |
 | `BottomTabBar` | stable | Floating dark pill bottom nav. Five fixed tabs; active tab renders as a teal pill with icon + label inline; inactive tabs render icon only. | — | — | `<nav aria-label="Main">`; each tab `<Link>` has `aria-current="page"` when active and `aria-label={label}` so inactive (icon-only) tabs still announce. |
+=======
+| `HeroSurface` | beta | Dark teal gradient panel — the single source of hero chrome (radius-card + hero gradient + hero foreground). | `as="section" \| "div" \| "article"`; `angle` (default `"135deg"`) | — | Decorative chrome — accessibility lives on the wrapping `<Link>` or the inner `<Heading tone="hero">`. Spreads native HTML attributes (e.g. `aria-label`, `id`) onto the rendered element. |
+>>>>>>> origin/main
 | `icons` (module) | stable | Inline SVG icon set incl. `SpinnerIcon`. | — | numeric `size` | All icons default to `aria-hidden`; meaningful icons get `aria-label` from the parent button. |
 
 Status legend:
@@ -2321,12 +2381,21 @@ visible. No extra component logic.
 | `helper` | `string` | — | Optional second line at `text-label` muted. |
 | `tone` | `"neutral" \| "success" \| "warning" \| "danger" \| "info"` | `"neutral"` | Tints **the value only**. Label + helper stay neutral. |
 | `align` | `"left" \| "center" \| "right"` | `"left"` | Useful when laying out a strip of metrics. |
+<<<<<<< HEAD
 | `hideLabel` | `boolean` | `false` | Visually hide the rendered label when the surrounding context already carries it (e.g. the Live At YVR strip on `/home`). The accessible name moves to `aria-label` on the wrapper. |
+=======
+| `hideLabel` | `boolean` | `false` | Visually hide the rendered label when the surrounding context already carries it (e.g. the Live At YVR strip on `/home` renders an icon + label row above the value). The `label` prop is still required and is set as `aria-label` on the wrapper so screen readers continue to identify the metric. |
+>>>>>>> origin/main
 | `className` | `string` | `""` | Composition hook. |
 
 **Anatomy.** Value (top, large, tabular-nums) → label (small uppercase)
 → optional helper. Value-first scanning. When `hideLabel` is true, the
+<<<<<<< HEAD
 label `<span>` isn't rendered; the accessible name moves to the wrapper.
+=======
+label `<span>` is not rendered; the value is the only visible element
+and the accessible name moves to the wrapper.
+>>>>>>> origin/main
 
 **When to use which.** `MetricBlock` is the **stand-alone metric** —
 "security wait is 8 min." `CountdownBlock` is the **time-until** form
@@ -2459,26 +2528,40 @@ visual rhythm.
 <GateDisplay gate="D73" />
 <GateDisplay gate="D73" terminal="M" helper="Domestic" />
 <GateDisplay gate="A1" terminal="A" helper="Pre-clearance" />
+<GateDisplay size="compact" gate="—" terminal="Intl" />
 ```
 
 | Prop | Type | Default | Notes |
 |---|---|---|---|
-| `gate` | `string` | (required) | The bare gate identifier — `"D73"`, not `"Gate D73"`. The component renders the "GATE" eyebrow. |
-| `terminal` | `string` | — | Rendered as `"Terminal <X>"`. |
-| `helper` | `string` | — | Appended after `Terminal X` with ` · `. |
+| `gate` | `string` | (required) | The bare gate identifier — `"D73"`, not `"Gate D73"`. The component renders the "GATE" eyebrow (default) or the `Gate` prefix (compact). Use `"—"` for a TBD gate. |
+| `terminal` | `string` | — | Default size renders as `"Terminal <X>"` on the support line. Compact joins terminal + gate inline (`Gate Intl · —`). |
+| `helper` | `string` | — | Appended after the terminal join with ` · `. |
+| `size` | `"default" \| "compact"` | `"default"` | Picks the layout. See sizes below. |
 | `className` | `string` | `""` | Composition hook. |
 
-**Anatomy.** Eyebrow `GATE` (top) → value (large, tabular-nums,
-uppercase) → optional support line at `text-label`.
+**Anatomy (default).** Eyebrow `GATE` (top) → value (large, tabular-nums,
+uppercase) → optional support line at `text-label`. Use on the boarding
+strip, hero trip card, and boarding-pass detail.
+
+**Anatomy (compact).** Single inline line at `text-label` /
+`tabular-nums` / `text-secondary`:
+`Gate <terminal · gate · helper>`. The `Gate` word stays as the prefix
+so the row reads naturally in a screen-reader linear walk. Use inside
+small list-card meta rows (e.g. saved-journey card) where the default's
+three-line stack would overwhelm the row. When both terminal and gate
+are passed, the join order is `terminal · gate` so a known terminal
+with a TBD gate still surfaces useful information (`Gate Intl · —`).
 
 **Required for every gate value.** Anywhere the app shows a gate
 identifier — flight card, boarding pass, next-trip strip, journey
-timeline — render it through `<GateDisplay>`. Do not pass a gate to
-`<MetricBlock>`, do not inline `<p>Gate D73</p>`, do not concatenate
-terminal + gate into a single string. `<GateDisplay>` and
-`<RouteTimeline>` are designed to compose inside a hero trip card —
-timeline carries origin → destination, GateDisplay carries the gate
-column of the boarding strip.
+timeline, saved-journey meta row — render it through `<GateDisplay>`.
+Do not pass a gate to `<MetricBlock>`, do not inline `<p>Gate D73</p>`,
+do not concatenate terminal + gate into a single string at the call
+site. Pick `size="default"` when the gate is a primary card metric and
+`size="compact"` when it sits among other facts in a single-line meta
+row. `<GateDisplay>` and `<RouteTimeline>` are designed to compose
+inside a hero trip card — timeline carries origin → destination,
+GateDisplay carries the gate column of the boarding strip.
 
 ### Do / Don't (cross-cutting)
 
@@ -3228,7 +3311,11 @@ visibly changing existing screens.**
 | `LargeTitleHeader` | `src/components/LargeTitleHeader.tsx` | iOS-style display title with optional back chip + trailing slot. |
 | `StickyBottomCTA` | `src/components/StickyBottomCTA.tsx` | Sticky bottom action(s) inside a scroll container. |
 | `SettingsRow` | `src/components/SettingsRow.tsx` | Authed-app settings / vault list row. Composes `<IconTile>` + `ChevronRightIcon`. Group rows inside a `<Card padding="none">` with hairline dividers. See §12k and §2b. |
+<<<<<<< HEAD
 | `HeroSurface` | `src/components/HeroSurface.tsx` | Dark teal gradient panel — single source of hero chrome (configurable radius + hero gradient + hero foreground). Pair with `<Heading tone="hero">` and `<Eyebrow tone="hero">`. See §2b. |
+=======
+| `HeroSurface` | `src/components/HeroSurface.tsx` | Dark teal gradient panel — the single source of hero chrome (radius-card + hero gradient + hero foreground). Consumer owns padding via `className`. Pair with `<Heading tone="hero">` / `<Eyebrow tone="hero">`. See §2b. |
+>>>>>>> origin/main
 | `icons` | `src/components/icons.tsx` | Inline SVG icons + brand marks (incl. `SpinnerIcon`, `SearchIcon`, `CloseIcon`, `HomeIcon`, `MapIcon`, `ServicesIcon`, `ProfileIcon`, `SettingsIcon`, `SparkleIcon`, `SyncIcon`, `NavigationIcon`, `IdCardIcon`, `CreditCardIcon`, `SlidersIcon`, `BookmarkIcon`, `LifeBuoyIcon`, `ClockIcon`, `ParkingIcon`, `TrainIcon`, `ScanIcon`, `AccessibilityIcon`, `DiningIcon`, `SignpostIcon`). |
 
 ---

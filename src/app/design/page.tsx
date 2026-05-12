@@ -119,11 +119,19 @@ export default function DesignPreviewPage() {
           <SubSection title="Hero tone (dark teal hero surface)">
             <p className="text-body-sm text-[var(--color-text-secondary)]">
               `tone=&quot;hero&quot;` on `&lt;Heading&gt;` and `&lt;Eyebrow&gt;` maps the
+<<<<<<< HEAD
               foreground to the `--color-surface-hero-*` tokens. Paint the
               surface with `&lt;HeroSurface&gt;`. `weight=&quot;light&quot;` on
               `&lt;Heading&gt;` renders the Home hero direction.
             </p>
             <HeroSurface angle="180deg" radius="card" className="flex flex-col gap-2 p-5">
+=======
+              foreground to the `--color-surface-hero-*` tokens. Use only on the
+              dark hero surface (Profile identity card, Saved Trips header,
+              Home hero), and paint the surface with `&lt;HeroSurface&gt;`.
+            </p>
+            <HeroSurface angle="180deg" className="flex flex-col gap-2 p-5">
+>>>>>>> origin/main
               <Eyebrow tone="hero">Your Travel Vault</Eyebrow>
               <Heading size="title" tone="hero">
                 Saved Trips
@@ -136,6 +144,7 @@ export default function DesignPreviewPage() {
                 <span>10:45 → 05:30 · Gate Intl · —</span>
               </p>
             </HeroSurface>
+<<<<<<< HEAD
             <HeroSurface className="flex flex-col gap-2 p-6">
               <Eyebrow tone="hero">Today</Eyebrow>
               <Heading size="display" tone="hero" weight="light">
@@ -147,6 +156,8 @@ export default function DesignPreviewPage() {
                 `radius=&quot;hero&quot;` + `weight=&quot;light&quot;` — Home hero direction.
               </p>
             </HeroSurface>
+=======
+>>>>>>> origin/main
           </SubSection>
         </Section>
 

@@ -51,6 +51,7 @@ type SavedJourney = {
   destination: string;
   departTime: string;
   arriveTime: string;
+  terminal?: string;
   gate: string;
 };
 
@@ -84,7 +85,8 @@ const savedJourneys: SavedJourney[] = [
     destination: "YVR",
     departTime: "10:45",
     arriveTime: "05:30",
-    gate: "Intl · —",
+    terminal: "Intl",
+    gate: "—",
   },
 ];
 
@@ -313,7 +315,11 @@ function SavedJourneyCard({ journey }: { journey: SavedJourney }) {
             </span>
           </span>
           <span aria-hidden>·</span>
-          <span>Gate {journey.gate}</span>
+          <GateDisplay
+            size="compact"
+            gate={journey.gate}
+            terminal={journey.terminal}
+          />
         </p>
       </div>
     </Card>

@@ -284,7 +284,11 @@ function AddTripControl() {
       <Link
         href="/trips/new"
         aria-label="Add a trip"
+<<<<<<< HEAD
         className="inline-flex h-11 shrink-0 items-center gap-1.5 rounded-[var(--radius-button)] bg-[var(--color-nav-surface)] px-5 text-body-sm-emphasis text-[var(--color-nav-surface-fg-active)] transition-opacity duration-150 hover:opacity-90"
+=======
+        className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-action-primary)] px-4 text-body-sm-emphasis text-[var(--color-action-primary-fg)] transition-opacity duration-150 hover:opacity-90"
+>>>>>>> origin/main
       >
         <span aria-hidden>+</span>
         <span>Add Trip</span>
@@ -403,8 +407,12 @@ function DepartingHeroCard({ card }: { card: IntentCard }) {
     >
       <HeroSurface
         as="div"
+<<<<<<< HEAD
         radius="card"
         className="flex h-full min-h-[196px] flex-col justify-between p-5 shadow-[var(--shadow-card-solid)]"
+=======
+        className="flex h-full min-h-[196px] flex-col justify-between p-5"
+>>>>>>> origin/main
       >
         <div className="flex items-start justify-between">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-chip-border)] bg-[var(--color-surface-hero-chip)] text-[var(--color-surface-hero-fg)]">
@@ -432,7 +440,11 @@ function DepartingHeroCard({ card }: { card: IntentCard }) {
 
 function CompactIntentCard({ card }: { card: IntentCard }) {
   return (
+<<<<<<< HEAD
     <Card padding="compact" tone="solid">
+=======
+    <Card padding="compact">
+>>>>>>> origin/main
       <Link
         href={card.href}
         aria-label={`${card.title} — ${card.description}`}
@@ -486,7 +498,11 @@ function ExploreRow({ card }: { card: IntentCard }) {
 
 function UnlockConciergeBanner() {
   return (
+<<<<<<< HEAD
     <Card tone="solid">
+=======
+    <Card>
+>>>>>>> origin/main
       <Link
         href="/trips/new"
         className="flex items-center gap-4"

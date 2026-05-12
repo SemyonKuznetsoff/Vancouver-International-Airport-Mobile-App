@@ -216,10 +216,19 @@
   --text-body-sm--line-height: 1.55;
   --text-body-sm--font-weight: var(--font-weight-medium);
 
+<<<<<<< HEAD
   /* Emphasised variant of body-sm — same size/line-height, weight 600.
      Replaces the recurring `text-body-sm font-semibold` inline pattern.
      Used by small-card titles, body-sm CTA labels, and section-header
      navigation links ("All", "Manage", "See all"). */
+=======
+  /* Emphasised variant of body-sm. Same size + line-height; weight bumps
+     to semibold (600). Used for small-card titles (CompactIntentCard,
+     UnlockConciergeBanner), CTA labels at body-sm size (Home Add Trip
+     pill), and inline section-header navigation links ("All", "Manage",
+     "See all"). Replaces the recurring `text-body-sm font-semibold`
+     inline override pattern. */
+>>>>>>> origin/main
   --text-body-sm-emphasis: var(--font-size-300);
   --text-body-sm-emphasis--line-height: 1.55;
   --text-body-sm-emphasis--font-weight: var(--font-weight-semibold);

@@ -11,7 +11,12 @@ type MetricBlockProps = {
    * Hide the rendered label. Use when the surrounding context already
    * carries the label (e.g. the Live At YVR strip on Home renders the
    * label inline with an icon row above the value). The `label` prop is
+<<<<<<< HEAD
    * still required and is set as `aria-label` on the wrapper.
+=======
+   * still required and used as the accessible name on the wrapper so
+   * screen readers continue to identify the metric.
+>>>>>>> origin/main
    */
   hideLabel?: boolean;
   className?: string;
