@@ -764,18 +764,39 @@ Do not alter the angle or stops without updating this section.
 
 ### Semantic — Membership tier
 
-Loyalty-tier accents used **only** on the hero surface. Not a status
-colour — never use these for live data, never use them outside the
-hero surface.
+Loyalty-tier accents for membership / tier badges (Aeroplan Gold, Star
+Alliance Gold, Priority Pass, etc.). **Not a status colour** — never
+use these for live data; never reuse `--color-warning` or
+`--color-success` for a tier badge.
+
+Two families, paired by surface:
+
+**Hero surface (dark teal):** use these tokens on the hero only.
 
 | Token | Value | Usage |
 |---|---|---|
-| `--color-hero-tier-gold-bg` | `rgba(200,164,92, 0.15)` | Gold-tier chip fill (Aeroplan Gold, Star Alliance Gold). |
-| `--color-hero-tier-gold-border` | `rgba(200,164,92, 0.4)` | Gold-tier chip border. |
-| `--color-hero-tier-gold-fg` | `#e1c685` | Gold-tier chip foreground (icon + label). |
+| `--color-hero-tier-gold-bg` | `rgba(200,164,92, 0.15)` | Gold-tier chip fill on hero (Aeroplan Gold pill). |
+| `--color-hero-tier-gold-border` | `rgba(200,164,92, 0.4)` | Gold-tier chip border on hero. |
+| `--color-hero-tier-gold-fg` | `#e1c685` | Gold-tier chip foreground + monospace member code on hero. |
 
-If a new tier (Aeroplan Diamond, Silver, etc.) is introduced, add a
-parallel `--color-hero-tier-<name>-{bg,border,fg}` trio. Never reuse
+**Light surface (white card):** use these on `--color-surface-sheet`
+or `--color-surface-card`. The hero `fg` is too light to read on
+white; the light-surface `fg` is the deeper mustard.
+
+| Token | Value | Usage |
+|---|---|---|
+| `--color-tier-gold-bg` | `rgba(212,184,132, 0.13)` | Gold-tier pill fill on a white card ("BEST MATCH NEAR YOUR GATE" on Lounges & Premium). |
+| `--color-tier-gold-border` | `rgba(212,184,132, 0.33)` | Gold-tier pill border on a white card. |
+| `--color-tier-gold-fg` | `#7a5e2a` | Gold-tier pill label on a white card. |
+
+**Dual-surface dot/accent:**
+
+| Token | Value | Usage |
+|---|---|---|
+| `--color-tier-gold-dot` | `#d4b884` | Mid-gold dot/accent that reads on **both** hero and light surfaces. Use for status dots ("Walk-in $55"), eligible-lounge bullets on the hero, and rating-star tints. |
+
+If a new tier (Aeroplan Diamond, Silver, etc.) is introduced, add
+parallel hero + light trios plus a matching dot token. Never reuse
 `--color-warning` or `--color-success` for a tier badge.
 
 ### Focus
