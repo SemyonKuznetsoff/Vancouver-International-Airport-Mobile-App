@@ -609,12 +609,21 @@ export default function DesignPreviewPage() {
 
           <SubSection title="BottomTabBar">
             <p className="text-body-sm text-[var(--color-text-secondary)]">
-              Rendered inline below (normally lives at the bottom of `&lt;AppShellAuthed&gt;`). No tab is
-              active here because `/design` isn't a tab.
+              Floating dark dock pill — renders centred above the home indicator inside
+              `&lt;AppShellAuthed&gt;`. The active tab shows its icon **plus** label inside a
+              `--color-action-teal` capsule; inactive tabs are icon-only. No tab is active in this
+              preview because `/design` isn't a tab; flip an `activeHref` prop to see each state.
             </p>
-            <Card padding="none" className="overflow-hidden">
-              <BottomTabBar badges={{ flights: true }} />
-            </Card>
+            <div className="relative h-32 overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-bg)]">
+              <div className="absolute inset-x-0 bottom-0">
+                <BottomTabBar activeHref="/home" badges={{ flights: true }} />
+              </div>
+            </div>
+            <div className="relative h-32 overflow-hidden rounded-[var(--radius-card)] bg-[var(--color-bg)]">
+              <div className="absolute inset-x-0 bottom-0">
+                <BottomTabBar activeHref="/services" />
+              </div>
+            </div>
           </SubSection>
 
           <SubSection title="StickyBottomCTA">
