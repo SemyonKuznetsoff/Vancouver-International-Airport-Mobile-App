@@ -462,6 +462,24 @@ export function BookmarkIcon(props: IconProps) {
   );
 }
 
+export function LuggageIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="6" y="7" width="12" height="13" rx="2" />
+      <path d="M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2" />
+      <path d="M10 10v7M14 10v7" />
+    </svg>
+  );
+}
+
+export function ChatBubbleIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M5 7a2.5 2.5 0 0 1 2.5-2.5h9A2.5 2.5 0 0 1 19 7v6a2.5 2.5 0 0 1-2.5 2.5h-5L7 19v-3.5A2.5 2.5 0 0 1 5 13Z" />
+    </svg>
+  );
+}
+
 export function LifeBuoyIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
