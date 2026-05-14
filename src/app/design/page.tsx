@@ -182,6 +182,13 @@ export default function DesignPreviewPage() {
             <Button variant="primary" trailingIcon={<ArrowRightIcon size={16} />}>
               Primary action
             </Button>
+            <Button
+              variant="primary"
+              tone="teal"
+              trailingIcon={<ArrowRightIcon size={16} />}
+            >
+              Reserve Parking (tone=&quot;teal&quot;)
+            </Button>
             <Button variant="primary" loading loadingLabel="Signing in…">
               Continue
             </Button>
@@ -222,6 +229,12 @@ export default function DesignPreviewPage() {
                   Padding none — children own padding.
                 </p>
               </div>
+            </Card>
+            <Card surface="sheet">
+              <p className="text-body text-[var(--color-text-primary)]">
+                surface=&quot;sheet&quot; — near-opaque white surface for
+                cards that sit beneath a sticky overlay (Reserve Parking).
+              </p>
             </Card>
           </Stack>
         </Section>
@@ -431,6 +444,11 @@ export default function DesignPreviewPage() {
               <StatusPill tone="warning" size="sm">Boarding</StatusPill>
               <StatusPill tone="danger" size="sm">Cancelled</StatusPill>
             </div>
+            <HeroSurface as="div" className="p-4">
+              <StatusPill tone="success" surface="hero" leadingDot>
+                Available
+              </StatusPill>
+            </HeroSurface>
           </SubSection>
 
           <SubSection title="LiveIndicator">

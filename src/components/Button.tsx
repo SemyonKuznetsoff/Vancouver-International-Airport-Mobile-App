@@ -5,9 +5,17 @@ import type { Route } from "next";
 import { SpinnerIcon } from "./icons";
 
 type Variant = "primary" | "secondary" | "ghost";
+type Tone = "primary" | "teal";
 
 type CommonProps = {
   variant?: Variant;
+  /**
+   * Optional tone for the `primary` variant. `primary` (default) renders
+   * the canonical navy fill. `teal` swaps in `--color-action-teal` +
+   * `--shadow-button-teal` for premium teal CTAs (Reserve Parking).
+   * Ignored on `secondary` / `ghost` variants.
+   */
+  tone?: Tone;
   children: React.ReactNode;
   leadingIcon?: React.ReactNode;
   trailingIcon?: React.ReactNode;
@@ -41,16 +49,30 @@ const base =
  */
 const variants: Record<Variant, string> = {
   primary:
-    "h-[54px] w-full rounded-[var(--radius-pill)] bg-[var(--color-action-primary)] text-[var(--color-action-primary-fg)] text-[15px] leading-none shadow-[var(--shadow-button)] active:opacity-90",
+    "h-[54px] w-full rounded-[var(--radius-pill)] text-[var(--color-action-primary-fg)] text-[15px] leading-none active:opacity-90",
   secondary:
     "h-[52px] w-full rounded-[var(--radius-pill)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] text-[14px] hover:bg-[var(--color-surface-elevated-hover)]",
   ghost:
     "h-[44px] w-full rounded-[var(--radius-pill)] bg-transparent text-[var(--color-text-secondary)] text-[13px] tracking-[0.025em] hover:text-[var(--color-text-primary)]",
 };
 
+/**
+ * Tone chrome for the `primary` variant. Carries the fill + matching
+ * shadow so size, typography, and pill shape stay consistent across
+ * tones — the canonical primary CTA shape is one shape app-wide.
+ * Tones are ignored on `secondary` / `ghost`.
+ */
+const primaryToneClasses: Record<Tone, string> = {
+  primary:
+    "bg-[var(--color-action-primary)] shadow-[var(--shadow-button)]",
+  teal:
+    "bg-[var(--color-action-teal)] shadow-[var(--shadow-button-teal)]",
+};
+
 export function Button(props: ButtonAsButton | ButtonAsLink) {
   const {
     variant = "primary",
+    tone = "primary",
     children,
     leadingIcon,
     trailingIcon,
@@ -64,7 +86,10 @@ export function Button(props: ButtonAsButton | ButtonAsLink) {
   const isLink = "href" in props && props.href != null;
   const inactive = disabled || loading;
 
-  const classes = `${base} ${variants[variant]} ${className}`.trim();
+  const toneChrome =
+    variant === "primary" ? primaryToneClasses[tone] : "";
+  const classes =
+    `${base} ${variants[variant]} ${toneChrome} ${className}`.trim();
 
   const label = loading && loadingLabel ? loadingLabel : children;
   // Loading replaces the trailing slot with a spinner. Leading slot stays
