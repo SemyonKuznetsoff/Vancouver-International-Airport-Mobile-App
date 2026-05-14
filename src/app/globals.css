@@ -46,6 +46,22 @@
   --color-action-primary: #1d3557;
   --color-action-primary-fg: #ffffff;
 
+  /* Teal accent — deep premium teal used for inline action links and
+     icon-tile fills inside teal-themed flows (Reserve Parking "Change",
+     "View breakdown" links, Entry/Exit row icon tiles). Distinct from
+     `--color-action-primary` (navy), which remains the canonical
+     primary CTA fill. The soft companion sits on solid white cards. */
+  --color-action-teal: #0a5a66;
+  --color-action-teal-soft: rgba(10, 90, 102, 0.08);
+
+  /* High-opacity surface for near-solid raised elements that must read
+     as opaque on top of glass/aurora — floating sticky bottom sheets
+     (Reserve Parking summary) and the active "raised pill" of a
+     segmented control (Reserve Parking duration selector). Distinct
+     from `--color-surface-card` (airy glass over the aurora) which
+     would dissolve content beneath these surfaces. */
+  --color-surface-sheet: rgba(255, 255, 255, 0.95);
+
   /* Hero surface — dark teal identity card used on Profile and future
      premium / membership hero panels. Foreground tokens carry inverse
      text + an inner glass fill that sits *on* the hero surface, not on
@@ -122,15 +138,31 @@
 
   /* Radii */
   --radius-chip: 10px;
+  --radius-tile: 14px;
   --radius-panel: 22px;
   --radius-card: 24px;
   --radius-pill: 9999px;
 
   /* Shadows */
   --shadow-button: 0 6px 18px -8px rgba(29, 53, 87, 0.45);
+  /* Glow drop paired with the `teal` tone of the primary Button — sits
+     under premium teal CTAs (Reserve Parking) so the pill reads lifted
+     off the aurora with a teal-tinted halo. */
+  --shadow-button-teal: 0 10px 24px -6px rgba(10, 90, 102, 0.55);
   --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   --shadow-panel: 0 12px 40px -4px rgba(31, 38, 135, 0.12);
   --shadow-toggle: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
+  /* Pressed-pill lift inside a segmented control (Reserve Parking
+     duration selector). Subtle teal-tinted drop so the active pill
+     reads "raised" on the f0f3f2-style track. */
+  --shadow-segment: 0 2px 4px 0 rgba(15, 42, 46, 0.18);
+  /* Upward-facing shadow used by sticky bottom sheets to separate the
+     sheet from scrolling content above it. Pair with `--color-surface-sheet`
+     and a top hairline border. */
+  --shadow-sheet: 0 -8px 24px 0 rgba(15, 42, 46, 0.18);
+  /* Strong premium drop on the Reserve Parking hero card — teal-tinted
+     so the dark teal panel still reads as elevated on the aurora. */
+  --shadow-hero-card: 0 20px 40px -20px rgba(7, 47, 54, 0.55);
 
   /* Focus */
   --focus-ring: 2px solid #1d3557;

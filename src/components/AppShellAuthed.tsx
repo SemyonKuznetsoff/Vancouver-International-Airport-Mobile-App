@@ -8,6 +8,13 @@ type AppShellAuthedProps = {
    */
   badges?: React.ComponentProps<typeof BottomTabBar>["badges"];
   /**
+   * Optional explicit tab href to mark active. Forwarded to BottomTabBar.
+   * Use on sub-routes that belong under a top tab but don't share its
+   * pathname prefix — e.g. `/parking/reserve` belongs under Services so the
+   * page passes `activeHref="/services"` to keep the Services tab lit.
+   */
+  activeHref?: React.ComponentProps<typeof BottomTabBar>["activeHref"];
+  /**
    * Render without the tab bar when a screen needs a clean shell
    * temporarily (e.g. an onboarding-style flow inside the authed app).
    */
@@ -34,6 +41,7 @@ type AppShellAuthedProps = {
 export function AppShellAuthed({
   children,
   badges,
+  activeHref,
   hideTabBar = false,
 }: AppShellAuthedProps) {
   return (
@@ -49,7 +57,9 @@ export function AppShellAuthed({
       >
         {children}
       </main>
-      {hideTabBar ? null : <BottomTabBar badges={badges} />}
+      {hideTabBar ? null : (
+        <BottomTabBar badges={badges} activeHref={activeHref} />
+      )}
     </div>
   );
 }

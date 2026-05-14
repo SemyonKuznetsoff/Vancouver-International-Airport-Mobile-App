@@ -460,6 +460,19 @@ through one source of truth.
 height), 27, 29, 31. Any pixel-perfect Figma value that breaks this scale
 must be flagged in the PR description.
 
+### Component radii
+
+Shapes use named radius tokens, never inline `rounded-[Npx]`. The
+strict design-system check will flag arbitrary radii.
+
+| Token | Value | Use for |
+|---|---|---|
+| `--radius-chip` | 10px | Small chips, pill-adjacent corners (membership chip, secondary tile corners). |
+| `--radius-tile` | 14px | Medium-density tiles — IconTile inside list rows (Reserve Parking Entry / Exit / Vehicle), the segmented duration selector track + active pill, the Reserve Parking journey strip. Sits between `--radius-chip` and `--radius-panel`. |
+| `--radius-panel` | 22px | Glass card chrome (`<Card>`). |
+| `--radius-card` | 24px | Hero cards (`<HeroSurface>`). |
+| `--radius-pill` | 9999px | Pills, primary CTA, toggle track. |
+
 ---
 
 ## 4. Typography scale
@@ -654,6 +667,7 @@ it onto a semantic token.
 | `--color-surface-hover` | `--white-a30` | Hover tint on translucent rows (e.g. `AuthOption`, `SettingsRow`). |
 | `--color-surface-pressed` | `--white-a40` | Pressed tint on translucent rows. |
 | `--color-surface-tile` | `rgba(29,53,87, 0.06)` (navy @ 6%) | Warm inner-card tile fill. Use for the leading `<IconTile>` inside `<SettingsRow>`, the trip card's gate/boarding/seat strip, and the trip-card header airline chip. Distinct from `--color-surface-elevated`, which is translucent over aurora — this tone is meant to sit **inside** a card. |
+| `--color-surface-sheet` | `rgba(255,255,255, 0.95)` | Near-opaque white surface for raised elements that must read as solid above scrolling content — `<Card surface="sheet">` (booking cards behind a sticky overlay) and the active raised pill of a segmented control. Distinct from `--color-surface-card` (airy glass) which would dissolve content beneath. |
 
 ### Semantic — Text
 
@@ -678,6 +692,8 @@ it onto a semantic token.
 |---|---|---|
 | `--color-action-primary` | `--navy-900` | Filled CTA, switch track ON. |
 | `--color-action-primary-fg` | `--neutral-0` | Foreground on filled CTA. |
+| `--color-action-teal` | `#0a5a66` | Premium commerce action — teal CTA fill (Reserve / Pay / Confirm flows) and teal inline action links ("Change", "View breakdown"). Distinct from `--color-action-primary` (navy), which remains the default CTA. |
+| `--color-action-teal-soft` | `rgba(10,90,102, 0.08)` | Paired soft fill — icon-tile background and small badge background inside teal flows (Entry / Exit row tiles, "Saved" badge). |
 
 ### Semantic — Status
 
@@ -803,6 +819,26 @@ comes from this component. Other primitives (e.g. `AuthOptionGroup`,
 | `default` | 20 | Most informational cards. |
 | `lg` | 24 | Hero / spotlight cards. |
 
+### Surface variants
+
+The `surface` prop swaps the card's fill while keeping border, radius,
+and shadow unchanged — the chrome remains a single recognisable shape
+across both surfaces.
+
+| Variant | Fill | When to use |
+|---|---|---|
+| `card` (default) | `--color-surface-card` (translucent glass) | Canonical informational card on the aurora background. The vast majority of cards. |
+| `sheet` | `--color-surface-sheet` (near-opaque white) | Booking / reservation cards that sit beneath a sticky bottom sheet, and any card whose content must not show through. Reserve Parking's reservation-details card is the reference. |
+
+```tsx
+<Card surface="sheet" padding="none">
+  …rows that need to stay opaque under an overlay…
+</Card>
+```
+
+Never override the card's `bg-…` via `className` — pick a `surface`
+instead so the chrome stays canonical.
+
 ### Composing layout concerns
 
 Extra layout needs (`overflow-hidden`, divider selectors, custom max-width)
@@ -878,6 +914,25 @@ Use `flex flex-col gap-3` (12px between siblings).
 - Text: 15px / Medium / white.
 - Trailing icon optional (16px).
 - One per screen. Lives at the bottom in a `mt-auto` block.
+
+#### Tone — `tone="primary" \| "teal"`
+
+Optional. Swaps only the fill + paired shadow so size, typography, and
+pill shape stay consistent — primary CTAs across the app remain a
+single recognisable shape.
+
+| Tone | Fill | Shadow | When to use |
+|---|---|---|---|
+| `primary` (default) | `--color-action-primary` (navy) | `--shadow-button` | Default primary CTA across the app. |
+| `teal` | `--color-action-teal` | `--shadow-button-teal` | Premium commerce / reservation / payment CTAs (Reserve Parking is the reference). |
+
+```tsx
+<Button tone="teal" trailingIcon={<ArrowRightIcon size={16} />}>
+  Reserve Parking
+</Button>
+```
+
+`tone` is ignored on `secondary` and `ghost` variants.
 
 ### Button states (anatomy)
 
@@ -1221,8 +1276,12 @@ Component-shadow tokens:
 |---|---|---|
 | `--shadow-card` | `--shadow-elevation-1` | `Card`. |
 | `--shadow-panel` | `--shadow-elevation-3` | Future sheets / modals. |
-| `--shadow-button` | `0 6px 18px -8px rgba(29,53,87,0.45)` | `Button` (navy-tinted lift). |
+| `--shadow-button` | `0 6px 18px -8px rgba(29,53,87,0.45)` | `Button` `tone="primary"` (navy-tinted lift). |
+| `--shadow-button-teal` | `0 10px 24px -6px rgba(10,90,102, 0.55)` | `Button` `tone="teal"` (premium teal-tinted glow). |
 | `--shadow-toggle` | `0 2px 6px 0 var(--black-a18)` | `Toggle` knob. |
+| `--shadow-segment` | `0 2px 4px 0 rgba(15,42,46, 0.18)` | Active raised pill of a segmented control (Reserve Parking duration selector). |
+| `--shadow-sheet` | `0 -8px 24px 0 rgba(15,42,46, 0.18)` | Upward-facing drop on a sticky bottom sheet (Reserve Parking summary). Pairs with `--color-surface-sheet`. |
+| `--shadow-hero-card` | `0 20px 40px -20px rgba(7,47,54, 0.55)` | Strong teal-tinted drop on the Reserve Parking hero card so the dark panel still reads elevated on the aurora. |
 
 Components must consume the component-facing shadow tokens, not the raw
 elevation primitives. Pick `--shadow-card` for a card body, not
@@ -2227,6 +2286,7 @@ GateDisplay       →  GATE / D73 with optional terminal + helper
 |---|---|---|---|
 | `tone` | `"success" \| "warning" \| "danger" \| "info" \| "neutral"` | `"neutral"` | Picks the status surface trio (bg + border + fg). |
 | `size` | `"sm" \| "md"` | `"md"` | `sm` = 20px tall, `md` = 28px tall. Both use `text-micro` so the label scans identically. |
+| `surface` | `"light" \| "hero"` | `"light"` | Render context. `light` uses the standard pale-fill / dark-fg trios tuned for the aurora. `hero` swaps in dark-surface trios so the pill stays legible on a `<HeroSurface>`. Currently only `success` ships a hero variant; unsupported (tone, hero) pairs fall back silently to the light trio. |
 | `leadingDot` | `boolean` | `false` | 6px filled dot at `currentColor` (the variant fg). |
 | `children` | `ReactNode` | — | The label. Keep it short — content-guide §3. |
 | `className` | `string` | `""` | Composition hook. |
@@ -2249,6 +2309,10 @@ status surface fg, `text-micro uppercase`. Single-line content.
 
 // ❌ Using tone for decoration (status surfaces are reserved for live data).
 <StatusPill tone="success">Vancouver</StatusPill>
+
+// ❌ Using surface="hero" outside a dark <HeroSurface> — the mint
+//    trio reads correctly only on dark teal contexts.
+<Card><StatusPill tone="success" surface="hero">…</StatusPill></Card>
 ```
 
 ### LiveIndicator
@@ -2771,6 +2835,26 @@ The two shells have intentionally different layouts.
 **Never apply `AppShellAuthed` to onboarding screens.** The five tabs
 would surface routes that don't exist for unauthenticated users and
 break the onboarding's single-CTA focus.
+
+#### AppShellAuthed forwarded props
+
+`AppShellAuthed` accepts two optional props that pass straight through
+to the rendered `<BottomTabBar>`:
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `badges` | `Partial<Record<TabKey, boolean>>` | — | See `BottomTabBar` below. |
+| `activeHref` | `string` | `undefined` (BottomTabBar falls back to `usePathname()`) | Use on a sub-route that belongs under a top tab but doesn't share its pathname prefix — e.g. `/parking/reserve` belongs under Services, so the page passes `activeHref="/services"` to keep the Services tab lit. |
+
+```tsx
+<AppShellAuthed activeHref="/services">
+  …Reserve Parking content…
+</AppShellAuthed>
+```
+
+When the prop is omitted (the default for Home, Profile, Saved Trips,
+Find My Car), `BottomTabBar`'s `usePathname()` detection runs as
+before — no behaviour change.
 
 ### BottomTabBar
 

@@ -198,6 +198,33 @@ export function ClockIcon(props: IconProps) {
   );
 }
 
+export function UmbrellaIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M3 12a9 9 0 0 1 18 0Z" />
+      <path d="M12 12v6.5a2 2 0 0 0 4 0" />
+    </svg>
+  );
+}
+
+export function CalendarIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="4" y="6" width="16" height="14" rx="2" />
+      <path d="M4 10h16M9 4v4M15 4v4" />
+    </svg>
+  );
+}
+
+export function ArrowsVerticalIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M8 4v16M5 7l3-3 3 3" />
+      <path d="M16 20V4M13 17l3 3 3-3" />
+    </svg>
+  );
+}
+
 export function ParkingIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
