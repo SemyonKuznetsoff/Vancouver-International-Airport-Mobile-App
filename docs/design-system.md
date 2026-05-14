@@ -803,7 +803,8 @@ parallel hero + light trios plus a matching dot token. Never reuse
 
 | Token | Value | Usage |
 |---|---|---|
-| `--focus-ring` | `2px solid #1d3557` | Applied globally via `:focus-visible`. |
+| `--focus-ring` | `2px solid #1d3557` | Applied globally via `:focus-visible`. Navy outline tuned for light surfaces (aurora, white cards). |
+| `--focus-ring-on-dark` | `2px solid var(--color-map-mint)` | Override for dark surfaces where the navy `--focus-ring` washes out — e.g. `BottomTabBar` links on `--color-nav-surface`. Apply via `focus-visible:[outline:var(--focus-ring-on-dark)]`. |
 
 ---
 
@@ -2906,22 +2907,45 @@ before — no behaviour change.
 | `badges` | `Partial<Record<TabKey, boolean>>` | — | Per-tab dot toggle. `TabKey` is `"home" \| "flights" \| "map" \| "services" \| "profile"`. |
 | `className` | `string` | `""` | Composition hook. |
 
-**Anatomy.** 56px tall row (`h-14`) + `env(safe-area-inset-bottom)`.
-Top border at `--color-border`. Background `--color-surface-card`.
-Five evenly-spaced tabs (`flex-1` each). Each tab: 22px icon + `text-micro
-uppercase` label, vertical stack. Active tab uses `--color-action-primary`;
-inactive uses `--color-text-secondary` with hover to `--color-text-primary`.
+**Anatomy.** Floating dark dock pill centred above the home indicator.
+The outer wrapper is full-width with `px-4` side gutters and reserves
+`max(env(safe-area-inset-bottom), 12px)` of bottom padding. The inner
+`<nav>` is a `h-14` pill with `bg-[--color-nav-surface]` (charcoal),
+`rounded-[--radius-pill]`, `p-1.5` interior, and `shadow-[--shadow-nav]`
+floating elevation. Five tabs sit on a single row with `gap-1`. The
+active tab renders as a `h-11` capsule filled with
+`--color-nav-active-bg` (`--color-action-teal`), with the icon **plus**
+`text-label` name; inactive tabs render as `h-11 w-11` icon-only
+buttons with `--color-nav-fg-muted` and hover to `--color-nav-fg`.
+Icons render at 18px.
 
-**Badge dot.** 6px filled `--color-danger` dot positioned at the top-right
-of the active icon (right ~28% of the tab width). Decorative; the change
-of state should be announced by the relevant screen, not the tab itself.
+**Non-colour active cue.** The active tab is the only tab whose label
+is rendered. Combined with `aria-current="page"`, this gives screen
+readers and Forced-Colors users a non-colour signal for the selected
+tab.
+
+**Badge dot.** 6px filled `--color-danger` dot positioned at the
+top-right of each tab. Decorative; the change of state should be
+announced by the relevant screen, not the tab itself.
 
 **Tabs.** Hard-coded: Home, Flights, Map, Services, Profile. Adding or
 reordering tabs is a design-system change, not a screen change.
 
 **A11y.** `<nav aria-label="Main">` wrapper. Each `<Link>` carries
-`aria-current="page"` when active and `aria-label={label}` so the
-uppercase label and the icon are not double-announced.
+`aria-current="page"` when active and `aria-label={label}` so screen
+readers receive a clean name regardless of whether the visible label is
+rendered. Tap targets meet 44×44 — active capsule is `h-11` with
+intrinsic content width; inactive tabs are explicit `h-11 w-11`.
+
+**Tokens.** `--color-nav-surface`, `--color-nav-fg`, `--color-nav-fg-muted`,
+`--color-nav-active-bg` (aliased to `--color-action-teal`),
+`--color-nav-active-fg`, the `--shadow-nav` floating-dock elevation,
+and `--focus-ring-on-dark` (mint outline) applied to each tab link
+via `focus-visible:[outline:var(--focus-ring-on-dark)]` so keyboard
+focus is visible on the dark dock — the global navy `--focus-ring`
+washes out on `--color-nav-surface`. Future shell experiments
+(translucent glass nav, alternate active tones) swap these tokens
+without reaching into `BottomTabBar.tsx`.
 
 ### LargeTitleHeader
 

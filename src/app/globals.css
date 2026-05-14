@@ -102,6 +102,19 @@
      aurora) — this tone sits inside a solid card and reads warm. */
   --color-surface-tile: rgba(31, 53, 87, 0.06);
 
+  /* Bottom navigation surface — the global floating dock pill rendered
+     by `BottomTabBar`. The bar reads as a near-black charcoal pill
+     hovering above the aurora background, with the active tab filled
+     in `--color-action-teal`. Tokens live here (not inside the
+     component) so future shell experiments — translucent glass nav,
+     light-mode nav, alternate active tones — can swap them without
+     reaching into `BottomTabBar.tsx`. */
+  --color-nav-surface: #1a1d22;
+  --color-nav-fg: #ffffff;
+  --color-nav-fg-muted: rgba(255, 255, 255, 0.55);
+  --color-nav-active-bg: var(--color-action-teal);
+  --color-nav-active-fg: #ffffff;
+
   /* Control surfaces — composed from semantic text token + alpha */
   --color-track-off: color-mix(
     in srgb,
@@ -185,9 +198,20 @@
   /* Strong premium drop on the Reserve Parking hero card — teal-tinted
      so the dark teal panel still reads as elevated on the aurora. */
   --shadow-hero-card: 0 20px 40px -20px rgba(7, 47, 54, 0.55);
+  /* Floating dock elevation under the global bottom navigation pill.
+     Soft, cool, slightly deeper than `--shadow-card` so the dark pill
+     reads as suspended above the aurora without competing with
+     content cards. Pair with `--color-nav-surface`. */
+  --shadow-nav: 0 12px 32px -8px rgba(7, 18, 32, 0.35);
 
   /* Focus */
   --focus-ring: 2px solid #1d3557;
+  /* Focus ring tuned for dark surfaces — the navy `--focus-ring` has
+     poor contrast on `--color-nav-surface` and other dark-teal surfaces.
+     Uses the YVR mint accent so keyboard focus is visible on the
+     global bottom dock and any future dark dock / hero overlay
+     controls. Pair via `focus-visible:[outline:var(--focus-ring-on-dark)]`. */
+  --focus-ring-on-dark: 2px solid var(--color-map-mint);
 
   /* Typography family */
   --font-sans: var(--font-jakarta), system-ui, -apple-system, "Segoe UI",
