@@ -60,6 +60,7 @@ import {
   LocationPinIcon,
   LockIcon,
   MailIcon,
+  NavigationIcon,
   ParkingIcon,
   PlaneIcon,
   ScanIcon,
@@ -76,6 +77,8 @@ export default function DesignPreviewPage() {
   const [chipDep, setChipDep] = useState(true);
   const [chipArr, setChipArr] = useState(false);
   const [chipLay, setChipLay] = useState(false);
+  const [chipBest, setChipBest] = useState(true);
+  const [chipFastest, setChipFastest] = useState(false);
 
   return (
     <AppShell>
@@ -188,6 +191,13 @@ export default function DesignPreviewPage() {
               trailingIcon={<ArrowRightIcon size={16} />}
             >
               Reserve Parking (tone=&quot;teal&quot;)
+            </Button>
+            <Button
+              variant="primary"
+              tone="mint"
+              leadingIcon={<NavigationIcon size={16} />}
+            >
+              Get SkyTrain Directions (tone=&quot;mint&quot;)
             </Button>
             <Button variant="primary" loading loadingLabel="Signing in…">
               Continue
@@ -555,6 +565,22 @@ export default function DesignPreviewPage() {
               </ChipFilter>
               <ChipFilter selected={false} onToggle={() => {}} disabled>
                 Disabled
+              </ChipFilter>
+            </div>
+            <div
+              role="group"
+              aria-label="Filter transport options"
+              className="mt-3 flex flex-wrap gap-2"
+            >
+              <ChipFilter tone="teal" selected={chipBest} onToggle={setChipBest}>
+                Best value (tone=&quot;teal&quot;)
+              </ChipFilter>
+              <ChipFilter
+                tone="teal"
+                selected={chipFastest}
+                onToggle={setChipFastest}
+              >
+                Fastest
               </ChipFilter>
             </div>
           </SubSection>

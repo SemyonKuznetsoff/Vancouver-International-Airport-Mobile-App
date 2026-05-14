@@ -5,7 +5,7 @@ import type { Route } from "next";
 import { SpinnerIcon } from "./icons";
 
 type Variant = "primary" | "secondary" | "ghost";
-type Tone = "primary" | "teal";
+type Tone = "primary" | "teal" | "mint";
 
 type CommonProps = {
   variant?: Variant;
@@ -13,6 +13,9 @@ type CommonProps = {
    * Optional tone for the `primary` variant. `primary` (default) renders
    * the canonical navy fill. `teal` swaps in `--color-action-teal` +
    * `--shadow-button-teal` for premium teal CTAs (Reserve Parking).
+   * `mint` swaps in `--color-map-mint` + dark-teal foreground +
+   * `--shadow-button-mint` for in-hero CTAs that sit on the dark teal
+   * hero surface (Ground Transport SkyTrain directions).
    * Ignored on `secondary` / `ghost` variants.
    */
   tone?: Tone;
@@ -49,7 +52,7 @@ const base =
  */
 const variants: Record<Variant, string> = {
   primary:
-    "h-[54px] w-full rounded-[var(--radius-pill)] text-[var(--color-action-primary-fg)] text-[15px] leading-none active:opacity-90",
+    "h-[54px] w-full rounded-[var(--radius-pill)] text-[15px] leading-none active:opacity-90",
   secondary:
     "h-[52px] w-full rounded-[var(--radius-pill)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] text-[14px] hover:bg-[var(--color-surface-elevated-hover)]",
   ghost:
@@ -64,9 +67,11 @@ const variants: Record<Variant, string> = {
  */
 const primaryToneClasses: Record<Tone, string> = {
   primary:
-    "bg-[var(--color-action-primary)] shadow-[var(--shadow-button)]",
+    "bg-[var(--color-action-primary)] text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button)]",
   teal:
-    "bg-[var(--color-action-teal)] shadow-[var(--shadow-button-teal)]",
+    "bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button-teal)]",
+  mint:
+    "bg-[var(--color-map-mint)] text-[var(--color-action-teal)] shadow-[var(--shadow-button-mint)]",
 };
 
 export function Button(props: ButtonAsButton | ButtonAsLink) {
