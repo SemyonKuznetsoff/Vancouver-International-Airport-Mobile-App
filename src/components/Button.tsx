@@ -5,7 +5,7 @@ import type { Route } from "next";
 import { SpinnerIcon } from "./icons";
 
 type Variant = "primary" | "secondary" | "ghost";
-type Tone = "primary" | "teal" | "mint";
+type Tone = "primary" | "teal" | "mint" | "inverse";
 
 type CommonProps = {
   variant?: Variant;
@@ -16,6 +16,11 @@ type CommonProps = {
    * `mint` swaps in `--color-map-mint` + dark-teal foreground +
    * `--shadow-button-mint` for in-hero CTAs that sit on the dark teal
    * hero surface (Ground Transport SkyTrain directions).
+   * `inverse` swaps in `--color-surface-hero-fg` (white) + dark-teal
+   * foreground + `--shadow-button-inverse` for max-contrast in-hero
+   * CTAs (Parking "Reserve a Space" promo). Use when the in-hero CTA
+   * needs to read as a primary action against the dark teal field;
+   * choose `mint` when the CTA should sit *within* the hero palette.
    * Ignored on `secondary` / `ghost` variants.
    */
   tone?: Tone;
@@ -72,6 +77,8 @@ const primaryToneClasses: Record<Tone, string> = {
     "bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button-teal)]",
   mint:
     "bg-[var(--color-map-mint)] text-[var(--color-action-teal)] shadow-[var(--shadow-button-mint)]",
+  inverse:
+    "bg-[var(--color-surface-hero-fg)] text-[var(--color-action-teal)] shadow-[var(--shadow-button-inverse)]",
 };
 
 export function Button(props: ButtonAsButton | ButtonAsLink) {
