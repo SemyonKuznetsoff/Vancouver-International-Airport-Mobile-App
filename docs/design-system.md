@@ -936,7 +936,7 @@ Use `flex flex-col gap-3` (12px between siblings).
 - Trailing icon optional (16px).
 - One per screen. Lives at the bottom in a `mt-auto` block.
 
-#### Tone — `tone="primary" \| "teal" \| "mint"`
+#### Tone — `tone="primary" \| "teal" \| "mint" \| "inverse"`
 
 Optional. Swaps only the fill + paired text colour + paired shadow so
 size, typography, and pill shape stay consistent — primary CTAs across
@@ -946,7 +946,8 @@ the app remain a single recognisable shape.
 |---|---|---|---|---|
 | `primary` (default) | `--color-action-primary` (navy) | `--color-action-primary-fg` (white) | `--shadow-button` | Default primary CTA across the app. |
 | `teal` | `--color-action-teal` | `--color-action-primary-fg` (white) | `--shadow-button-teal` | Premium commerce / reservation / payment CTAs (Reserve Parking is the reference). |
-| `mint` | `--color-map-mint` | `--color-action-teal` (dark teal) | `--shadow-button-mint` | In-hero CTAs that sit *inside* the dark teal hero surface (Ground Transport SkyTrain directions). |
+| `mint` | `--color-map-mint` | `--color-action-teal` (dark teal) | `--shadow-button-mint` | In-hero CTAs that sit *within* the dark teal hero palette (Ground Transport SkyTrain directions). |
+| `inverse` | `--color-surface-hero-fg` (white) | `--color-action-teal` (dark teal) | `--shadow-button-inverse` | Max-contrast in-hero CTAs that need to *pop* off the dark teal field (Parking "Reserve a Space" promo). Choose `inverse` when the CTA is the primary action on the hero; choose `mint` when the CTA should blend into the hero palette. |
 
 ```tsx
 <Button tone="teal" trailingIcon={<ArrowRightIcon size={16} />}>
@@ -955,6 +956,10 @@ the app remain a single recognisable shape.
 
 <Button tone="mint" leadingIcon={<NavigationIcon size={16} />}>
   Get SkyTrain Directions
+</Button>
+
+<Button tone="inverse">
+  Reserve a Space
 </Button>
 ```
 
@@ -1305,6 +1310,7 @@ Component-shadow tokens:
 | `--shadow-button` | `0 6px 18px -8px rgba(29,53,87,0.45)` | `Button` `tone="primary"` (navy-tinted lift). |
 | `--shadow-button-teal` | `0 10px 24px -6px rgba(10,90,102, 0.55)` | `Button` `tone="teal"` (premium teal-tinted glow). |
 | `--shadow-button-mint` | `0 6px 18px -8px rgba(127,216,196, 0.45)` | `Button` `tone="mint"` (soft mint halo for in-hero CTAs sitting on the dark teal hero surface). |
+| `--shadow-button-inverse` | `0 6px 18px -8px rgba(7,47,54, 0.45)` | `Button` `tone="inverse"` (cool teal-tinted halo under a white pill on the dark teal hero surface — Parking "Reserve a Space"). |
 | `--shadow-toggle` | `0 2px 6px 0 var(--black-a18)` | `Toggle` knob. |
 | `--shadow-segment` | `0 2px 4px 0 rgba(15,42,46, 0.18)` | Active raised pill of a segmented control (Reserve Parking duration selector). |
 | `--shadow-sheet` | `0 -8px 24px 0 rgba(15,42,46, 0.18)` | Upward-facing drop on a sticky bottom sheet (Reserve Parking summary). Pairs with `--color-surface-sheet`. |

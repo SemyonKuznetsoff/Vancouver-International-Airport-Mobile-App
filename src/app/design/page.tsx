@@ -199,6 +199,9 @@ export default function DesignPreviewPage() {
             >
               Get SkyTrain Directions (tone=&quot;mint&quot;)
             </Button>
+            <Button variant="primary" tone="inverse">
+              Reserve a Space (tone=&quot;inverse&quot;)
+            </Button>
             <Button variant="primary" loading loadingLabel="Signing in…">
               Continue
             </Button>

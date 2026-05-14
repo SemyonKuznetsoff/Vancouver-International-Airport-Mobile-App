@@ -166,6 +166,11 @@
      Transport SkyTrain directions). Subtle by design so the pill
      reads as part of the hero rather than detaching from it. */
   --shadow-button-mint: 0 6px 18px -8px rgba(127, 216, 196, 0.45);
+  /* Soft halo for the `inverse` tone of the primary Button — pairs with
+     a white pill on the dark teal hero surface (Parking promo "Reserve
+     a Space"). Slightly cooler tint so the pill lifts off the hero
+     without drawing as much attention as a teal/mint CTA. */
+  --shadow-button-inverse: 0 6px 18px -8px rgba(7, 47, 54, 0.45);
   --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   --shadow-panel: 0 12px 40px -4px rgba(31, 38, 135, 0.12);
   --shadow-toggle: 0 2px 6px 0 rgba(0, 0, 0, 0.18);
