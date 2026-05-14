@@ -85,6 +85,18 @@
   --color-hero-tier-gold-border: rgba(200, 164, 92, 0.4);
   --color-hero-tier-gold-fg: #e1c685;
 
+  /* Light-surface companion of the gold tier accent — used for the
+     "BEST MATCH NEAR YOUR GATE" pill on a white card and any other
+     gold tier callout that lives outside the hero. Foreground is the
+     deeper mustard so text reads on `--color-surface-sheet` /
+     `--color-surface-card`. The dot tone (`--color-tier-gold-dot`) is
+     the mid gold and reads correctly on *both* light and hero
+     surfaces. Not a status colour. */
+  --color-tier-gold-bg: rgba(212, 184, 132, 0.13);
+  --color-tier-gold-border: rgba(212, 184, 132, 0.33);
+  --color-tier-gold-fg: #7a5e2a;
+  --color-tier-gold-dot: #d4b884;
+
   /* Warm tile fill — used for the leading IconTile inside settings/vault
      rows. Distinct from `--color-surface-elevated` (translucent over
      aurora) — this tone sits inside a solid card and reads warm. */

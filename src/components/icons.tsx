@@ -356,6 +356,64 @@ export function NavigationIcon(props: IconProps) {
   );
 }
 
+export function StarIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="m12 3 2.7 5.7 6.3.9-4.6 4.4 1.1 6.2L12 17.3l-5.5 2.9 1.1-6.2L3 9.6l6.3-.9Z" />
+    </svg>
+  );
+}
+
+export function WifiIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M3 9a14 14 0 0 1 18 0" />
+      <path d="M6 12.5a10 10 0 0 1 12 0" />
+      <path d="M9 16a6 6 0 0 1 6 0" />
+      <circle cx="12" cy="19" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function ShowerIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M5 11h14" />
+      <path d="M12 11V5a2 2 0 0 1 2-2c1.7 0 3 1.3 3 3" />
+      <path d="M8 14v.5M11 15v1M14 14v.5M8.5 17.5v.5M12 18v1M15.5 17.5v.5" />
+    </svg>
+  );
+}
+
+export function MoonIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z" />
+    </svg>
+  );
+}
+
+export function BriefcaseIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="3" y="7" width="18" height="13" rx="2" />
+      <path d="M9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+      <path d="M3 12h18" />
+    </svg>
+  );
+}
+
+export function UsersIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <circle cx="9" cy="8" r="3.5" />
+      <path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5" />
+      <circle cx="17" cy="9" r="2.5" />
+      <path d="M16 14c2.8 0 5 2.2 5 5" />
+    </svg>
+  );
+}
+
 export function IdCardIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
