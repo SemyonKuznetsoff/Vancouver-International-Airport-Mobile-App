@@ -225,6 +225,44 @@ export function ArrowsVerticalIcon(props: IconProps) {
   );
 }
 
+export function MoreIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <circle cx="6" cy="12" r="1.25" fill="currentColor" stroke="none" />
+      <circle cx="12" cy="12" r="1.25" fill="currentColor" stroke="none" />
+      <circle cx="18" cy="12" r="1.25" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+export function CheckIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="m5 12 5 5 9-11" />
+    </svg>
+  );
+}
+
+export function BuildingIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M5 21V6l7-3 7 3v15" />
+      <path d="M3 21h18" />
+      <path d="M9 9h0M9 13h0M9 17h0M15 9h0M15 13h0M15 17h0" />
+    </svg>
+  );
+}
+
+export function WalletIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="3" y="6" width="18" height="13" rx="2" />
+      <path d="M3 10h18" />
+      <circle cx="16.5" cy="14.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function ParkingIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
@@ -394,6 +432,45 @@ export function GoogleIcon(props: IconProps) {
         d="M12 5.977c1.47 0 2.787.506 3.825 1.498l2.866-2.866C16.96 2.99 14.695 2 12 2 8.087 2 4.71 4.245 3.072 7.512l3.33 2.59C7.19 7.737 9.395 5.977 12 5.977Z"
       />
     </svg>
+  );
+}
+
+/**
+ * Decorative gold/bronze "smart-chip" badge that evokes the chip on a
+ * physical parking access card. Used inside the dark teal Parking
+ * Reserved pass card, beside the "Scan at parking barrier" label, to
+ * give the pass a tangible, premium feel. Multicolour brand decoration —
+ * sits alongside `AppleIcon` / `GoogleIcon` / `AeroplanBadge` and is
+ * allow-listed for raw hex in `scripts/check-design-system.mjs`.
+ */
+export function ParkingPassChip({ size = 24 }: { size?: number }) {
+  const stripe: React.CSSProperties = {
+    backgroundColor: "rgba(0,0,0,0.18)",
+    borderRadius: 1,
+    flex: 1,
+  };
+  return (
+    <span
+      aria-hidden
+      className="inline-flex shrink-0 flex-col items-stretch gap-0.5 p-1"
+      style={{
+        width: size,
+        height: size * 0.75,
+        borderRadius: 6,
+        backgroundImage: "linear-gradient(143deg, #d6b97a 0%, #8c6e3a 100%)",
+      }}
+    >
+      <span className="flex flex-1 gap-0.5">
+        <span style={stripe} />
+        <span style={stripe} />
+        <span style={stripe} />
+      </span>
+      <span className="flex flex-1 gap-0.5">
+        <span style={stripe} />
+        <span style={stripe} />
+        <span style={stripe} />
+      </span>
+    </span>
   );
 }
 
