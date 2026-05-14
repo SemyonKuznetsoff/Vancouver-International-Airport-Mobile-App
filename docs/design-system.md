@@ -915,20 +915,25 @@ Use `flex flex-col gap-3` (12px between siblings).
 - Trailing icon optional (16px).
 - One per screen. Lives at the bottom in a `mt-auto` block.
 
-#### Tone — `tone="primary" \| "teal"`
+#### Tone — `tone="primary" \| "teal" \| "mint"`
 
-Optional. Swaps only the fill + paired shadow so size, typography, and
-pill shape stay consistent — primary CTAs across the app remain a
-single recognisable shape.
+Optional. Swaps only the fill + paired text colour + paired shadow so
+size, typography, and pill shape stay consistent — primary CTAs across
+the app remain a single recognisable shape.
 
-| Tone | Fill | Shadow | When to use |
-|---|---|---|---|
-| `primary` (default) | `--color-action-primary` (navy) | `--shadow-button` | Default primary CTA across the app. |
-| `teal` | `--color-action-teal` | `--shadow-button-teal` | Premium commerce / reservation / payment CTAs (Reserve Parking is the reference). |
+| Tone | Fill | Foreground | Shadow | When to use |
+|---|---|---|---|---|
+| `primary` (default) | `--color-action-primary` (navy) | `--color-action-primary-fg` (white) | `--shadow-button` | Default primary CTA across the app. |
+| `teal` | `--color-action-teal` | `--color-action-primary-fg` (white) | `--shadow-button-teal` | Premium commerce / reservation / payment CTAs (Reserve Parking is the reference). |
+| `mint` | `--color-map-mint` | `--color-action-teal` (dark teal) | `--shadow-button-mint` | In-hero CTAs that sit *inside* the dark teal hero surface (Ground Transport SkyTrain directions). |
 
 ```tsx
 <Button tone="teal" trailingIcon={<ArrowRightIcon size={16} />}>
   Reserve Parking
+</Button>
+
+<Button tone="mint" leadingIcon={<NavigationIcon size={16} />}>
+  Get SkyTrain Directions
 </Button>
 ```
 
@@ -1278,6 +1283,7 @@ Component-shadow tokens:
 | `--shadow-panel` | `--shadow-elevation-3` | Future sheets / modals. |
 | `--shadow-button` | `0 6px 18px -8px rgba(29,53,87,0.45)` | `Button` `tone="primary"` (navy-tinted lift). |
 | `--shadow-button-teal` | `0 10px 24px -6px rgba(10,90,102, 0.55)` | `Button` `tone="teal"` (premium teal-tinted glow). |
+| `--shadow-button-mint` | `0 6px 18px -8px rgba(127,216,196, 0.45)` | `Button` `tone="mint"` (soft mint halo for in-hero CTAs sitting on the dark teal hero surface). |
 | `--shadow-toggle` | `0 2px 6px 0 var(--black-a18)` | `Toggle` knob. |
 | `--shadow-segment` | `0 2px 4px 0 rgba(15,42,46, 0.18)` | Active raised pill of a segmented control (Reserve Parking duration selector). |
 | `--shadow-sheet` | `0 -8px 24px 0 rgba(15,42,46, 0.18)` | Upward-facing drop on a sticky bottom sheet (Reserve Parking summary). Pairs with `--color-surface-sheet`. |
@@ -2696,12 +2702,14 @@ visual relationship is preserved.
 | `selected` | `boolean` | (required) | Controlled. |
 | `onToggle` | `(next: boolean) => void` | (required) | Receives the next state. |
 | `disabled` | `boolean` | `false` | — |
+| `tone` | `"primary" \| "teal"` | `"primary"` | Selected-pill fill tone. `primary` (default) renders the canonical navy fill; `teal` swaps in `--color-action-teal` for chip rows inside teal-themed flows (Ground Transport transport filter). Unselected chrome is identical across tones — only the selected pill changes colour. Mirrors the Button tone pattern. |
 | `children` | `ReactNode` | (required) | The chip label. Sentence case. |
 | `className` | `string` | `""` | Composition hook. |
 
 **Anatomy.** 44px tall pill (`--radius-pill`) with `text-body-sm
 font-medium` label. Selected state fills with `--color-action-primary`
-and inverts text to `--color-action-primary-fg`. Unselected state uses
+(or `--color-action-teal` when `tone="teal"`) and inverts text to
+`--color-action-primary-fg`. Unselected state uses
 `--color-surface-elevated` with `--color-border` hairline.
 
 **A11y.** Each chip is a real `<button>` with `aria-pressed`. The chip

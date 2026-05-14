@@ -149,6 +149,11 @@
      under premium teal CTAs (Reserve Parking) so the pill reads lifted
      off the aurora with a teal-tinted halo. */
   --shadow-button-teal: 0 10px 24px -6px rgba(10, 90, 102, 0.55);
+  /* Soft halo for the `mint` tone of the primary Button — pairs with a
+     mint pill sitting *inside* the dark teal hero surface (Ground
+     Transport SkyTrain directions). Subtle by design so the pill
+     reads as part of the hero rather than detaching from it. */
+  --shadow-button-mint: 0 6px 18px -8px rgba(127, 216, 196, 0.45);
   --shadow-card: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
   --shadow-panel: 0 12px 40px -4px rgba(31, 38, 135, 0.12);
   --shadow-toggle: 0 2px 6px 0 rgba(0, 0, 0, 0.18);

@@ -1,11 +1,28 @@
 "use client";
 
+type Tone = "primary" | "teal";
+
 type ChipFilterProps = {
   selected: boolean;
   onToggle: (next: boolean) => void;
   disabled?: boolean;
+  /**
+   * Tone of the selected fill. `primary` (default) renders the canonical
+   * navy fill matched to `--color-action-primary`. `teal` swaps in
+   * `--color-action-teal` for chip rows inside teal-themed flows
+   * (Ground Transport transport filter). Unselected chrome is identical
+   * across tones — only the selected pill changes colour.
+   */
+  tone?: Tone;
   children: React.ReactNode;
   className?: string;
+};
+
+const selectedToneClasses: Record<Tone, string> = {
+  primary:
+    "border-[var(--color-action-primary)] bg-[var(--color-action-primary)] text-[var(--color-action-primary-fg)]",
+  teal:
+    "border-[var(--color-action-teal)] bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)]",
 };
 
 /**
@@ -29,6 +46,7 @@ export function ChipFilter({
   selected,
   onToggle,
   disabled = false,
+  tone = "primary",
   children,
   className = "",
 }: ChipFilterProps) {
@@ -40,7 +58,7 @@ export function ChipFilter({
       onClick={() => onToggle(!selected)}
       className={`inline-flex h-11 shrink-0 items-center rounded-[var(--radius-pill)] border px-4 text-body-sm font-medium transition-colors duration-150 ${
         selected
-          ? "border-[var(--color-action-primary)] bg-[var(--color-action-primary)] text-[var(--color-action-primary-fg)]"
+          ? selectedToneClasses[tone]
           : "border-[var(--color-border)] bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] hover:bg-[var(--color-surface-elevated-hover)]"
       } ${disabled ? "opacity-[var(--opacity-disabled)] pointer-events-none" : ""} ${className}`.trim()}
     >
