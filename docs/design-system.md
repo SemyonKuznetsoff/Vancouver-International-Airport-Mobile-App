@@ -471,6 +471,7 @@ strict design-system check will flag arbitrary radii.
 | `--radius-tile` | 14px | Medium-density tiles — IconTile inside list rows (Reserve Parking Entry / Exit / Vehicle), the segmented duration selector track + active pill, the Reserve Parking journey strip. Sits between `--radius-chip` and `--radius-panel`. |
 | `--radius-panel` | 22px | Glass card chrome (`<Card>`). |
 | `--radius-card` | 24px | Hero cards (`<HeroSurface>`). |
+| `--radius-nav` | 28px | Bottom-navigation dock (`<BottomTabBar>`). Larger than `--radius-card` so the floating dock reads as a single deliberate landmark distinct from content cards. |
 | `--radius-pill` | 9999px | Pills, primary CTA, toggle track. |
 
 ---
@@ -2907,17 +2908,23 @@ before — no behaviour change.
 | `badges` | `Partial<Record<TabKey, boolean>>` | — | Per-tab dot toggle. `TabKey` is `"home" \| "flights" \| "map" \| "services" \| "profile"`. |
 | `className` | `string` | `""` | Composition hook. |
 
-**Anatomy.** Floating dark dock pill centred above the home indicator.
-The outer wrapper is full-width with `px-4` side gutters and reserves
+**Anatomy.** Floating dark dock centred above the home indicator —
+a warm near-black **rounded square** (not a pill), tuned to the Figma
+navbar reference. The outer wrapper is full-width with `px-6` side
+gutters (matching the main content gutter) and reserves
 `max(env(safe-area-inset-bottom), 12px)` of bottom padding. The inner
-`<nav>` is a `h-14` pill with `bg-[--color-nav-surface]` (charcoal),
-`rounded-[--radius-pill]`, `p-1.5` interior, and `shadow-[--shadow-nav]`
-floating elevation. Five tabs sit on a single row with `gap-1`. The
-active tab renders as a `h-11` capsule filled with
-`--color-nav-active-bg` (`--color-action-teal`), with the icon **plus**
-`text-label` name; inactive tabs render as `h-11 w-11` icon-only
-buttons with `--color-nav-fg-muted` and hover to `--color-nav-fg`.
-Icons render at 18px.
+`<nav>` is a `w-full` row with `bg-[--color-nav-surface]` (warm
+charcoal), `rounded-[--radius-nav]` (28px), `px-3 py-2` interior, and
+`shadow-[--shadow-nav]` teal-tinted floating elevation. Five tabs sit
+on a single row with `justify-between`. Each tab `<Link>` is a `h-11`
+hit target so the dock honours WCAG 2.5.5 (44×44 minimum) even when
+the visible chrome is smaller. The **active tab** wraps its content
+in a visible `h-8` (32px) capsule filled with `--color-nav-active-bg`
+(`--color-action-teal`), `px-4` interior, `gap-2` between 16px icon
+and `text-label font-semibold` label. **Inactive tabs** render the
+16px icon centred inside a 48px hit slot with `--color-nav-fg-muted`,
+hovering to `--color-nav-fg`. Icons render at 16px throughout to
+match the Figma reference.
 
 **Non-colour active cue.** The active tab is the only tab whose label
 is rendered. Combined with `aria-current="page"`, this gives screen
@@ -2931,21 +2938,28 @@ announced by the relevant screen, not the tab itself.
 **Tabs.** Hard-coded: Home, Flights, Map, Services, Profile. Adding or
 reordering tabs is a design-system change, not a screen change.
 
+**Tab icons.** `Home → HomeIcon`, `Flights → TicketIcon` (boarding-pass
+glyph, matches Figma), `Map → MapIcon`, `Services → LayersIcon` (stacked
+sheets, matches Figma), `Profile → ProfileIcon`. All rendered at 16px.
+
 **A11y.** `<nav aria-label="Main">` wrapper. Each `<Link>` carries
 `aria-current="page"` when active and `aria-label={label}` so screen
-readers receive a clean name regardless of whether the visible label is
-rendered. Tap targets meet 44×44 — active capsule is `h-11` with
-intrinsic content width; inactive tabs are explicit `h-11 w-11`.
+readers receive a clean name regardless of whether the visible label
+is rendered. Tap targets meet 44×44 — every `<Link>` is explicit
+`h-11`, with the visible capsule (active) or icon (inactive) centred
+inside. The visible 32px capsule is the Figma proportion; the 44px
+hit target is invisible but honours WCAG.
 
 **Tokens.** `--color-nav-surface`, `--color-nav-fg`, `--color-nav-fg-muted`,
 `--color-nav-active-bg` (aliased to `--color-action-teal`),
-`--color-nav-active-fg`, the `--shadow-nav` floating-dock elevation,
-and `--focus-ring-on-dark` (mint outline) applied to each tab link
-via `focus-visible:[outline:var(--focus-ring-on-dark)]` so keyboard
-focus is visible on the dark dock — the global navy `--focus-ring`
-washes out on `--color-nav-surface`. Future shell experiments
-(translucent glass nav, alternate active tones) swap these tokens
-without reaching into `BottomTabBar.tsx`.
+`--color-nav-active-fg`, `--radius-nav` (28px rounded-square radius),
+the `--shadow-nav` teal-tinted floating-dock elevation, and
+`--focus-ring-on-dark` (mint outline) applied to each tab link via
+`focus-visible:[outline:var(--focus-ring-on-dark)]` so keyboard focus
+is visible on the dark dock — the global navy `--focus-ring` washes
+out on `--color-nav-surface`. Future shell experiments (translucent
+glass nav, alternate active tones) swap these tokens without reaching
+into `BottomTabBar.tsx`.
 
 ### LargeTitleHeader
 
