@@ -84,8 +84,8 @@ function FlightDelayHeader() {
   return (
     <header className="flex items-center justify-between gap-3 px-6 pb-4 pt-2">
       <HeaderIconButton
-        aria-label="Back to My Flights"
-        href={"/flights" as Route}
+        aria-label="Back to flight detail"
+        href={"/flights/detail" as Route}
       >
         <ArrowLeftIcon size={16} />
       </HeaderIconButton>
@@ -217,8 +217,8 @@ function FlightIdentityRow({
 }) {
   return (
     <Link
-      href={"/flights" as Route}
-      aria-label={`${airline} flight ${flightNumber}, ${origin} to ${destination}`}
+      href={"/flights/detail" as Route}
+      aria-label={`View ${airline} flight ${flightNumber} details, ${origin} to ${destination}`}
       className="inline-flex items-center gap-3 rounded-[var(--radius-tile)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] px-3 py-2.5 transition-colors duration-150 hover:bg-[var(--color-surface-hero-chip)]"
     >
       <IconTile
@@ -531,8 +531,8 @@ function NextActionCard({ update }: { update: FlightUpdate }) {
         <div className="min-w-0 flex-1">
           <Button
             tone="teal"
-            href={"/flights/delay/navigate" as Route}
             trailingIcon={<ArrowRightIcon size={16} />}
+            aria-label={`Start walking to gate ${update.nextGate}`}
           >
             Start Walking
           </Button>
@@ -540,8 +540,8 @@ function NextActionCard({ update }: { update: FlightUpdate }) {
         <div className="w-28 shrink-0">
           <Button
             variant="secondary"
-            href={"/flights/delay/map" as Route}
             leadingIcon={<MapIcon size={14} />}
+            aria-label="Open terminal map"
           >
             Map
           </Button>

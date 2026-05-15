@@ -41,6 +41,14 @@ type RadarFlight = {
   meta?: string;
   metaLabel?: string;
   highlight?: string;
+  /**
+   * Destination route for the card's primary tap target. Pickup
+   * cards route to the live arrival concierge at `/home/pickup-waiting`;
+   * scheduled flight cards route to the flight detail screen. There is
+   * no per-flight dynamic detail route in this app, so multiple radar
+   * cards may share `/flights/detail` until real per-flight pages exist.
+   */
+  href: Route;
 };
 
 const ACTIVE_FLIGHT: ActiveFlight = {
@@ -67,6 +75,7 @@ const RADAR_FLIGHTS: RadarFlight[] = [
     detail: "WS 456 · Calgary",
     meta: "B4",
     metaLabel: "Gate",
+    href: "/flights/detail" as Route,
   },
   {
     id: "cx838",
@@ -75,6 +84,7 @@ const RADAR_FLIGHTS: RadarFlight[] = [
     detail: "CX 838 · Arrives 09:22",
     highlight: "Pickup",
     meta: "4h 41m left",
+    href: "/home/pickup-waiting" as Route,
   },
 ];
 
@@ -335,16 +345,16 @@ function CTARow({ flightNumber, gate }: { flightNumber: string; gate: string }) 
       <div className="min-w-0 flex-1">
         <Button
           tone="inverse"
-          href={"/flights/boarding-pass" as Route}
+          href={"/flights/check-in" as Route}
           leadingIcon={<QrCodeIcon size={16} />}
-          aria-label={`Show boarding pass for ${flightNumber}`}
+          aria-label={`Open check-in for ${flightNumber}`}
         >
           Boarding Pass
         </Button>
       </div>
       <Link
-        href={"/flights/gate" as Route}
-        aria-label={`Navigate to gate ${gate}`}
+        href={"/flights/detail" as Route}
+        aria-label={`View gate details for ${flightNumber}, gate ${gate}`}
         className="inline-flex h-[54px] w-28 shrink-0 items-center justify-center gap-1.5 rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] px-4 text-body-sm-emphasis text-[var(--color-surface-hero-fg)] transition-colors duration-150 hover:bg-[var(--color-surface-hero-chip)]"
       >
         <NavigationIcon size={14} aria-hidden />
@@ -358,7 +368,7 @@ function ViewTripDetailsLink() {
   return (
     <div className="flex justify-center">
       <Link
-        href={"/flights/details" as Route}
+        href={"/flights/detail" as Route}
         className="inline-flex h-11 items-center text-body-sm-emphasis text-[var(--color-action-teal)] hover:opacity-80"
       >
         View trip details
@@ -392,7 +402,7 @@ function ScheduledFlightCard({ flight }: { flight: RadarFlight }) {
   return (
     <Card as="div" surface="sheet" padding="none" className="overflow-hidden">
       <Link
-        href={`/flights/${flight.id}` as Route}
+        href={flight.href}
         aria-label={`${flight.route}, ${flight.detail}, ${flight.date ?? ""} ${flight.time ?? ""}`}
         className="flex w-full items-center gap-4 px-4 py-4 text-left transition-colors duration-150 hover:bg-[var(--color-surface-hover)]"
       >
@@ -438,8 +448,8 @@ function PickupFlightCard({ flight }: { flight: RadarFlight }) {
   return (
     <Card as="div" surface="sheet" padding="none" className="overflow-hidden">
       <Link
-        href={`/flights/${flight.id}` as Route}
-        aria-label={`${flight.route}, ${flight.detail}, ${flight.meta ?? ""}`}
+        href={flight.href}
+        aria-label={`Open pickup tracking for ${flight.route}, ${flight.detail}, ${flight.meta ?? ""}`}
         className="relative flex w-full items-center gap-3 px-4 py-4 text-left transition-colors duration-150 hover:bg-[var(--color-surface-hover)]"
       >
         <span

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
@@ -532,8 +531,8 @@ function CurrentActionCard({ flight }: { flight: FlightDetail }) {
         <div className="min-w-0 flex-1">
           <Button
             tone="teal"
-            href={"/flights/detail/navigate" as Route}
             leadingIcon={<NavigationIcon size={16} />}
+            aria-label={`Start walking to gate ${flight.gate}`}
           >
             Start Walking
           </Button>
@@ -541,8 +540,8 @@ function CurrentActionCard({ flight }: { flight: FlightDetail }) {
         <div className="w-[110px] shrink-0">
           <Button
             variant="secondary"
-            href={"/flights/detail/map" as Route}
             leadingIcon={<MapIcon size={14} />}
+            aria-label="Open terminal map"
           >
             Map
           </Button>
