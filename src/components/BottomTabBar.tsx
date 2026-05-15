@@ -5,10 +5,10 @@ import type { Route } from "next";
 import { usePathname } from "next/navigation";
 import {
   HomeIcon,
+  LayersIcon,
   MapIcon,
-  PlaneIcon,
   ProfileIcon,
-  ServicesIcon,
+  TicketIcon,
 } from "./icons";
 
 type TabKey = "home" | "flights" | "map" | "services" | "profile";
@@ -21,11 +21,11 @@ type Tab = {
 };
 
 const TABS: Tab[] = [
-  { key: "home", href: "/home", label: "Home", icon: <HomeIcon size={18} /> },
-  { key: "flights", href: "/flights", label: "Flights", icon: <PlaneIcon size={18} /> },
-  { key: "map", href: "/map", label: "Map", icon: <MapIcon size={18} /> },
-  { key: "services", href: "/services", label: "Services", icon: <ServicesIcon size={18} /> },
-  { key: "profile", href: "/profile", label: "Profile", icon: <ProfileIcon size={18} /> },
+  { key: "home", href: "/home", label: "Home", icon: <HomeIcon size={16} /> },
+  { key: "flights", href: "/flights", label: "Flights", icon: <TicketIcon size={16} /> },
+  { key: "map", href: "/map", label: "Map", icon: <MapIcon size={16} /> },
+  { key: "services", href: "/services", label: "Services", icon: <LayersIcon size={16} /> },
+  { key: "profile", href: "/profile", label: "Profile", icon: <ProfileIcon size={16} /> },
 ];
 
 type BottomTabBarProps = {
@@ -48,29 +48,31 @@ type BottomTabBarProps = {
 /**
  * Bottom tab navigation for the logged-in YVR app.
  *
- * Renders as a **floating dark dock pill** centred above the home
- * indicator: a near-black charcoal capsule (`--color-nav-surface`)
- * containing five tab items. The active tab fills with
- * `--color-nav-active-bg` (dark teal) and shows its icon **plus**
- * label; inactive tabs render icon-only. The "icon + label vs
- * icon-only" treatment is the primary non-colour cue for active
- * state, paired with `aria-current="page"`.
+ * Renders as a **floating dark dock** centred above the home indicator:
+ * a warm near-black rounded-square (`--color-nav-surface`,
+ * `--radius-nav` = 28px) containing five tab items. The active tab
+ * fills with `--color-nav-active-bg` (dark teal) and shows icon **plus**
+ * label inside a compact 32px-tall pill; inactive tabs are 16px
+ * icon-only. The "icon + label vs icon-only" treatment is the primary
+ * non-colour cue for active state, paired with `aria-current="page"`.
  *
  * - Five fixed tabs: Home, Flights, Map, Services, Profile.
  * - Safe-area aware: the outer wrapper reserves
- *   `env(safe-area-inset-bottom)` so the pill clears the home
+ *   `env(safe-area-inset-bottom)` so the dock clears the home
  *   indicator on iOS.
- * - Active tab is detected from `usePathname()` (or `activeHref` if
- *   explicitly passed). Sub-routes can light a parent tab by passing
- *   `activeHref` through `AppShellAuthed` (e.g. /parking,
- *   /parking/reserve, /ground-transport, /lounges-premium all light
- *   Services; /help-support lights Profile).
+ * - Active tab detected from `usePathname()` (or `activeHref` if
+ *   passed). Sub-routes can light a parent tab by passing `activeHref`
+ *   through `AppShellAuthed` (e.g. /parking, /parking/reserve,
+ *   /ground-transport, /lounges-premium all light Services;
+ *   /help-support lights Profile).
  * - Optional badge dot per tab via the `badges` prop.
  *
- * Layout assumption: this component is the last child of
- * `AppShellAuthed` inside a flex column. The wrapper occupies a small
- * footer region so main content scrolls **above** the pill, not
- * underneath it.
+ * **Touch targets.** The visible active capsule is 32px tall (Figma
+ * fidelity) but each tab `<Link>` is `h-11` (44px) so the hit area
+ * meets WCAG 2.5.5 even when the visible chrome is smaller.
+ *
+ * Layout assumption: last child of `AppShellAuthed` inside a flex
+ * column. Main content scrolls above the dock.
  */
 export function BottomTabBar({
   activeHref,
@@ -82,12 +84,12 @@ export function BottomTabBar({
 
   return (
     <div
-      className={`pointer-events-none flex w-full shrink-0 justify-center px-8 ${className}`.trim()}
+      className={`pointer-events-none flex w-full shrink-0 justify-center px-6 ${className}`.trim()}
       style={{ paddingBottom: "max(env(safe-area-inset-bottom), 12px)" }}
     >
       <nav
         aria-label="Main"
-        className="pointer-events-auto flex h-14 w-full items-center justify-around rounded-[var(--radius-pill)] bg-[var(--color-nav-surface)] px-2 shadow-[var(--shadow-nav)]"
+        className="pointer-events-auto flex w-full items-center justify-between gap-1 rounded-[var(--radius-nav)] bg-[var(--color-nav-surface)] px-3 py-2 shadow-[var(--shadow-nav)]"
       >
         {TABS.map((tab) => {
           const isActive =
@@ -98,20 +100,24 @@ export function BottomTabBar({
               href={tab.href as Route}
               aria-current={isActive ? "page" : undefined}
               aria-label={tab.label}
-              className={
+              className={`relative inline-flex h-11 items-center justify-center rounded-[var(--radius-pill)] transition-colors duration-200 focus-visible:[outline:var(--focus-ring-on-dark)] ${
                 isActive
-                  ? "relative inline-flex h-11 items-center gap-2 rounded-[var(--radius-pill)] bg-[var(--color-nav-active-bg)] px-4 text-[var(--color-nav-active-fg)] transition-colors duration-200 focus-visible:[outline:var(--focus-ring-on-dark)]"
-                  : "relative inline-flex h-11 w-11 items-center justify-center rounded-[var(--radius-pill)] text-[var(--color-nav-fg-muted)] transition-colors duration-200 hover:text-[var(--color-nav-fg)] focus-visible:[outline:var(--focus-ring-on-dark)]"
-              }
+                  ? "text-[var(--color-nav-active-fg)]"
+                  : "w-12 text-[var(--color-nav-fg-muted)] hover:text-[var(--color-nav-fg)]"
+              }`}
             >
-              <span aria-hidden className="inline-flex items-center justify-center">
-                {tab.icon}
-              </span>
               {isActive ? (
-                <span className="text-label text-[var(--color-nav-active-fg)]">
-                  {tab.label}
+                <span className="inline-flex h-8 items-center gap-2 rounded-[var(--radius-pill)] bg-[var(--color-nav-active-bg)] px-4">
+                  <span aria-hidden className="inline-flex items-center justify-center">
+                    {tab.icon}
+                  </span>
+                  <span className="text-label font-semibold">{tab.label}</span>
                 </span>
-              ) : null}
+              ) : (
+                <span aria-hidden className="inline-flex items-center justify-center">
+                  {tab.icon}
+                </span>
+              )}
               {badges?.[tab.key] ? (
                 <span
                   aria-hidden

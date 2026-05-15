@@ -102,14 +102,14 @@
      aurora) — this tone sits inside a solid card and reads warm. */
   --color-surface-tile: rgba(31, 53, 87, 0.06);
 
-  /* Bottom navigation surface — the global floating dock pill rendered
-     by `BottomTabBar`. The bar reads as a near-black charcoal pill
-     hovering above the aurora background, with the active tab filled
-     in `--color-action-teal`. Tokens live here (not inside the
+  /* Bottom navigation surface — the global floating dock rendered by
+     `BottomTabBar`. A warm near-black rounded-square hovering above
+     the aurora background, with the active tab filled in
+     `--color-action-teal`. Tokens live here (not inside the
      component) so future shell experiments — translucent glass nav,
      light-mode nav, alternate active tones — can swap them without
      reaching into `BottomTabBar.tsx`. */
-  --color-nav-surface: #1a1d22;
+  --color-nav-surface: #1a1918;
   --color-nav-fg: #ffffff;
   --color-nav-fg-muted: rgba(255, 255, 255, 0.55);
   --color-nav-active-bg: var(--color-action-teal);
@@ -167,6 +167,11 @@
   --radius-panel: 22px;
   --radius-card: 24px;
   --radius-pill: 9999px;
+  /* Bottom-navigation dock radius. The dock is a rounded square, not a
+     full pill — large enough to read as a single landmark, tight enough
+     to feel intentional. Paired with `--color-nav-surface` and
+     `--shadow-nav`. */
+  --radius-nav: 28px;
 
   /* Shadows */
   --shadow-button: 0 6px 18px -8px rgba(29, 53, 87, 0.45);
@@ -198,11 +203,12 @@
   /* Strong premium drop on the Reserve Parking hero card — teal-tinted
      so the dark teal panel still reads as elevated on the aurora. */
   --shadow-hero-card: 0 20px 40px -20px rgba(7, 47, 54, 0.55);
-  /* Floating dock elevation under the global bottom navigation pill.
-     Soft, cool, slightly deeper than `--shadow-card` so the dark pill
-     reads as suspended above the aurora without competing with
-     content cards. Pair with `--color-nav-surface`. */
-  --shadow-nav: 0 12px 32px -8px rgba(7, 18, 32, 0.35);
+  /* Floating dock elevation under the global bottom navigation. The
+     drop is teal-tinted (same hue as `--color-action-teal`) so the
+     dark dock reads as a YVR-branded landmark rather than a generic
+     neutral shadow. Pair with `--color-nav-surface` and
+     `--radius-nav`. */
+  --shadow-nav: 0 12px 24px -4px rgba(10, 90, 102, 0.4);
 
   /* Focus */
   --focus-ring: 2px solid #1d3557;

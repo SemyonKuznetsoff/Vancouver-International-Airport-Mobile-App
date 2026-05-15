@@ -104,6 +104,25 @@ export function ServicesIcon(props: IconProps) {
   );
 }
 
+export function TicketIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M4 8a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4Z" />
+      <path d="M12 7v2M12 11v2M12 15v2" />
+    </svg>
+  );
+}
+
+export function LayersIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="m12 3 9 5-9 5-9-5Z" />
+      <path d="m3 12 9 5 9-5" />
+      <path d="m3 17 9 5 9-5" />
+    </svg>
+  );
+}
+
 export function CarIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
