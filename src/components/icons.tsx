@@ -313,6 +313,25 @@ export function TrainIcon(props: IconProps) {
   );
 }
 
+export function PlusIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <path d="M12 5v14M5 12h14" />
+    </svg>
+  );
+}
+
+export function QrCodeIcon(props: IconProps) {
+  return (
+    <svg {...strokeProps(props)}>
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <path d="M14 14h3v3h-3zM20 14h1v3M14 20h3v1M20 20h1v1" />
+    </svg>
+  );
+}
+
 export function ScanIcon(props: IconProps) {
   return (
     <svg {...strokeProps(props)}>
