@@ -132,7 +132,7 @@ export default function ParkingPage() {
   return (
     <AppShellAuthed activeHref="/services">
       <ParkingHeader />
-      <div className="flex flex-1 flex-col gap-4 px-5 pb-6">
+      <div className="flex flex-1 flex-col gap-4 px-6 pb-6">
         <FilterRow active={filter} onSelect={setFilter} />
         <LiveUpdateCard />
         <PromoCard />
@@ -181,7 +181,7 @@ function FilterRow({
     <div
       role="group"
       aria-label="Filter parkades"
-      className="-mx-5 overflow-x-auto px-5"
+      className="-mx-6 overflow-x-auto px-6"
     >
       <div className="flex w-max gap-2">
         {FILTERS.map((f) => (

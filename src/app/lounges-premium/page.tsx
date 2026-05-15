@@ -82,7 +82,7 @@ export default function LoungesPremiumPage() {
 
 function LoungesHeader() {
   return (
-    <header className="flex items-center justify-between gap-3 px-5 pb-4 pt-2">
+    <header className="flex items-center justify-between gap-3 px-6 pb-4 pt-2">
       <Link
         href={"/services" as Route}
         aria-label="Back to services"
@@ -300,7 +300,7 @@ function FeaturedLoungeCard() {
             Navigate to Lounge
           </Button>
         </div>
-        <div className="w-24 shrink-0">
+        <div className="w-28 shrink-0">
           <Button
             variant="secondary"
             href={"/lounges-premium/details" as Route}

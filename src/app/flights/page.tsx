@@ -383,7 +383,7 @@ function CTARow({ flightNumber, gate }: { flightNumber: string; gate: string }) 
       <Link
         href={"/flights/gate" as Route}
         aria-label={`Navigate to gate ${gate}`}
-        className="inline-flex h-[54px] shrink-0 items-center gap-1.5 rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] px-4 text-body-sm-emphasis text-[var(--color-surface-hero-fg)] transition-colors duration-150 hover:bg-[var(--color-surface-hero-chip)]"
+        className="inline-flex h-[54px] w-28 shrink-0 items-center justify-center gap-1.5 rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] px-4 text-body-sm-emphasis text-[var(--color-surface-hero-fg)] transition-colors duration-150 hover:bg-[var(--color-surface-hero-chip)]"
       >
         <NavigationIcon size={14} aria-hidden />
         Gate {gate}

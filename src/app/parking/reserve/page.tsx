@@ -81,7 +81,7 @@ export default function ReserveParkingPage() {
 
 function ReserveHeader() {
   return (
-    <header className="flex items-center justify-between gap-3 px-5 pb-4 pt-2">
+    <header className="flex items-center justify-between gap-3 px-6 pb-4 pt-2">
       <Link
         href={"/services" as Route}
         aria-label="Back to services"

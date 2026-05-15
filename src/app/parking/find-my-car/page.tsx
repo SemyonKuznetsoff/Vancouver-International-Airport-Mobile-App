@@ -382,7 +382,7 @@ function SavedCarSheet({ car }: { car: SavedCar }) {
       <Link
         href={"/parking/find-my-car/navigate" as Route}
         aria-label="Navigate to my car"
-        className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-button)] bg-[var(--color-map-mint)] px-4 text-body-sm-emphasis text-[var(--color-surface-map)] shadow-[var(--shadow-map-cta)] transition-opacity duration-150 hover:opacity-95"
+        className="mt-5 inline-flex h-12 w-full items-center justify-center gap-2 rounded-[var(--radius-tile)] bg-[var(--color-map-mint)] px-4 text-body-sm-emphasis text-[var(--color-surface-map)] shadow-[var(--shadow-map-cta)] transition-opacity duration-150 hover:opacity-95"
       >
         <NavigationIcon size={16} />
         <span>Navigate to My Car</span>
@@ -410,7 +410,7 @@ function StatPill({
   return (
     <div
       aria-label={`${label} ${value}`}
-      className="flex flex-col gap-1 rounded-[var(--radius-button)] border border-[var(--color-surface-map-border)] bg-[var(--color-surface-map-elevated)] px-4 py-3"
+      className="flex flex-col gap-1 rounded-[var(--radius-tile)] border border-[var(--color-surface-map-border)] bg-[var(--color-surface-map-elevated)] px-4 py-3"
     >
       <span className="inline-flex items-center gap-1.5 text-micro uppercase text-[var(--color-map-mint)]">
         <span aria-hidden>{icon}</span>

@@ -49,7 +49,7 @@ export default function HelpSupportPage() {
   return (
     <AppShellAuthed activeHref="/profile">
       <HelpSupportHeader />
-      <div className="flex flex-1 flex-col gap-6 px-5 pb-6">
+      <div className="flex flex-1 flex-col gap-6 px-6 pb-6">
         <ConciergeHeroCard />
         <QuickAnswersSection answers={QUICK_ANSWERS} />
       </div>
