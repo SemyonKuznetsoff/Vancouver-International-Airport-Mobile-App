@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { Route } from "next";
+import { HeaderIconButton } from "@/components/HeaderIconButton";
 import {
   ArrowLeftIcon,
   BookmarkIcon,
@@ -57,13 +58,13 @@ export default function FindMyCarPage() {
 function TopControls() {
   return (
     <div className="flex items-center justify-between gap-3 px-5 pt-2">
-      <Link
-        href={"/services" as Route}
+      <HeaderIconButton
         aria-label="Back to services"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--color-surface-map-border)] bg-[var(--color-surface-map-elevated)] text-[var(--color-surface-map-fg)] transition-opacity duration-150 hover:opacity-80"
+        href={"/services" as Route}
+        variant="map"
       >
         <ArrowLeftIcon size={16} />
-      </Link>
+      </HeaderIconButton>
 
       <span
         aria-label="Saved location"
@@ -73,13 +74,12 @@ function TopControls() {
         <span>Saved location</span>
       </span>
 
-      <button
-        type="button"
+      <HeaderIconButton
         aria-label="Share saved parking location"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--color-surface-map-border)] bg-[var(--color-surface-map-elevated)] text-[var(--color-surface-map-fg)] transition-opacity duration-150 hover:opacity-80"
+        variant="map"
       >
         <ShareIcon size={16} />
-      </button>
+      </HeaderIconButton>
     </div>
   );
 }

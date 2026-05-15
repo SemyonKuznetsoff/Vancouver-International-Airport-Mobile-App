@@ -3,6 +3,7 @@ import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
+import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import {
   ArrowLeftIcon,
@@ -112,13 +113,12 @@ export default function ReservedParkingPage() {
 function ReservedHeader() {
   return (
     <header className="flex items-center justify-between gap-3 px-6 pb-3 pt-2">
-      <Link
-        href={"/parking/reserve" as Route}
+      <HeaderIconButton
         aria-label="Back to parking reservation"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
+        href={"/parking/reserve" as Route}
       >
         <ArrowLeftIcon size={16} />
-      </Link>
+      </HeaderIconButton>
 
       <div className="flex min-w-0 flex-1 flex-col items-center gap-1 text-center">
         <p className="text-eyebrow uppercase text-[var(--color-text-secondary)]">
@@ -129,13 +129,9 @@ function ReservedHeader() {
         </h1>
       </div>
 
-      <button
-        type="button"
-        aria-label="More parking reservation options"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
-      >
+      <HeaderIconButton aria-label="More parking reservation options">
         <MoreIcon size={16} />
-      </button>
+      </HeaderIconButton>
     </header>
   );
 }

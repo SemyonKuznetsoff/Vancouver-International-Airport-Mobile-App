@@ -7,6 +7,7 @@ import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { ChipFilter } from "@/components/ChipFilter";
+import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
 import { LiveIndicator } from "@/components/LiveIndicator";
@@ -157,13 +158,12 @@ export default function GroundTransportPage() {
 function GroundTransportHeader() {
   return (
     <header className="flex items-center justify-between gap-3 px-6 pb-4 pt-2">
-      <Link
-        href={"/services" as Route}
+      <HeaderIconButton
         aria-label="Back to services"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
+        href={"/services" as Route}
       >
         <ArrowLeftIcon size={16} />
-      </Link>
+      </HeaderIconButton>
 
       <div className="flex min-w-0 flex-1 flex-col items-center gap-1 text-center">
         <h1 className="text-section-title text-[var(--color-text-primary)]">

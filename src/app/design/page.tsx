@@ -24,6 +24,7 @@ import { Card } from "@/components/Card";
 import { ChipFilter } from "@/components/ChipFilter";
 import { CountdownBlock } from "@/components/CountdownBlock";
 import { EmptyState } from "@/components/EmptyState";
+import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { ErrorState } from "@/components/ErrorState";
 import { Eyebrow } from "@/components/Eyebrow";
 import { FieldMessage } from "@/components/FieldMessage";
@@ -605,6 +606,32 @@ export default function DesignPreviewPage() {
               The header at the top of this page is a `&lt;LargeTitleHeader&gt;`. It accepts an optional
               `backHref`, optional `trailing` content, and a subtitle.
             </p>
+          </SubSection>
+
+          <SubSection title="HeaderIconButton">
+            <p className="text-body-sm text-[var(--color-text-secondary)]">
+              Shared 44×44 elevated circle used in every authed page header (back, search,
+              share, bell, more). The `light` variant is the canonical aurora-screen chrome;
+              `map` swaps in the dark navy-teal surface tokens for the immersive Find My Car
+              shell. `badgeDot` adds a decorative alert dot — the alert state must also be
+              named in `aria-label`.
+            </p>
+            <div className="flex flex-wrap items-center gap-3">
+              <HeaderIconButton aria-label="Back to services">
+                <ArrowRightIcon size={16} />
+              </HeaderIconButton>
+              <HeaderIconButton
+                aria-label="Flight notifications, new alert"
+                badgeDot
+              >
+                <BellIcon size={16} />
+              </HeaderIconButton>
+              <div className="rounded-[var(--radius-card)] bg-[var(--color-surface-map)] p-3">
+                <HeaderIconButton aria-label="Share saved location" variant="map">
+                  <BookmarkIcon size={16} />
+                </HeaderIconButton>
+              </div>
+            </div>
           </SubSection>
 
           <SubSection title="BottomTabBar">

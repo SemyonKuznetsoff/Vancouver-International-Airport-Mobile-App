@@ -3,6 +3,7 @@ import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
+import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
 import { StatusPill } from "@/components/StatusPill";
@@ -100,13 +101,9 @@ function FlightsHeader({ date }: { date: string }) {
           My Flights
         </h1>
       </div>
-      <button
-        type="button"
-        aria-label="Add flight"
-        className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
-      >
+      <HeaderIconButton aria-label="Add flight">
         <PlusIcon size={18} />
-      </button>
+      </HeaderIconButton>
     </header>
   );
 }
