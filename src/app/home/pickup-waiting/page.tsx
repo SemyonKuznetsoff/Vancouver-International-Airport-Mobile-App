@@ -37,6 +37,14 @@ type JourneyStage = {
   title: string;
   detail: string;
   state: "active" | "upcoming";
+  /**
+   * Right-side timing chip. `"Now"` on the active row renders the
+   * filled teal NOW pill; on upcoming rows it renders a soft pill
+   * with the estimated time. Set to `null` to omit the chip — used
+   * on the final Exit row where the time is already in the detail
+   * line so a chip would duplicate.
+   */
+  eta: string | null;
 };
 
 const FLIGHT: ArrivingFlight = {
@@ -62,24 +70,28 @@ const STAGES: JourneyStage[] = [
     title: "In Flight",
     detail: "Approaching · 38 min to land",
     state: "active",
+    eta: "Now",
   },
   {
     id: "customs",
     title: "Customs",
     detail: "Typically 15 – 20 min after deplaning",
     state: "upcoming",
+    eta: "~10:05",
   },
   {
     id: "baggage",
     title: "Baggage · Carousel 6",
     detail: "Bags usually arrive ~25 min after landing",
     state: "upcoming",
+    eta: "~10:25",
   },
   {
     id: "exit",
     title: "Exit · Level 2 Arrivals",
     detail: "Predicted window 09:55 – 10:10",
     state: "upcoming",
+    eta: null,
   },
 ];
 
@@ -408,7 +420,11 @@ function LiveProgressPreview({
     >
       <div className="flex items-end justify-between gap-3">
         <div className="flex flex-col gap-0.5">
-          <span className="text-eyebrow uppercase text-[var(--color-action-teal)]">
+          <span className="inline-flex items-center gap-1.5 text-eyebrow uppercase text-[var(--color-action-teal)]">
+            <span
+              aria-hidden
+              className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-action-teal)]"
+            />
             Live progress
           </span>
           <h2
@@ -418,18 +434,19 @@ function LiveProgressPreview({
             {passenger}&rsquo;s journey
           </h2>
         </div>
-        <span className="text-label text-[var(--color-text-muted)]">
+        <span className="inline-flex shrink-0 items-center rounded-[var(--radius-pill)] bg-[var(--color-action-teal-soft)] px-2.5 py-1 text-micro uppercase tabular-nums text-[var(--color-action-teal)]">
           Stage {currentStage} of {stageCount}
         </span>
       </div>
 
-      <Card as="article" surface="sheet" padding="default">
+      <Card as="article" surface="sheet" padding="lg">
         <ol className="flex flex-col">
           {stages.map((stage, i) => (
             <PickupStageRow
               key={stage.id}
               stage={stage}
               isLast={i === stages.length - 1}
+              isBeforeOrAtActive={activeIndex >= 0 && i <= activeIndex}
             />
           ))}
         </ol>
@@ -441,36 +458,34 @@ function LiveProgressPreview({
 function PickupStageRow({
   stage,
   isLast,
+  isBeforeOrAtActive,
 }: {
   stage: JourneyStage;
   isLast: boolean;
+  isBeforeOrAtActive: boolean;
 }) {
   const active = stage.state === "active";
   return (
-    <li className="relative flex gap-3 pb-4 last:pb-0">
-      <span className="relative flex w-3 shrink-0 items-start justify-center">
-        <span
-          aria-hidden
-          className={`mt-1 inline-block h-2.5 w-2.5 rounded-full ${
-            active
-              ? "bg-[var(--color-action-teal)]"
-              : "bg-[var(--color-border-soft)] ring-1 ring-[var(--color-border)]"
-          }`}
-        />
-        {isLast ? null : (
-          <span
-            aria-hidden
-            className="absolute left-1/2 top-4 -translate-x-1/2 h-[calc(100%-12px)] w-px bg-[var(--color-border-soft)]"
-          />
-        )}
-      </span>
-      <div className="flex min-w-0 flex-1 items-start justify-between gap-3 pb-1">
+    <li
+      className="relative flex gap-4"
+      aria-current={active ? "step" : undefined}
+    >
+      <StageSpine
+        active={active}
+        isLast={isLast}
+        spineFilled={isBeforeOrAtActive && !isLast}
+      />
+      <div
+        className={`flex min-w-0 flex-1 items-center justify-between gap-3 ${
+          isLast ? "pb-0" : "pb-5"
+        }`}
+      >
         <div className="flex min-w-0 flex-col gap-0.5">
           <span
             className={
               active
                 ? "text-body-sm-emphasis text-[var(--color-text-primary)]"
-                : "text-body-sm text-[var(--color-text-secondary)]"
+                : "text-body-sm-emphasis text-[var(--color-text-secondary)]"
             }
           >
             {stage.title}
@@ -479,12 +494,86 @@ function PickupStageRow({
             {stage.detail}
           </span>
         </div>
-        {active ? (
-          <StatusPill tone="info" size="sm" leadingDot>
-            Now
-          </StatusPill>
-        ) : null}
+        <StageEtaChip eta={stage.eta} active={active} />
       </div>
     </li>
+  );
+}
+
+/**
+ * Spine + dot column for a single timeline row. The active row uses
+ * a filled teal dot inside a soft teal halo so the current state
+ * reads at a glance; upcoming rows use a small hollow ring. The
+ * vertical spine segment below the dot is painted teal up to and
+ * including the active dot, and muted for everything after — so the
+ * column itself shows progress, not just the dots.
+ */
+function StageSpine({
+  active,
+  isLast,
+  spineFilled,
+}: {
+  active: boolean;
+  isLast: boolean;
+  spineFilled: boolean;
+}) {
+  return (
+    <span
+      aria-hidden
+      className="relative flex w-5 shrink-0 flex-col items-center"
+    >
+      <span className="flex h-5 w-5 shrink-0 items-center justify-center">
+        {active ? (
+          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-action-teal-soft)]">
+            <span className="h-2.5 w-2.5 rounded-full bg-[var(--color-action-teal)]" />
+          </span>
+        ) : (
+          <span className="h-2.5 w-2.5 rounded-full border border-[var(--color-border)] bg-[var(--color-surface-elevated)]" />
+        )}
+      </span>
+      {isLast ? null : (
+        <span
+          className={`mt-1 w-px flex-1 ${
+            spineFilled
+              ? "bg-[var(--color-action-teal)]"
+              : "bg-[var(--color-border)]"
+          }`}
+        />
+      )}
+    </span>
+  );
+}
+
+/**
+ * Right-side timing chip for a timeline row. The active row gets a
+ * filled teal pill with a mint dot — premium "we're here now" badge
+ * that echoes the hero's mint accent. Upcoming rows get a quieter
+ * surface-tile pill with the ETA. Rows with `eta === null` (the
+ * final Exit row, whose time is already in the detail line) render
+ * nothing so the column doesn't duplicate.
+ */
+function StageEtaChip({
+  eta,
+  active,
+}: {
+  eta: string | null;
+  active: boolean;
+}) {
+  if (eta == null) return null;
+  if (active) {
+    return (
+      <span className="inline-flex shrink-0 items-center gap-1.5 rounded-[var(--radius-pill)] bg-[var(--color-action-teal)] px-2.5 py-1 text-micro uppercase text-[var(--color-action-primary-fg)]">
+        <span
+          aria-hidden
+          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-map-mint)]"
+        />
+        {eta}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex shrink-0 items-center rounded-[var(--radius-pill)] bg-[var(--color-surface-tile)] px-2.5 py-1 text-label tabular-nums text-[var(--color-text-secondary)]">
+      {eta}
+    </span>
   );
 }
