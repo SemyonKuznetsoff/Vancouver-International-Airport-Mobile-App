@@ -3,6 +3,7 @@ import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
+import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
 import {
@@ -76,13 +77,12 @@ export default function FlightDelayPage() {
 function FlightDelayHeader() {
   return (
     <header className="flex items-center justify-between gap-3 px-6 pb-4 pt-2">
-      <Link
-        href={"/flights" as Route}
+      <HeaderIconButton
         aria-label="Back to My Flights"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
+        href={"/flights" as Route}
       >
         <ArrowLeftIcon size={16} />
-      </Link>
+      </HeaderIconButton>
 
       <div className="flex min-w-0 flex-1 flex-col items-center gap-0.5 text-center">
         <span className="text-eyebrow uppercase text-[var(--color-text-muted)]">
@@ -93,17 +93,12 @@ function FlightDelayHeader() {
         </h1>
       </div>
 
-      <button
-        type="button"
+      <HeaderIconButton
         aria-label="Flight notifications, new alert"
-        className="relative inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
+        badgeDot
       >
         <BellIcon size={16} />
-        <span
-          aria-hidden
-          className="absolute right-2 top-2 inline-block h-2 w-2 rounded-full bg-[var(--color-warning)]"
-        />
-      </button>
+      </HeaderIconButton>
     </header>
   );
 }

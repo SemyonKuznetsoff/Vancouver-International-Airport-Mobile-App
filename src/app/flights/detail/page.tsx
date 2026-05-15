@@ -3,6 +3,7 @@ import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
+import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
 import { StatusPill } from "@/components/StatusPill";
@@ -87,13 +88,12 @@ export default function FlightDetailPage() {
 function FlightDetailHeader() {
   return (
     <header className="flex items-center justify-between gap-3 px-6 pb-4 pt-2">
-      <Link
-        href={"/flights" as Route}
+      <HeaderIconButton
         aria-label="Back to My Flights"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
+        href={"/flights" as Route}
       >
         <ArrowLeftIcon size={16} />
-      </Link>
+      </HeaderIconButton>
 
       <div className="flex min-w-0 flex-1 flex-col items-center gap-1 text-center">
         <h1 className="text-section-title text-[var(--color-text-primary)]">
@@ -104,13 +104,9 @@ function FlightDetailHeader() {
         </p>
       </div>
 
-      <button
-        type="button"
-        aria-label="Flight notifications"
-        className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
-      >
+      <HeaderIconButton aria-label="Flight notifications">
         <BellIcon size={16} />
-      </button>
+      </HeaderIconButton>
     </header>
   );
 }

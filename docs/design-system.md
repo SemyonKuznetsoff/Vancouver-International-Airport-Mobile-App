@@ -186,22 +186,65 @@ like the same product.
 
 ### Header trailing slot
 
-Trailing icon buttons in the header (settings gear, notification bell,
-filter, etc.) use the same 44×44 chip as the back chip:
+Trailing icon buttons in the header (back, search, share, bell, more,
+etc.) use the shared **`<HeaderIconButton>`** primitive — one source of
+truth for the 44×44 elevated circle. The primitive used to be
+duplicated across 17 inline call sites; do not re-introduce that
+pattern.
 
 ```tsx
-<a
-  href="/profile/settings"
-  aria-label="Open settings"
-  className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
->
-  <SettingsIcon size={18} />
-</a>
+import { HeaderIconButton } from "@/components/HeaderIconButton";
+import { ArrowLeftIcon, BellIcon, ShareIcon } from "@/components/icons";
+
+<HeaderIconButton aria-label="Back to services" href="/services">
+  <ArrowLeftIcon size={16} />
+</HeaderIconButton>
+
+<HeaderIconButton aria-label="Flight notifications, new alert" badgeDot>
+  <BellIcon size={16} />
+</HeaderIconButton>
+
+<HeaderIconButton aria-label="Share saved location" variant="map">
+  <ShareIcon size={16} />
+</HeaderIconButton>
 ```
 
-If this lockup appears on a second authed screen, promote it to a
-`HeaderIconButton` primitive — until then, keep the inline form identical
-to the Profile example so the chrome stays consistent.
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `aria-label` | `string` | (required) | The button is icon-only — TypeScript enforces a label so screen readers always have a name. If `badgeDot` is shown, fold the alert state into the label (e.g. `"Flight notifications, new alert"`). |
+| `children` | `ReactNode` | (required) | The icon. Render at 16–18px (`<BellIcon size={16} />`). The primitive does not constrain icon size. |
+| `href` | `Route \| URL` | `undefined` | When provided, renders `<Link>`; otherwise renders `<button type="button">`. |
+| `onClick` | `MouseEventHandler` | — | Forwarded to the rendered element. |
+| `badgeDot` | `boolean` | `false` | Renders a 2×2 dot in the top-right for unread / alert affordances. Decorative (`aria-hidden`); pair with an `aria-label` that names the state. |
+| `badgeTone` | `"warning" \| "danger" \| "success"` | `"warning"` | Dot colour. |
+| `variant` | `"light" \| "map"` | `"light"` | `light` is the canonical elevated white circle on aurora screens. `map` swaps in `--color-surface-map-elevated` + `--color-surface-map-border` for the dark immersive map shell (`/parking/find-my-car`). |
+| `className` | `string` | `""` | Composition hook; rarely needed. |
+
+**Anatomy.** `h-11 w-11` (44×44 tap target), `rounded-full`, the light
+variant carries `bg-[--color-surface-elevated]` + `--shadow-card` +
+hover lift to `--color-surface-elevated-hover`. The map variant is
+bordered with `--color-surface-map-border` over
+`--color-surface-map-elevated` and reads on the navy-teal map
+background.
+
+**A11y.** Focus visibility is inherited from the global
+`:focus-visible` rule — do not add per-component overrides. The badge
+dot is always `aria-hidden`; the state must be reflected in
+`aria-label`.
+
+**Documented exceptions.** Three header chips intentionally remain
+inline because they use **different chrome** from the canonical
+elevated white circle:
+
+- `/home` notification bell — flat (no `--shadow-card`) to pair with
+  the `BrandMark` lockup that has no shadow.
+- `/home` profile avatar — `bg-[--color-action-primary]` (navy fill),
+  not the elevated white surface.
+- `/profile` settings cog (in `LargeTitleHeader.trailing`) — flat
+  (no `--shadow-card`) to pair with the large-title header layout.
+
+These are not part of the `HeaderIconButton` family; the primitive
+intentionally does not absorb them.
 
 ### Profile identity hero card
 
