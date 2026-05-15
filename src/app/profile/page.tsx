@@ -220,12 +220,17 @@ function NextTripCard() {
       <div className="flex flex-col gap-2 px-4 pt-4 pb-4">
         <Button
           variant="primary"
-          href="/flights/ac892/navigate"
+          href="/flights/detail"
           leadingIcon={<NavigationIcon size={16} />}
+          aria-label="Navigate to gate for AC 892"
         >
           Navigate to gate
         </Button>
-        <Button variant="ghost" href="/flights/ac892">
+        <Button
+          variant="ghost"
+          href="/flights/detail"
+          aria-label="View trip details for AC 892"
+        >
           View trip details
         </Button>
       </div>

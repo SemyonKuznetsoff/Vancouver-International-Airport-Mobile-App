@@ -132,7 +132,7 @@ const intentSecondary: IntentCard[] = [
   },
   {
     id: "pickup",
-    href: "/home/pickup",
+    href: "/home/pickup-waiting",
     title: "Pickup",
     description: "Drop-off · curbside",
     icon: <MapIcon size={16} />,
