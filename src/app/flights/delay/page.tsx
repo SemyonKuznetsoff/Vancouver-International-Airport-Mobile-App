@@ -27,6 +27,8 @@ type FlightUpdate = {
   after: { gate: string; time: string; terminal: string };
   walkMinutes: number;
   nextGate: string;
+  reference: string;
+  boardingTime: string;
 };
 
 type Step = {
@@ -48,6 +50,8 @@ const UPDATE: FlightUpdate = {
   after: { gate: "E71", time: "15:15", terminal: "Intl Terminal" },
   walkMinutes: 8,
   nextGate: "E71",
+  reference: "AC892-E71",
+  boardingTime: "Boarding 13:50",
 };
 
 const STEPS: Step[] = [
@@ -113,51 +117,40 @@ function FlightUpdateCard({ update }: { update: FlightUpdate }) {
     >
       <PassDecorBackground />
       <div className="relative flex flex-col gap-5 p-5">
-        <div className="flex flex-col gap-4">
-          <UpdateMetaRow />
+        {/* Pass header — status + sync */}
+        <UpdateMetaRow />
+
+        {/* Main identity — title, pill, supporting copy */}
+        <div className="flex flex-col gap-3">
           <UpdateTitleRow delayMinutes={update.delayMinutes} />
           <p className="text-body-sm text-[var(--color-surface-hero-fg-muted)]">
             Review your updated gate and timing.
           </p>
-          <FlightRow
-            flightNumber={update.flightNumber}
-            airline={update.airline}
-            origin={update.origin}
-            destination={update.destination}
-          />
         </div>
+
+        {/* Flight identity row */}
+        <FlightIdentityRow
+          flightNumber={update.flightNumber}
+          airline={update.airline}
+          origin={update.origin}
+          destination={update.destination}
+        />
+
         <PassPerforation />
+
+        {/* Document metadata zone — scan tile + reference/updated/valid */}
+        <PassDocumentBlock
+          reference={update.reference}
+          boardingTime={update.boardingTime}
+        />
+
+        {/* Gate change zone */}
         <GateChangeModule before={update.before} after={update.after} />
+
+        {/* Pass footer — terminal chip + barcode stripe */}
         <PassFooter terminal={update.after.terminal} />
       </div>
     </HeroSurface>
-  );
-}
-
-function PassPerforation() {
-  return (
-    <div aria-hidden className="relative -mx-5 flex items-center gap-1">
-      <span className="block h-6 w-3 rounded-r-[var(--radius-pill)] bg-[var(--color-bg)]" />
-      <span className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]" />
-      <span className="block h-6 w-3 rounded-l-[var(--radius-pill)] bg-[var(--color-bg)]" />
-    </div>
-  );
-}
-
-function PassFooter({ terminal }: { terminal: string }) {
-  return (
-    <div className="flex items-center justify-between gap-3 border-t border-[var(--color-surface-hero-tile-border)] pt-4">
-      <span className="text-label text-[var(--color-surface-hero-fg-muted)]">
-        {terminal}
-      </span>
-      <span className="inline-flex items-center gap-1.5 text-label text-[var(--color-surface-hero-fg-muted)]">
-        <span
-          aria-hidden
-          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-map-mint)]"
-        />
-        Live · just now
-      </span>
-    </div>
   );
 }
 
@@ -165,25 +158,26 @@ function PassDecorBackground() {
   return (
     <svg
       aria-hidden
-      viewBox="0 0 350 480"
+      viewBox="0 0 350 720"
       preserveAspectRatio="xMidYMid slice"
       className="pointer-events-none absolute inset-0 h-full w-full text-[var(--color-surface-hero-fg)] opacity-[0.05]"
     >
       <path
-        d="M -10 100 C 80 60 200 130 360 80"
+        d="M -10 120 C 80 80 200 150 360 100"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.25"
       />
       <path
-        d="M -10 380 C 100 340 230 410 360 360"
+        d="M -10 540 C 100 500 230 570 360 520"
         fill="none"
         stroke="currentColor"
         strokeWidth="1"
         strokeDasharray="3 5"
       />
-      <circle cx="310" cy="50" r="2" fill="currentColor" />
-      <circle cx="40" cy="420" r="2" fill="currentColor" />
+      <circle cx="310" cy="60" r="2" fill="currentColor" />
+      <circle cx="40" cy="600" r="2" fill="currentColor" />
+      <circle cx="290" cy="650" r="1.5" fill="currentColor" />
     </svg>
   );
 }
@@ -236,7 +230,7 @@ function DelayPill({ minutes }: { minutes: number }) {
   );
 }
 
-function FlightRow({
+function FlightIdentityRow({
   flightNumber,
   airline,
   origin,
@@ -273,6 +267,139 @@ function FlightRow({
     </Link>
   );
 }
+
+function PassPerforation() {
+  return (
+    <div aria-hidden className="relative -mx-5 flex items-center gap-1">
+      <span className="block h-6 w-3 rounded-r-[var(--radius-pill)] bg-[var(--color-bg)]" />
+      <span className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]" />
+      <span className="block h-6 w-3 rounded-l-[var(--radius-pill)] bg-[var(--color-bg)]" />
+    </div>
+  );
+}
+
+function PassDocumentBlock({
+  reference,
+  boardingTime,
+}: {
+  reference: string;
+  boardingTime: string;
+}) {
+  return (
+    <div className="flex items-center gap-5">
+      <FlightUpdateScanTile />
+
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
+            Reference
+          </span>
+          <span className="font-mono text-section-title tabular-nums text-[var(--color-surface-hero-fg)]">
+            {reference}
+          </span>
+        </div>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
+            Updated
+          </span>
+          <span className="text-body-sm text-[var(--color-surface-hero-fg)]">
+            Gate change · Delay
+          </span>
+        </div>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
+            Valid
+          </span>
+          <span className="text-body-sm tabular-nums text-[var(--color-surface-hero-fg)]">
+            {boardingTime}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FlightUpdateScanTile() {
+  return (
+    <div
+      aria-hidden
+      className="relative flex shrink-0 items-center justify-center rounded-[var(--radius-tile)] bg-[var(--color-surface-hero-fg)] p-3 shadow-[var(--shadow-card)]"
+      style={{ width: 116, height: 116 }}
+    >
+      <FlightUpdateGlyph />
+      <span className="absolute inset-0 flex items-center justify-center">
+        <span
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[var(--color-action-teal)] text-[var(--color-surface-hero-fg)]"
+        >
+          <PlaneIcon size={14} />
+        </span>
+      </span>
+    </div>
+  );
+}
+
+/**
+ * Abstract pass glyph — three finder-pattern corner blocks like a QR
+ * code, with sparse internal cells for "document scan tile" feel.
+ * Not a scannable code. Decorative only (`aria-hidden` on the tile
+ * wrapper).
+ */
+function FlightUpdateGlyph() {
+  return (
+    <svg
+      viewBox="0 0 21 21"
+      className="h-full w-full text-[var(--color-text-primary)]"
+      aria-hidden
+    >
+      {FLIGHT_GLYPH_CELLS.map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" fill="currentColor" />
+      ))}
+      <FinderPatternMini x={0} y={0} />
+      <FinderPatternMini x={14} y={0} />
+      <FinderPatternMini x={0} y={14} />
+    </svg>
+  );
+}
+
+function FinderPatternMini({ x, y }: { x: number; y: number }) {
+  return (
+    <g>
+      <rect x={x} y={y} width={5} height={5} fill="currentColor" />
+      <rect
+        x={x + 1}
+        y={y + 1}
+        width={3}
+        height={3}
+        fill="var(--color-surface-hero-fg)"
+      />
+      <rect x={x + 2} y={y + 2} width={1} height={1} fill="currentColor" />
+    </g>
+  );
+}
+
+const FLIGHT_GLYPH_CELLS: ReadonlyArray<readonly [number, number]> = [
+  [8, 0], [10, 0], [12, 0],
+  [9, 1], [11, 1],
+  [7, 2], [13, 2],
+  [6, 3], [10, 3], [14, 3],
+  [8, 4], [12, 4],
+  [11, 5],
+  [7, 6], [9, 6], [13, 6],
+  [0, 7], [2, 7], [4, 7], [9, 7], [11, 7], [16, 7], [18, 7], [20, 7],
+  [1, 8], [3, 8], [5, 8], [7, 8], [13, 8], [15, 8], [17, 8], [19, 8],
+  [0, 9], [4, 9], [10, 9], [12, 9], [16, 9], [20, 9],
+  [2, 10], [6, 10], [8, 10], [14, 10], [18, 10],
+  [1, 11], [3, 11], [11, 11], [15, 11], [19, 11],
+  [9, 12], [13, 12], [17, 12],
+  [7, 13], [11, 13], [15, 13], [20, 13],
+  [9, 14], [13, 14], [16, 14], [18, 14],
+  [11, 15], [14, 15], [19, 15],
+  [8, 16], [12, 16], [15, 16], [17, 16], [20, 16],
+  [10, 17], [13, 17], [18, 17],
+  [8, 18], [11, 18], [14, 18], [16, 18], [20, 18],
+  [9, 19], [12, 19], [15, 19], [17, 19], [19, 19],
+  [10, 20], [13, 20], [16, 20], [18, 20], [20, 20],
+];
 
 function GateChangeModule({
   before,
@@ -358,6 +485,50 @@ function GateChangeArrow() {
       className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-warning)] text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button)]"
     >
       <ArrowRightIcon size={14} />
+    </span>
+  );
+}
+
+function PassFooter({ terminal }: { terminal: string }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-t border-[var(--color-surface-hero-tile-border)] pt-4">
+      <div className="inline-flex min-w-0 items-center gap-2.5">
+        <PassTerminalChip />
+        <span className="truncate text-label text-[var(--color-surface-hero-fg-muted)]">
+          Show update at gate · {terminal}
+        </span>
+      </div>
+      <PassBarcodeMarks />
+    </div>
+  );
+}
+
+function PassTerminalChip() {
+  return (
+    <span
+      aria-hidden
+      className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-tile)] border border-[var(--color-map-mint-soft)] bg-[var(--color-map-mint-bg)] text-[var(--color-map-mint)]"
+    >
+      <SyncIcon size={12} />
+    </span>
+  );
+}
+
+function PassBarcodeMarks() {
+  const widths = [10, 16, 8, 14, 12, 18, 10];
+  return (
+    <span
+      aria-hidden
+      className="inline-flex shrink-0 items-end gap-[3px]"
+      style={{ height: 18 }}
+    >
+      {widths.map((h, i) => (
+        <span
+          key={i}
+          className="inline-block w-0.5 rounded-full bg-[var(--color-surface-hero-fg-soft)]"
+          style={{ height: h }}
+        />
+      ))}
     </span>
   );
 }
