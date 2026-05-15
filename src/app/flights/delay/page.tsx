@@ -6,6 +6,8 @@ import { Card } from "@/components/Card";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
+import { PassDecorBackground } from "@/components/PassDecorBackground";
+import { PassPerforation } from "@/components/PassPerforation";
 import {
   ArrowLeftIcon,
   ArrowRightIcon,
@@ -115,7 +117,7 @@ function FlightUpdateCard({ update }: { update: FlightUpdate }) {
       aria-label={accessibleName}
       className="shadow-[var(--shadow-hero-card)]"
     >
-      <PassDecorBackground />
+      <PassDecorBackground variant="delay" />
       <div className="relative flex flex-col gap-5 p-5">
         {/* Pass header — status + sync */}
         <UpdateMetaRow />
@@ -136,7 +138,7 @@ function FlightUpdateCard({ update }: { update: FlightUpdate }) {
           destination={update.destination}
         />
 
-        <PassPerforation />
+        <PassPerforation inset="-mx-5" />
 
         {/* Document metadata zone — scan tile + reference/updated/valid */}
         <PassDocumentBlock
@@ -151,34 +153,6 @@ function FlightUpdateCard({ update }: { update: FlightUpdate }) {
         <PassFooter terminal={update.after.terminal} />
       </div>
     </HeroSurface>
-  );
-}
-
-function PassDecorBackground() {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 350 720"
-      preserveAspectRatio="xMidYMid slice"
-      className="pointer-events-none absolute inset-0 h-full w-full text-[var(--color-surface-hero-fg)] opacity-[0.05]"
-    >
-      <path
-        d="M -10 120 C 80 80 200 150 360 100"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.25"
-      />
-      <path
-        d="M -10 540 C 100 500 230 570 360 520"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeDasharray="3 5"
-      />
-      <circle cx="310" cy="60" r="2" fill="currentColor" />
-      <circle cx="40" cy="600" r="2" fill="currentColor" />
-      <circle cx="290" cy="650" r="1.5" fill="currentColor" />
-    </svg>
   );
 }
 
@@ -265,16 +239,6 @@ function FlightIdentityRow({
         <ArrowRightIcon size={14} />
       </span>
     </Link>
-  );
-}
-
-function PassPerforation() {
-  return (
-    <div aria-hidden className="relative -mx-5 flex items-center gap-1">
-      <span className="block h-6 w-3 rounded-r-[var(--radius-pill)] bg-[var(--color-bg)]" />
-      <span className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]" />
-      <span className="block h-6 w-3 rounded-l-[var(--radius-pill)] bg-[var(--color-bg)]" />
-    </div>
   );
 }
 

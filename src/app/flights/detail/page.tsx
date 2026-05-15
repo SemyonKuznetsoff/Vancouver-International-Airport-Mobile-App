@@ -6,6 +6,7 @@ import { Card } from "@/components/Card";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
+import { PassDecorBackground } from "@/components/PassDecorBackground";
 import { StatusPill } from "@/components/StatusPill";
 import {
   ArrowLeftIcon,
@@ -149,33 +150,6 @@ function FlightPassCard({ flight }: { flight: FlightDetail }) {
         />
       </div>
     </HeroSurface>
-  );
-}
-
-function PassDecorBackground() {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 350 360"
-      preserveAspectRatio="xMidYMid slice"
-      className="pointer-events-none absolute inset-0 h-full w-full text-[var(--color-surface-hero-fg)] opacity-[0.05]"
-    >
-      <path
-        d="M -10 80 C 80 40 180 110 360 60"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.25"
-      />
-      <path
-        d="M -10 300 C 100 260 220 320 360 270"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeDasharray="3 5"
-      />
-      <circle cx="310" cy="40" r="2" fill="currentColor" />
-      <circle cx="50" cy="320" r="2" fill="currentColor" />
-    </svg>
   );
 }
 

@@ -6,6 +6,8 @@ import { Card } from "@/components/Card";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
+import { PassDecorBackground } from "@/components/PassDecorBackground";
+import { PassPerforation } from "@/components/PassPerforation";
 import { StatusPill } from "@/components/StatusPill";
 import {
   ChevronRightIcon,
@@ -133,7 +135,7 @@ function ActiveFlightCard({ flight }: { flight: ActiveFlight }) {
       aria-label={accessibleName}
       className="shadow-[var(--shadow-hero-card)]"
     >
-      <PassDecorBackground />
+      <PassDecorBackground variant="tall" />
       <div className="relative flex flex-col gap-5 p-6">
         <AirlineRow
           airline={flight.airline}
@@ -156,33 +158,6 @@ function ActiveFlightCard({ flight }: { flight: ActiveFlight }) {
         <CTARow flightNumber={flight.flightNumber} gate={flight.gate} />
       </div>
     </HeroSurface>
-  );
-}
-
-function PassDecorBackground() {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 350 480"
-      preserveAspectRatio="xMidYMid slice"
-      className="pointer-events-none absolute inset-0 h-full w-full text-[var(--color-surface-hero-fg)] opacity-[0.05]"
-    >
-      <path
-        d="M -20 100 C 90 60 220 130 380 80"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.25"
-      />
-      <path
-        d="M -20 360 C 100 320 240 380 380 320"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeDasharray="3 5"
-      />
-      <circle cx="320" cy="60" r="2" fill="currentColor" />
-      <circle cx="60" cy="380" r="2" fill="currentColor" />
-    </svg>
   );
 }
 
@@ -350,16 +325,6 @@ function InfoCell({
       >
         {value}
       </span>
-    </div>
-  );
-}
-
-function PassPerforation() {
-  return (
-    <div aria-hidden className="relative -mx-6 flex items-center gap-1">
-      <span className="block h-6 w-3 rounded-r-[var(--radius-pill)] bg-[var(--color-bg)]" />
-      <span className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]" />
-      <span className="block h-6 w-3 rounded-l-[var(--radius-pill)] bg-[var(--color-bg)]" />
     </div>
   );
 }
