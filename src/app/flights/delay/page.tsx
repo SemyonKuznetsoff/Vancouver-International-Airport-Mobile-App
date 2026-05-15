@@ -101,7 +101,7 @@ function FlightDelayHeader() {
         <BellIcon size={16} />
         <span
           aria-hidden
-          className="absolute right-2 top-2 inline-block h-2 w-2 rounded-full bg-[var(--color-warning)] ring-2 ring-[var(--color-surface-elevated)]"
+          className="absolute right-2 top-2 inline-block h-2 w-2 rounded-full bg-[var(--color-warning)]"
         />
       </button>
     </header>
@@ -306,7 +306,7 @@ function GateCard({
             : "line-through text-[var(--color-surface-hero-fg-soft)]"
         }`}
       >
-        {gate}
+        {isWarning ? gate : <s>{gate}</s>}
       </span>
       <span
         className={`text-label tabular-nums ${
@@ -374,7 +374,7 @@ function NextActionCard({ update }: { update: FlightUpdate }) {
             Start Walking
           </Button>
         </div>
-        <div className="w-[110px] shrink-0">
+        <div className="w-28 shrink-0">
           <Button
             variant="secondary"
             href={"/flights/delay/map" as Route}

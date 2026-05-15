@@ -111,7 +111,7 @@ export default function ReservedParkingPage() {
 
 function ReservedHeader() {
   return (
-    <header className="flex items-center justify-between gap-3 px-5 pb-3 pt-2">
+    <header className="flex items-center justify-between gap-3 px-6 pb-3 pt-2">
       <Link
         href={"/parking/reserve" as Route}
         aria-label="Back to parking reservation"
