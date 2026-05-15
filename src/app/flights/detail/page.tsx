@@ -7,6 +7,7 @@ import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
 import { PassDecorBackground } from "@/components/PassDecorBackground";
+import { PassPerforation } from "@/components/PassPerforation";
 import { StatusPill } from "@/components/StatusPill";
 import {
   ArrowLeftIcon,
@@ -16,6 +17,7 @@ import {
   MapIcon,
   NavigationIcon,
   PlaneIcon,
+  SyncIcon,
 } from "@/components/icons";
 
 type FlightDetail = {
@@ -122,14 +124,16 @@ function FlightPassCard({ flight }: { flight: FlightDetail }) {
         : flight.status === "Boarding"
           ? "info"
           : "danger";
+  const reference = `${flight.flightNumber.replace(/\s/g, "")}-${flight.gate}`;
   return (
     <HeroSurface
       as="section"
       aria-label={accessibleName}
       className="shadow-[var(--shadow-hero-card)]"
     >
-      <PassDecorBackground />
+      <PassDecorBackground variant="tall" />
       <div className="relative flex flex-col gap-5 p-5">
+        {/* Pass header — airline identity + ON TIME */}
         <PassHeader
           airlineCode={flight.airlineCode}
           airlineName={flight.airlineName}
@@ -137,17 +141,30 @@ function FlightPassCard({ flight }: { flight: FlightDetail }) {
           status={flight.status}
           statusTone={statusTone}
         />
+
+        {/* Main route identity */}
         <RouteRow origin={flight.origin} destination={flight.destination} />
+
+        {/* Flight timing / gate module */}
         <FlightInfoModule
           departs={flight.departs}
           arrives={flight.arrives}
           arrivesDayOffset={flight.arrivesDayOffset}
           gate={flight.gate}
         />
-        <PassFooter
-          terminal={flight.terminal}
-          updatedLabel={flight.updatedLabel}
+
+        <PassPerforation inset="-mx-5" />
+
+        {/* Document metadata zone — scan tile + reference column */}
+        <BoardingPassMetadata
+          airlineCode={flight.airlineCode}
+          reference={reference}
+          status={flight.status}
+          boardingTime={flight.boardingTime}
         />
+
+        {/* Pass footer — terminal chip + barcode marks */}
+        <BoardingPassFooter terminal={flight.terminal} />
       </div>
     </HeroSurface>
   );
@@ -308,26 +325,174 @@ function InfoCell({
   );
 }
 
-function PassFooter({
-  terminal,
-  updatedLabel,
+function BoardingPassMetadata({
+  airlineCode,
+  reference,
+  status,
+  boardingTime,
 }: {
-  terminal: string;
-  updatedLabel: string;
+  airlineCode: string;
+  reference: string;
+  status: FlightDetail["status"];
+  boardingTime: string;
 }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-t border-[var(--color-surface-hero-tile-border)] pt-4">
-      <span className="text-label text-[var(--color-surface-hero-fg-muted)]">
-        {terminal}
-      </span>
-      <span className="inline-flex items-center gap-1.5 text-label text-[var(--color-surface-hero-fg-muted)]">
+    <div className="flex items-center gap-5">
+      <BoardingPassScanTile airlineCode={airlineCode} />
+
+      <div className="flex min-w-0 flex-1 flex-col gap-3">
+        <div className="flex flex-col gap-0.5">
+          <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
+            Reference
+          </span>
+          <span className="font-mono text-section-title tabular-nums text-[var(--color-surface-hero-fg)]">
+            {reference}
+          </span>
+        </div>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
+            Status
+          </span>
+          <span className="text-body-sm text-[var(--color-surface-hero-fg)]">
+            {status}
+          </span>
+        </div>
+        <div className="flex flex-col gap-0.5">
+          <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
+            Boarding
+          </span>
+          <span className="text-body-sm tabular-nums text-[var(--color-surface-hero-fg)]">
+            {boardingTime}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function BoardingPassScanTile({ airlineCode }: { airlineCode: string }) {
+  return (
+    <div
+      aria-hidden
+      className="relative flex shrink-0 items-center justify-center rounded-[var(--radius-tile)] bg-[var(--color-surface-hero-fg)] p-3 shadow-[var(--shadow-card)]"
+      style={{ width: 116, height: 116 }}
+    >
+      <BoardingPassGlyph />
+      <span className="absolute inset-0 flex items-center justify-center">
         <span
-          aria-hidden
-          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-map-mint)]"
-        />
-        {updatedLabel}
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-[var(--color-action-teal)] text-micro uppercase text-[var(--color-surface-hero-fg)]"
+        >
+          {airlineCode}
+        </span>
       </span>
     </div>
+  );
+}
+
+/**
+ * Abstract boarding-pass glyph — three finder-pattern corner blocks
+ * like a QR code, with sparse internal cells for "document scan tile"
+ * feel. Not a scannable code. Decorative only (`aria-hidden` on the
+ * tile wrapper).
+ */
+function BoardingPassGlyph() {
+  return (
+    <svg
+      viewBox="0 0 21 21"
+      className="h-full w-full text-[var(--color-text-primary)]"
+      aria-hidden
+    >
+      {BOARDING_PASS_CELLS.map(([x, y]) => (
+        <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" fill="currentColor" />
+      ))}
+      <FinderPatternMini x={0} y={0} />
+      <FinderPatternMini x={14} y={0} />
+      <FinderPatternMini x={0} y={14} />
+    </svg>
+  );
+}
+
+function FinderPatternMini({ x, y }: { x: number; y: number }) {
+  return (
+    <g>
+      <rect x={x} y={y} width={5} height={5} fill="currentColor" />
+      <rect
+        x={x + 1}
+        y={y + 1}
+        width={3}
+        height={3}
+        fill="var(--color-surface-hero-fg)"
+      />
+      <rect x={x + 2} y={y + 2} width={1} height={1} fill="currentColor" />
+    </g>
+  );
+}
+
+const BOARDING_PASS_CELLS: ReadonlyArray<readonly [number, number]> = [
+  [8, 0], [11, 0], [13, 0],
+  [9, 1], [10, 1],
+  [7, 2], [12, 2],
+  [6, 3], [11, 3], [14, 3],
+  [9, 4], [13, 4],
+  [10, 5],
+  [7, 6], [12, 6],
+  [0, 7], [2, 7], [5, 7], [8, 7], [11, 7], [16, 7], [18, 7], [20, 7],
+  [1, 8], [4, 8], [7, 8], [10, 8], [13, 8], [15, 8], [17, 8], [19, 8],
+  [0, 9], [3, 9], [9, 9], [12, 9], [16, 9], [20, 9],
+  [2, 10], [6, 10], [8, 10], [14, 10], [18, 10],
+  [1, 11], [4, 11], [11, 11], [15, 11], [19, 11],
+  [9, 12], [13, 12], [17, 12],
+  [7, 13], [11, 13], [16, 13], [20, 13],
+  [9, 14], [13, 14], [15, 14], [18, 14],
+  [11, 15], [14, 15], [19, 15],
+  [8, 16], [12, 16], [15, 16], [17, 16], [20, 16],
+  [10, 17], [13, 17], [18, 17],
+  [8, 18], [11, 18], [14, 18], [16, 18], [20, 18],
+  [9, 19], [12, 19], [15, 19], [17, 19], [19, 19],
+  [10, 20], [13, 20], [16, 20], [18, 20], [20, 20],
+];
+
+function BoardingPassFooter({ terminal }: { terminal: string }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-t border-[var(--color-surface-hero-tile-border)] pt-4">
+      <div className="inline-flex min-w-0 items-center gap-2.5">
+        <PassTerminalChip />
+        <span className="truncate text-label text-[var(--color-surface-hero-fg-muted)]">
+          Show boarding pass at gate · {terminal}
+        </span>
+      </div>
+      <BarcodeMarks />
+    </div>
+  );
+}
+
+function PassTerminalChip() {
+  return (
+    <span
+      aria-hidden
+      className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-tile)] border border-[var(--color-map-mint-soft)] bg-[var(--color-map-mint-bg)] text-[var(--color-map-mint)]"
+    >
+      <SyncIcon size={12} />
+    </span>
+  );
+}
+
+function BarcodeMarks() {
+  const widths = [10, 16, 8, 14, 12, 18, 10];
+  return (
+    <span
+      aria-hidden
+      className="inline-flex shrink-0 items-end gap-[3px]"
+      style={{ height: 18 }}
+    >
+      {widths.map((h, i) => (
+        <span
+          key={i}
+          className="inline-block w-0.5 rounded-full bg-[var(--color-surface-hero-fg-soft)]"
+          style={{ height: h }}
+        />
+      ))}
+    </span>
   );
 }
 
