@@ -117,21 +117,52 @@ function FlightUpdateCard({ update }: { update: FlightUpdate }) {
       className="shadow-[var(--shadow-hero-card)]"
     >
       <PassDecorBackground />
-      <div className="relative flex flex-col gap-4 p-5">
-        <UpdateMetaRow />
-        <UpdateTitleRow delayMinutes={update.delayMinutes} />
-        <p className="text-body-sm text-[var(--color-surface-hero-fg-muted)]">
-          Review your updated gate and timing.
-        </p>
-        <FlightRow
-          flightNumber={update.flightNumber}
-          airline={update.airline}
-          origin={update.origin}
-          destination={update.destination}
-        />
+      <div className="relative flex flex-col gap-5 p-5">
+        <div className="flex flex-col gap-4">
+          <UpdateMetaRow />
+          <UpdateTitleRow delayMinutes={update.delayMinutes} />
+          <p className="text-body-sm text-[var(--color-surface-hero-fg-muted)]">
+            Review your updated gate and timing.
+          </p>
+          <FlightRow
+            flightNumber={update.flightNumber}
+            airline={update.airline}
+            origin={update.origin}
+            destination={update.destination}
+          />
+        </div>
+        <PassPerforation />
         <GateChangeModule before={update.before} after={update.after} />
+        <PassFooter terminal={update.after.terminal} />
       </div>
     </HeroSurface>
+  );
+}
+
+function PassPerforation() {
+  return (
+    <div aria-hidden className="relative -mx-5 flex items-center gap-1">
+      <span className="block h-6 w-3 rounded-r-[var(--radius-pill)] bg-[var(--color-bg)]" />
+      <span className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]" />
+      <span className="block h-6 w-3 rounded-l-[var(--radius-pill)] bg-[var(--color-bg)]" />
+    </div>
+  );
+}
+
+function PassFooter({ terminal }: { terminal: string }) {
+  return (
+    <div className="flex items-center justify-between gap-3 border-t border-[var(--color-surface-hero-tile-border)] pt-4">
+      <span className="text-label text-[var(--color-surface-hero-fg-muted)]">
+        {terminal}
+      </span>
+      <span className="inline-flex items-center gap-1.5 text-label text-[var(--color-surface-hero-fg-muted)]">
+        <span
+          aria-hidden
+          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-map-mint)]"
+        />
+        Live · just now
+      </span>
+    </div>
   );
 }
 
@@ -156,6 +187,8 @@ function PassDecorBackground() {
         strokeWidth="1"
         strokeDasharray="3 5"
       />
+      <circle cx="310" cy="50" r="2" fill="currentColor" />
+      <circle cx="40" cy="420" r="2" fill="currentColor" />
     </svg>
   );
 }
