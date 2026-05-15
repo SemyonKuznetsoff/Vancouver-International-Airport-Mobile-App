@@ -5,6 +5,8 @@ import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
+import { PassDecorBackground } from "@/components/PassDecorBackground";
+import { PassPerforation } from "@/components/PassPerforation";
 import {
   ArrowLeftIcon,
   BuildingIcon,
@@ -184,31 +186,6 @@ function ParkingPassCard() {
   );
 }
 
-function PassDecorBackground() {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 350 360"
-      preserveAspectRatio="xMidYMid slice"
-      className="pointer-events-none absolute inset-0 h-full w-full text-[var(--color-surface-hero-fg)] opacity-[0.05]"
-    >
-      <path
-        d="M -10 280 C 80 240 180 270 360 220"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.25"
-      />
-      <path
-        d="M -10 320 C 100 280 220 310 360 260"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1"
-        strokeDasharray="3 5"
-      />
-    </svg>
-  );
-}
-
 function PassHeader() {
   return (
     <div className="flex items-start justify-between gap-3">
@@ -237,25 +214,6 @@ function PassHeader() {
           Secure
         </span>
       </div>
-    </div>
-  );
-}
-
-function PassPerforation() {
-  return (
-    <div className="relative -mx-6 flex items-center gap-1">
-      <span
-        aria-hidden
-        className="block h-6 w-3 rounded-r-[var(--radius-pill)] bg-[var(--color-bg)]"
-      />
-      <span
-        aria-hidden
-        className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]"
-      />
-      <span
-        aria-hidden
-        className="block h-6 w-3 rounded-l-[var(--radius-pill)] bg-[var(--color-bg)]"
-      />
     </div>
   );
 }

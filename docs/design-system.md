@@ -369,6 +369,71 @@ Use `<Card padding="none">` and compose the trip card content inside:
   rest of the app. If a future iteration needs side-by-side actions
   inside a card, propose a `Button size="compact"` variant first.
 
+### Pass-card primitives — `<PassPerforation>` and `<PassDecorBackground>`
+
+The boarding-pass / parking-pass / flight-update "official document"
+cards across the app — `/parking/reserved`, `/flights`,
+`/flights/detail`, `/flights/delay` — share two decorative chrome
+pieces. Both used to be re-implemented locally on every screen; both
+are now shared primitives.
+
+**Scope guard.** Use these **only** inside an official pass-card
+surface (a `<HeroSurface>` rendering a boarding pass, parking pass,
+or flight-update pass). Do **not** use them as general dividers or
+backgrounds — the notches imply "tear-off ticket", and the decor
+implies "premium travel document".
+
+#### `<PassPerforation>`
+
+Side-notched dashed divider that visually splits a pass card into
+zones (e.g. between the QR/identity zone and the reference metadata
+zone on Parking Reserved). Always `aria-hidden` and
+`pointer-events-none`.
+
+```tsx
+import { PassPerforation } from "@/components/PassPerforation";
+
+<PassPerforation />                          // default: hero surface, -mx-6
+<PassPerforation inset="-mx-5" />            // tighter p-5 cards (Flight Delay)
+<PassPerforation surface="card" />           // light Card sheet variant
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `surface` | `"hero" \| "card"` | `"hero"` | Drives the dashed-line colour. `hero` uses `--color-surface-hero-tile-border` (for dark pass bodies); `card` uses `--color-border-soft` (for `Card surface="sheet"` light pass bodies). The notch fill is always `--color-bg`. |
+| `inset` | `"-mx-5" \| "-mx-6"` | `"-mx-6"` | Match the parent card's inner padding. `-mx-6` for `p-6` pass cards (Parking Reserved, My Flights); `-mx-5` for the tighter `p-5` Flight Delay pass. |
+| `className` | `string` | `""` | Composition hook; rarely needed. |
+
+**A11y.** Decorative only. The pass's section landmark carries the
+status meaning via its own `aria-label`; the perforation never needs
+to be announced.
+
+#### `<PassDecorBackground>`
+
+Faint curved lines + dots that give the pass body a paper-document
+texture. Renders inside a `<HeroSurface>` (or other
+`relative overflow-hidden` dark surface) and uses
+`--color-surface-hero-fg` at `opacity-[0.05]` so it never competes
+with foreground content.
+
+```tsx
+import { PassDecorBackground } from "@/components/PassDecorBackground";
+
+<PassDecorBackground />                      // default: "calm"
+<PassDecorBackground variant="tall" />       // taller pass cards
+<PassDecorBackground variant="delay" />      // tallest pass cards
+```
+
+| Prop | Type | Default | Notes |
+|---|---|---|---|
+| `variant` | `"calm" \| "tall" \| "delay"` | `"calm"` | Pre-defined curve/dot envelope. Each variant matches the approximate height of one existing pass card so the decoration doesn't clip or float. `calm` (350×360, no dots) = Parking Reserved, Flight Detail. `tall` (350×480, 2 dots) = My Flights main pass. `delay` (350×720, 3 dots) = Flight Delay rework. |
+| `className` | `string` | `""` | Composition hook; rarely needed. |
+
+Variants are visually similar but never identical — each pass card
+gets a slight individual feel without forking the primitive.
+
+**A11y.** Always `aria-hidden` and `pointer-events-none`.
+
 ### Card surfaces in the authed app
 
 The Profile Figma mockup renders the trip card and vault row groups as

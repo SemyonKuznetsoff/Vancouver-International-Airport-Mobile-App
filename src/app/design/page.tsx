@@ -31,6 +31,8 @@ import { FieldMessage } from "@/components/FieldMessage";
 import { GateDisplay } from "@/components/GateDisplay";
 import { Heading } from "@/components/Heading";
 import { HeroSurface } from "@/components/HeroSurface";
+import { PassDecorBackground } from "@/components/PassDecorBackground";
+import { PassPerforation } from "@/components/PassPerforation";
 import { IconTile } from "@/components/IconTile";
 import { InlineAlert } from "@/components/InlineAlert";
 import { LargeTitleHeader } from "@/components/LargeTitleHeader";
@@ -632,6 +634,40 @@ export default function DesignPreviewPage() {
                 </HeaderIconButton>
               </div>
             </div>
+          </SubSection>
+
+          <SubSection title="Pass card primitives">
+            <p className="text-body-sm text-[var(--color-text-secondary)]">
+              `&lt;PassPerforation&gt;` (dashed tear strip with side notches) and
+              `&lt;PassDecorBackground&gt;` (faint curves + dots) are shared decorative
+              pieces used only inside boarding-pass / parking-pass / flight-update cards.
+              Demo below combines both inside a `&lt;HeroSurface&gt;`.
+            </p>
+            <HeroSurface
+              as="div"
+              className="relative shadow-[var(--shadow-hero-card)]"
+            >
+              <PassDecorBackground variant="calm" />
+              <div className="relative flex flex-col gap-5 p-6">
+                <div className="flex flex-col gap-1">
+                  <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
+                    Pass header zone
+                  </span>
+                  <span className="text-section-title text-[var(--color-surface-hero-fg)]">
+                    Pass title
+                  </span>
+                </div>
+                <PassPerforation />
+                <div className="flex flex-col gap-1">
+                  <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
+                    Pass body zone
+                  </span>
+                  <span className="text-body-sm text-[var(--color-surface-hero-fg-muted)]">
+                    Document metadata, scan tile, gate-change module, etc.
+                  </span>
+                </div>
+              </div>
+            </HeroSurface>
           </SubSection>
 
           <SubSection title="BottomTabBar">
