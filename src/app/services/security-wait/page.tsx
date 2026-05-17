@@ -23,7 +23,11 @@ type CheckpointTone = "low" | "medium" | "high";
 
 type CheckpointSummary = {
   id: string;
+  /** Short display label, sized for the 3-up summary tile at 375px. */
   label: string;
+  /** Full checkpoint name used in aria-labels so SR users hear the
+   *  unabbreviated name even when the visible label is shortened. */
+  name: string;
   waitMinutes: number;
   tone: CheckpointTone;
 };
@@ -54,9 +58,27 @@ const STATUS_LABEL = "Updated just now";
 const SOURCE_LABEL = "CATSA & YVR feed";
 
 const SUMMARY: CheckpointSummary[] = [
-  { id: "intl", label: "International", waitMinutes: 12, tone: "low" },
-  { id: "us", label: "US Transborder", waitMinutes: 18, tone: "medium" },
-  { id: "dom", label: "Domestic", waitMinutes: 6, tone: "low" },
+  {
+    id: "intl",
+    label: "Intl",
+    name: "International",
+    waitMinutes: 12,
+    tone: "low",
+  },
+  {
+    id: "us",
+    label: "US Trans",
+    name: "US Transborder",
+    waitMinutes: 18,
+    tone: "medium",
+  },
+  {
+    id: "dom",
+    label: "Domestic",
+    name: "Domestic",
+    waitMinutes: 6,
+    tone: "low",
+  },
 ];
 
 const RECOMMENDED: Checkpoint = {
@@ -157,7 +179,7 @@ function SecurityHeader() {
 
 function SecurityStatusPass({ summary }: { summary: CheckpointSummary[] }) {
   const accessibleName = `Live security status from ${SOURCE_LABEL}, ${STATUS_LABEL}. ${summary
-    .map((s) => `${s.label}: ${s.waitMinutes} minute wait`)
+    .map((s) => `${s.name}: ${s.waitMinutes} minute wait`)
     .join(", ")}.`;
   return (
     <HeroSurface
@@ -267,7 +289,7 @@ function SecuritySummaryGrid({
 function SecuritySummaryTile({ summary }: { summary: CheckpointSummary }) {
   return (
     <div
-      aria-label={`${summary.label}: ${summary.waitMinutes} minute wait`}
+      aria-label={`${summary.name}: ${summary.waitMinutes} minute wait`}
       className="relative flex flex-col gap-2 overflow-hidden rounded-[var(--radius-tile)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] p-3"
     >
       <SummaryToneStripe tone={summary.tone} />
@@ -345,7 +367,7 @@ function RecommendedChips() {
         Recommended
       </span>
       <span className="inline-flex h-7 items-center rounded-[var(--radius-pill)] border border-[var(--color-map-mint-soft)] bg-[var(--color-map-mint-bg)] px-2.5 text-micro uppercase text-[var(--color-map-mint)]">
-        Lowest wait for your terminal
+        Lowest wait · Intl
       </span>
     </div>
   );
