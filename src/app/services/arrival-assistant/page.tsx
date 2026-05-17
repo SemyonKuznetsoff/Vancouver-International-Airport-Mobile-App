@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Card } from "@/components/Card";
@@ -9,6 +10,7 @@ import { PassPerforation } from "@/components/PassPerforation";
 import { StatusPill } from "@/components/StatusPill";
 import {
   ArrowLeftIcon,
+  ChevronRightIcon,
   ClockIcon,
   InfoIcon,
   LocationPinIcon,
@@ -43,6 +45,7 @@ type UpcomingStep = {
   index: number;
   title: string;
   detail: string;
+  href?: Route;
 };
 
 const FLIGHT: ArrivalFlight = {
@@ -70,7 +73,13 @@ const CURRENT_STEP: CurrentStep = {
 };
 
 const UPCOMING_STEPS: UpcomingStep[] = [
-  { id: "baggage", index: 2, title: "Baggage claim", detail: "Carousel 6 · ~12 min" },
+  {
+    id: "baggage",
+    index: 2,
+    title: "Baggage claim",
+    detail: "Carousel 6 · ~12 min",
+    href: "/flights/baggage-info" as Route,
+  },
   { id: "carousel", index: 3, title: "Carousel 6", detail: "International Arrivals · Level 2" },
   { id: "inspection", index: 4, title: "Customs inspection", detail: "Final declaration · Green / Red lanes" },
   { id: "transport", index: 5, title: "Ground transport", detail: "SkyTrain, taxi, rideshare, pickup" },
@@ -467,8 +476,8 @@ function NextStepsCard({ steps }: { steps: UpcomingStep[] }) {
 }
 
 function NextStepRow({ step }: { step: UpcomingStep }) {
-  return (
-    <div className="flex items-center gap-3 px-4 py-3.5">
+  const content = (
+    <>
       <span
         aria-hidden
         className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-tile)] text-body-sm-emphasis tabular-nums text-[var(--color-text-secondary)]"
@@ -483,6 +492,28 @@ function NextStepRow({ step }: { step: UpcomingStep }) {
           {step.detail}
         </span>
       </div>
-    </div>
+      {step.href ? (
+        <span
+          aria-hidden
+          className="inline-flex shrink-0 text-[var(--color-text-muted)]"
+        >
+          <ChevronRightIcon size={16} />
+        </span>
+      ) : null}
+    </>
+  );
+  if (step.href) {
+    return (
+      <Link
+        href={step.href}
+        aria-label={`${step.title} — ${step.detail}`}
+        className="flex items-center gap-3 px-4 py-3.5 transition-colors duration-150 hover:bg-[var(--color-surface-hover)]"
+      >
+        {content}
+      </Link>
+    );
+  }
+  return (
+    <div className="flex items-center gap-3 px-4 py-3.5">{content}</div>
   );
 }
