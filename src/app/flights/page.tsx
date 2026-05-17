@@ -113,7 +113,10 @@ function FlightsHeader({ date }: { date: string }) {
           My Flights
         </h1>
       </div>
-      <HeaderIconButton aria-label="Add flight">
+      <HeaderIconButton
+        aria-label="Add flight"
+        href={"/flights/search" as Route}
+      >
         <PlusIcon size={18} />
       </HeaderIconButton>
     </header>
