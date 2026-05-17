@@ -16,6 +16,7 @@ import {
   DiningIcon,
   LifeBuoyIcon,
   ParkingIcon,
+  PlaneIcon,
   SearchIcon,
   ShieldCheckIcon,
   SignpostIcon,
@@ -149,6 +150,13 @@ const SERVICE_GROUPS: ServiceGroup[] = [
     id: "experience",
     label: "Airport experience",
     rows: [
+      {
+        id: "arrival-assistant",
+        icon: <PlaneIcon size={16} />,
+        title: "Arrival Assistant",
+        description: "Guided journey from gate to ground transport",
+        href: "/services/arrival-assistant" as Route,
+      },
       {
         id: "dining",
         icon: <DiningIcon size={16} />,
