@@ -104,6 +104,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     id: "security",
     label: "Security",
     icon: <ShieldCheckIcon size={14} />,
+    href: "/services/security-wait" as Route,
   },
   {
     id: "parking",
@@ -381,6 +382,7 @@ function BestRightNowCard() {
 
       <Button
         tone="teal"
+        href={"/services/security-wait" as Route}
         trailingIcon={<ArrowRightIcon size={16} />}
         aria-label="View all security checkpoints"
       >
