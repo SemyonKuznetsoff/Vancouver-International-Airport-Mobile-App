@@ -202,7 +202,7 @@ function ActiveModeCard({ mode }: { mode: Mode }) {
       >
         <IconTile
           size={40}
-          className="bg-[var(--color-action-teal-soft)] text-[var(--color-action-teal)]"
+          className="bg-[var(--color-surface-tile)] text-[var(--color-text-primary)]"
         >
           {mode.icon}
         </IconTile>
@@ -211,7 +211,7 @@ function ActiveModeCard({ mode }: { mode: Mode }) {
             <h2 className="text-section-title text-[var(--color-text-primary)]">
               {mode.title}
             </h2>
-            <span className="inline-flex h-5 items-center rounded-[var(--radius-pill)] bg-[var(--color-action-teal-soft)] px-2 text-micro uppercase text-[var(--color-action-teal)]">
+            <span className="inline-flex h-5 items-center rounded-[var(--radius-pill)] bg-[var(--color-surface-tile)] px-2 text-micro uppercase text-[var(--color-text-primary)]">
               Active
             </span>
           </div>
@@ -221,14 +221,14 @@ function ActiveModeCard({ mode }: { mode: Mode }) {
         </div>
         <span
           aria-hidden
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)]"
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-action-primary)] text-[var(--color-action-primary-fg)]"
         >
           <CheckIcon size={14} />
         </span>
       </div>
 
       <div className="mt-4 rounded-[var(--radius-tile)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] p-4">
-        <p className="inline-flex items-center gap-2 text-eyebrow uppercase text-[var(--color-action-teal)]">
+        <p className="inline-flex items-center gap-2 text-eyebrow uppercase text-[var(--color-text-secondary)]">
           <SparkleIcon size={12} />
           <span>{mode.modeLabel}</span>
         </p>
@@ -239,7 +239,7 @@ function ActiveModeCard({ mode }: { mode: Mode }) {
           {mode.priorities.map((p) => (
             <li
               key={p}
-              className="inline-flex h-7 items-center rounded-[var(--radius-pill)] bg-[var(--color-action-teal-soft)] px-3 text-body-sm font-medium text-[var(--color-action-teal)]"
+              className="inline-flex h-7 items-center rounded-[var(--radius-pill)] bg-[var(--color-surface-tile)] px-3 text-body-sm font-medium text-[var(--color-text-primary)]"
             >
               {p}
             </li>
@@ -314,7 +314,7 @@ function LanguagePicker({
             aria-label={l.aria}
             className={`inline-flex h-11 items-center gap-1.5 rounded-[var(--radius-pill)] border px-4 text-body-sm font-medium transition-colors duration-150 ${
               isSelected
-                ? "border-[var(--color-action-teal)] bg-[var(--color-action-teal-soft)] text-[var(--color-action-teal)]"
+                ? "border-[var(--color-action-primary)] bg-[var(--color-surface-sheet)] text-[var(--color-text-primary)]"
                 : "border-[var(--color-border)] bg-[var(--color-surface-elevated)] text-[var(--color-text-secondary)] hover:bg-[var(--color-surface-elevated-hover)]"
             }`}
           >
