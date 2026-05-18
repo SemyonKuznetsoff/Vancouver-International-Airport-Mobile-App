@@ -1,16 +1,209 @@
 @import "tailwindcss";
 
-/* ---------- Design tokens ---------- */
+/* ---------- Design tokens ----------
+   Two tiers:
+   1. Primitive scales (--navy-*, --steel-*, --mist-*, --teal-*, --aurora-*,
+      --success-*, --warning-*, --danger-*, --info-*, --neutral-*, --white-a*,
+      --black-a*) hold raw colour values. They are the palette under the
+      design — never consumed by components.
+   2. Semantic tokens (--color-*) are component-facing roles that reference
+      primitives. Components consume semantic tokens only.
+
+   Editing rules: change a brand hue by editing the primitive scale; rebind
+   a role by editing the semantic mapping. Adding a new role lives in the
+   semantic block; no raw hex inside components. See docs/design-system.md
+   §5 for full role tables.
+*/
 @theme {
+  /* ---------- Primitive — Navy ----------
+     Dark brand navy. 900 anchors --color-text-primary and
+     --color-action-primary. */
+  --navy-50: #f3f6fa;
+  --navy-100: #e3eaf2;
+  --navy-200: #c5d2e2;
+  --navy-300: #9aafc8;
+  --navy-400: #6987a8;
+  --navy-500: #466a8e;
+  --navy-600: #325478;
+  --navy-700: #284263;
+  --navy-800: #213a55;
+  --navy-900: #1d3557;
+  --navy-950: #122340;
+
+  /* ---------- Primitive — Steel ----------
+     Mid-saturation supporting blue. 500 → text-muted, 700 → text-secondary. */
+  --steel-50: #f3f7fa;
+  --steel-100: #e3edf3;
+  --steel-200: #c4d8e2;
+  --steel-300: #9bb8c9;
+  --steel-400: #82a0b6;
+  --steel-500: #6d8aa3;
+  --steel-600: #517793;
+  --steel-700: #3a6a8a;
+  --steel-800: #2e556e;
+  --steel-900: #213e51;
+
+  /* ---------- Primitive — Mist ----------
+     Cool pale surface family. 100 anchors --color-bg / --color-surface. */
+  --mist-50: #f3f8f9;
+  --mist-100: #e2eef0;
+  --mist-200: #cbe0e3;
+  --mist-300: #aeccd1;
+  --mist-400: #88b3ba;
+  --mist-500: #5e9099;
+  --mist-600: #487a83;
+  --mist-700: #3c6770;
+  --mist-800: #305157;
+  --mist-900: #233c41;
+
+  /* ---------- Primitive — Teal ----------
+     Premium commerce / travel-document accent. 800 anchors --color-action-teal
+     and the hero surface family. Distinct from the navy primary CTA. */
+  --teal-50: #effbfc;
+  --teal-100: #d3f4f7;
+  --teal-200: #abe7ec;
+  --teal-300: #74d2db;
+  --teal-400: #3eb4c1;
+  --teal-500: #1f95a3;
+  --teal-600: #137682;
+  --teal-700: #0c6470;
+  --teal-800: #0a5a66;
+  --teal-900: #074049;
+  --teal-950: #042c33;
+
+  /* ---------- Primitive — Aurora ----------
+     Background-only hues. Specific anchors light up --color-aurora-*. */
+  --aurora-sky-50: #ebf3ff;
+  --aurora-sky-100: #d8e7ff;
+  --aurora-sky-200: #b6d3ff;
+  --aurora-sky-300: #8ec5ff;
+  --aurora-sky-400: #5fa5f0;
+  --aurora-sky-500: #3a87dc;
+  --aurora-sky-600: #266ec0;
+  --aurora-sky-700: #1d5599;
+  --aurora-sky-800: #173f73;
+  --aurora-sky-900: #112c52;
+
+  --aurora-lavender-50: #faf2ff;
+  --aurora-lavender-100: #eed9ff;
+  --aurora-lavender-200: #dab2ff;
+  --aurora-lavender-300: #c08eff;
+  --aurora-lavender-400: #a36bef;
+  --aurora-lavender-500: #864ed4;
+  --aurora-lavender-600: #6a3aae;
+  --aurora-lavender-700: #522d88;
+  --aurora-lavender-800: #3d2266;
+  --aurora-lavender-900: #2a1748;
+
+  --aurora-mint-50: #ecfdfa;
+  --aurora-mint-100: #c9faf1;
+  --aurora-mint-200: #95f4e2;
+  --aurora-mint-300: #67f0d8;
+  --aurora-mint-400: #46ecd5;
+  --aurora-mint-500: #20c7af;
+  --aurora-mint-600: #199e8b;
+  --aurora-mint-700: #157d6f;
+  --aurora-mint-800: #115f56;
+  --aurora-mint-900: #0c4540;
+
+  /* ---------- Primitive — Status scales ----------
+     50 = soft surface bg, 300 = mid border, 500/600 = solid mark, 700 = on-bg
+     foreground. WCAG: the 700-on-50 reading pairs are all AA or better. */
+  --success-50: #ebfaf3;
+  --success-100: #c9f0d9;
+  --success-200: #95e1b7;
+  --success-300: #6cd09b;
+  --success-400: #34b677;
+  --success-500: #129562;
+  --success-600: #0a8754;
+  --success-700: #086d44;
+  --success-800: #075637;
+  --success-900: #06402a;
+
+  --warning-50: #fdf5e7;
+  --warning-100: #fbe6c2;
+  --warning-200: #f6cf8a;
+  --warning-300: #eab441;
+  --warning-400: #d8941e;
+  --warning-500: #c97a16;
+  --warning-600: #a3620f;
+  --warning-700: #80500c;
+  --warning-800: #61400d;
+  --warning-900: #4a310b;
+
+  --danger-50: #fcebea;
+  --danger-100: #f9d3d0;
+  --danger-200: #f1a7a1;
+  --danger-300: #e6776f;
+  --danger-400: #d04d44;
+  --danger-500: #b3261e;
+  --danger-600: #911f18;
+  --danger-700: #791812;
+  --danger-800: #5f130e;
+  --danger-900: #480e0b;
+
+  --info-50: #ebf3ff;
+  --info-100: #cde0fb;
+  --info-200: #9cc1f7;
+  --info-300: #5d96f0;
+  --info-400: #3b7bd9;
+  --info-500: #1f5fb1;
+  --info-600: #1a4e91;
+  --info-700: #143c70;
+  --info-800: #102f57;
+  --info-900: #0c2440;
+
+  /* ---------- Primitive — Neutral ----------
+     Achromatic anchors. 0 → --color-text-inverse / --color-action-primary-fg.
+     1000 is reserved (no current consumer). */
+  --neutral-0: #ffffff;
+  --neutral-50: #f7f8f9;
+  --neutral-100: #eef0f3;
+  --neutral-200: #dde0e5;
+  --neutral-300: #b8bec7;
+  --neutral-400: #8a93a0;
+  --neutral-500: #5d6675;
+  --neutral-600: #444d5a;
+  --neutral-700: #303843;
+  --neutral-800: #1f262e;
+  --neutral-900: #11161c;
+  --neutral-1000: #000000;
+
+  /* ---------- Primitive — Alpha layers ----------
+     White-on-aurora glass tints and black-on-light shadow tints. Composed
+     surface/border roles reference these instead of inlining rgba. */
+  --white-a05: rgba(255, 255, 255, 0.05);
+  --white-a08: rgba(255, 255, 255, 0.08);
+  --white-a10: rgba(255, 255, 255, 0.1);
+  --white-a12: rgba(255, 255, 255, 0.12);
+  --white-a16: rgba(255, 255, 255, 0.16);
+  --white-a18: rgba(255, 255, 255, 0.18);
+  --white-a30: rgba(255, 255, 255, 0.3);
+  --white-a40: rgba(255, 255, 255, 0.4);
+  --white-a50: rgba(255, 255, 255, 0.5);
+  --white-a55: rgba(255, 255, 255, 0.55);
+  --white-a60: rgba(255, 255, 255, 0.6);
+  --white-a65: rgba(255, 255, 255, 0.65);
+  --white-a70: rgba(255, 255, 255, 0.7);
+  --white-a80: rgba(255, 255, 255, 0.8);
+  --white-a95: rgba(255, 255, 255, 0.95);
+
+  --black-a10: rgba(0, 0, 0, 0.1);
+  --black-a18: rgba(0, 0, 0, 0.18);
+  --black-a20: rgba(0, 0, 0, 0.2);
+  --black-a30: rgba(0, 0, 0, 0.3);
+  --black-a40: rgba(0, 0, 0, 0.4);
+  --black-a55: rgba(0, 0, 0, 0.55);
+
   /* Surfaces */
-  --color-bg: #e2eef0;
-  --color-surface: #e2eef0;
-  --color-surface-elevated: rgba(255, 255, 255, 0.6);
-  --color-surface-overlay: rgba(255, 255, 255, 0.5);
-  --color-surface-card: rgba(255, 255, 255, 0.4);
-  --color-surface-hover: rgba(255, 255, 255, 0.3);
-  --color-surface-pressed: rgba(255, 255, 255, 0.4);
-  --color-surface-elevated-hover: rgba(255, 255, 255, 0.7);
+  --color-bg: var(--mist-100);
+  --color-surface: var(--mist-100);
+  --color-surface-elevated: var(--white-a60);
+  --color-surface-overlay: var(--white-a50);
+  --color-surface-card: var(--white-a40);
+  --color-surface-hover: var(--white-a30);
+  --color-surface-pressed: var(--white-a40);
+  --color-surface-elevated-hover: var(--white-a70);
 
   /* Map / parking utility surface — dark navy-teal background used by
      immersive utility flows (Find My Car, terminal map, gate
@@ -32,27 +225,27 @@
   --shadow-map-sheet: 0 -16px 32px -8px rgba(0, 0, 0, 0.55);
 
   /* Text */
-  --color-text-primary: #1d3557;
-  --color-text-secondary: #3a6a8a;
-  --color-text-muted: #6d8aa3;
-  --color-text-inverse: #ffffff;
+  --color-text-primary: var(--navy-900);
+  --color-text-secondary: var(--steel-700);
+  --color-text-muted: var(--steel-500);
+  --color-text-inverse: var(--neutral-0);
 
   /* Borders */
-  --color-border: rgba(255, 255, 255, 0.6);
-  --color-border-soft: rgba(255, 255, 255, 0.4);
-  --color-border-hairline: rgba(255, 255, 255, 0.6); /* legacy alias */
+  --color-border: var(--white-a60);
+  --color-border-soft: var(--white-a40);
+  --color-border-hairline: var(--white-a60); /* legacy alias */
 
   /* Actions */
-  --color-action-primary: #1d3557;
-  --color-action-primary-fg: #ffffff;
+  --color-action-primary: var(--navy-900);
+  --color-action-primary-fg: var(--neutral-0);
 
   /* Teal accent — deep premium teal used for inline action links and
      icon-tile fills inside teal-themed flows (Reserve Parking "Change",
      "View breakdown" links, Entry/Exit row icon tiles). Distinct from
      `--color-action-primary` (navy), which remains the canonical
      primary CTA fill. The soft companion sits on solid white cards. */
-  --color-action-teal: #0a5a66;
-  --color-action-teal-soft: rgba(10, 90, 102, 0.08);
+  --color-action-teal: var(--teal-800);
+  --color-action-teal-soft: color-mix(in srgb, var(--teal-800) 8%, transparent);
 
   /* High-opacity surface for near-solid raised elements that must read
      as opaque on top of glass/aurora — floating sticky bottom sheets
@@ -60,23 +253,26 @@
      segmented control (Reserve Parking duration selector). Distinct
      from `--color-surface-card` (airy glass over the aurora) which
      would dissolve content beneath these surfaces. */
-  --color-surface-sheet: rgba(255, 255, 255, 0.95);
+  --color-surface-sheet: var(--white-a95);
 
   /* Hero surface — dark teal identity card used on Profile and future
      premium / membership hero panels. Foreground tokens carry inverse
      text + an inner glass fill that sits *on* the hero surface, not on
-     the aurora. */
+     the aurora.
+     The two gradient stops are bespoke darker shades of YVR teal,
+     held outside the --teal-* scale so the hero reads visibly distinct
+     from --color-action-teal. */
   --color-surface-hero-start: #0e4a4e;
   --color-surface-hero-end: #0a3a3d;
-  --color-surface-hero-fg: #ffffff;
-  --color-surface-hero-fg-muted: rgba(255, 255, 255, 0.65);
-  --color-surface-hero-fg-soft: rgba(255, 255, 255, 0.55);
-  --color-surface-hero-tile: rgba(255, 255, 255, 0.08);
-  --color-surface-hero-tile-border: rgba(255, 255, 255, 0.1);
-  --color-surface-hero-chip: rgba(255, 255, 255, 0.1);
-  --color-surface-hero-chip-border: rgba(255, 255, 255, 0.16);
-  --color-surface-hero-avatar: rgba(255, 255, 255, 0.12);
-  --color-surface-hero-avatar-border: rgba(255, 255, 255, 0.18);
+  --color-surface-hero-fg: var(--neutral-0);
+  --color-surface-hero-fg-muted: var(--white-a65);
+  --color-surface-hero-fg-soft: var(--white-a55);
+  --color-surface-hero-tile: var(--white-a08);
+  --color-surface-hero-tile-border: var(--white-a10);
+  --color-surface-hero-chip: var(--white-a10);
+  --color-surface-hero-chip-border: var(--white-a16);
+  --color-surface-hero-avatar: var(--white-a12);
+  --color-surface-hero-avatar-border: var(--white-a18);
 
   /* Membership tier accents — used only inside the hero surface to badge
      an external loyalty tier (Aeroplan Gold today; Star Alliance Gold,
@@ -99,8 +295,10 @@
 
   /* Warm tile fill — used for the leading IconTile inside settings/vault
      rows. Distinct from `--color-surface-elevated` (translucent over
-     aurora) — this tone sits inside a solid card and reads warm. */
-  --color-surface-tile: rgba(31, 53, 87, 0.06);
+     aurora) — this tone sits inside a solid card and reads warm.
+     Composed from --navy-900 @ 6% so a future palette swap follows the
+     primary text/action hue. */
+  --color-surface-tile: color-mix(in srgb, var(--navy-900) 6%, transparent);
 
   /* Bottom navigation surface — the global floating dock rendered by
      `BottomTabBar`. A warm near-black rounded-square hovering above
@@ -108,12 +306,14 @@
      `--color-action-teal`. Tokens live here (not inside the
      component) so future shell experiments — translucent glass nav,
      light-mode nav, alternate active tones — can swap them without
-     reaching into `BottomTabBar.tsx`. */
+     reaching into `BottomTabBar.tsx`.
+     `--color-nav-surface` is a bespoke warm near-black; not a primitive
+     because no other surface uses this exact tone. */
   --color-nav-surface: #1a1918;
-  --color-nav-fg: #ffffff;
-  --color-nav-fg-muted: rgba(255, 255, 255, 0.55);
+  --color-nav-fg: var(--neutral-0);
+  --color-nav-fg-muted: var(--white-a55);
   --color-nav-active-bg: var(--color-action-teal);
-  --color-nav-active-fg: #ffffff;
+  --color-nav-active-fg: var(--neutral-0);
 
   /* Control surfaces — composed from semantic text token + alpha */
   --color-track-off: color-mix(
@@ -127,39 +327,48 @@
   --opacity-muted: 0.6;
   --opacity-overlay: 0.5;
 
-  /* Status — reserved for live data states only */
-  --color-success: #0a8754;
-  --color-warning: #c97a16;
-  --color-danger: #b3261e;
-  --color-info: #1f5fb1;
+  /* Status — reserved for live data states only.
+     The 500/600 anchors are the high-contrast mark colour; the surface
+     trios below pair the matching 50/300/700 stops. Never use status
+     colours as decoration. */
+  --color-success: var(--success-600);
+  --color-warning: var(--warning-500);
+  --color-danger: var(--danger-500);
+  --color-info: var(--info-500);
 
   /* Status surface trios (bg / border / fg) — consumed by InlineAlert,
      ErrorState badges, status banners. Each trio is a solid background,
-     a mid-light border, and a high-contrast foreground. */
-  --color-success-bg: #ebfaf3;
-  --color-success-border: #6cd09b;
-  --color-success-fg: #086d44;
+     a mid-light border, and a high-contrast foreground.
+     WCAG: foreground (700) on background (50) is ≥ 7:1 across the four
+     statuses, comfortably AAA for normal text. */
+  --color-success-bg: var(--success-50);
+  --color-success-border: var(--success-300);
+  --color-success-fg: var(--success-700);
 
-  --color-warning-bg: #fdf5e7;
-  --color-warning-border: #eab441;
-  --color-warning-fg: #80500c;
+  --color-warning-bg: var(--warning-50);
+  --color-warning-border: var(--warning-300);
+  --color-warning-fg: var(--warning-700);
 
-  --color-danger-bg: #fcebea;
-  --color-danger-border: #e6776f;
-  --color-danger-fg: #791812;
+  --color-danger-bg: var(--danger-50);
+  --color-danger-border: var(--danger-300);
+  --color-danger-fg: var(--danger-700);
 
-  --color-info-bg: #ebf3ff;
-  --color-info-border: #5d96f0;
-  --color-info-fg: #143c70;
+  --color-info-bg: var(--info-50);
+  --color-info-border: var(--info-300);
+  --color-info-fg: var(--info-700);
 
+  /* Neutral inline alert trio — uses the mist/steel families because it
+     reads "informational" rather than carrying status. */
   --color-neutral-bg: #eef5f7;
   --color-neutral-border: #a4b9cb;
-  --color-neutral-fg: #3a6a8a;
+  --color-neutral-fg: var(--steel-700);
 
-  /* Aurora accents — background only */
-  --color-aurora-sky: #8ec5ff;
-  --color-aurora-lavender: #dab2ff;
-  --color-aurora-mint: #46ecd5;
+  /* Aurora accents — background only. Never use for text, borders, or
+     icons. The specific scale stops below are tuned to the aurora gradient
+     visible in `AuroraBackground`. */
+  --color-aurora-sky: var(--aurora-sky-300);
+  --color-aurora-lavender: var(--aurora-lavender-200);
+  --color-aurora-mint: var(--aurora-mint-400);
 
   /* Radii */
   --radius-chip: 10px;
