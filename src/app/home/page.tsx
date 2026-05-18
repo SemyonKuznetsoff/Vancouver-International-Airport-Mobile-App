@@ -419,10 +419,10 @@ function UnlockConciergeBanner() {
         </IconTile>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <p className="text-body-sm-emphasis text-[var(--color-text-primary)]">
-            Unlock your concierge
+            Your YVR concierge
           </p>
           <p className="text-label text-[var(--color-text-secondary)]">
-            Gate updates, walk-time, security ETA — all unlocked when a trip is linked.
+            Real-time gate updates, walk-time, and security ETA — there when you need them.
           </p>
         </div>
       </div>
