@@ -570,7 +570,10 @@ function WhatToDoNowSection({
       </div>
       <ol className="flex flex-col gap-2">
         {steps.map((step) => (
-          <li key={step.id}>
+          <li
+            key={step.id}
+            aria-current={step.tone === "action" ? "step" : undefined}
+          >
             <StepCard step={step} />
           </li>
         ))}

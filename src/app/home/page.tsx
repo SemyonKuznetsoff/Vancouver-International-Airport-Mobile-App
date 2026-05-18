@@ -14,7 +14,6 @@ import {
   AccessibilityIcon,
   ArrowRightIcon,
   BellIcon,
-  ChevronRightIcon,
   DiningIcon,
   LifeBuoyIcon,
   MapIcon,
@@ -22,8 +21,6 @@ import {
   ParkingIcon,
   PlaneIcon,
   ProfileIcon,
-  ScanIcon,
-  SearchIcon,
   ShieldCheckIcon,
   SignpostIcon,
   SparkleIcon,
@@ -240,55 +237,7 @@ function HeroAddTripCard({ status }: { status: AirportStatus }) {
       <p className="mt-4 text-body text-[var(--color-surface-hero-fg-muted)]">
         Add a trip and we&rsquo;ll guide every step — from curb to gate, calmly.
       </p>
-
-      <AddTripControl />
-
-      <Link
-        href="/trips/import"
-        aria-label="Scan boarding pass or import a booking"
-        className="mt-4 inline-flex items-center gap-2 text-body-sm text-[var(--color-surface-hero-fg-muted)] transition-colors duration-150 hover:text-[var(--color-surface-hero-fg)]"
-      >
-        <ScanIcon size={14} />
-        <span>Scan boarding pass or import booking</span>
-        <ArrowRightIcon size={12} />
-      </Link>
     </HeroSurface>
-  );
-}
-
-function AddTripControl() {
-  return (
-    <form
-      role="search"
-      action="/trips/new"
-      method="get"
-      className="mt-6 flex items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-bg)] p-1"
-    >
-      <label className="flex flex-1 items-center gap-2 px-3">
-        <span
-          aria-hidden
-          className="inline-flex shrink-0 items-center text-[var(--color-text-secondary)]"
-        >
-          <SearchIcon size={16} />
-        </span>
-        <span className="sr-only">Add a trip — search by flight, airline, or city</span>
-        <input
-          type="search"
-          name="q"
-          placeholder="Flight, airline or city"
-          aria-label="Search by flight, airline or city"
-          className="h-11 w-full bg-transparent text-body-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
-        />
-      </label>
-      <Link
-        href="/trips/new"
-        aria-label="Add a trip"
-        className="inline-flex h-11 shrink-0 items-center gap-2 rounded-[var(--radius-panel)] bg-[var(--color-action-primary)] px-4 text-body-sm-emphasis text-[var(--color-action-primary-fg)] transition-opacity duration-150 hover:opacity-90"
-      >
-        <span aria-hidden>+</span>
-        <span>Add trip</span>
-      </Link>
-    </form>
   );
 }
 
@@ -462,11 +411,7 @@ function CompactIntentCard({ card }: { card: IntentCard }) {
 function UnlockConciergeBanner() {
   return (
     <Card>
-      <Link
-        href="/trips/new"
-        className="flex items-center gap-4"
-        aria-label="Add a trip to unlock concierge features"
-      >
+      <div className="flex items-center gap-4">
         <IconTile size={40} className="bg-[var(--color-surface-tile)]">
           <span className="text-[var(--color-text-primary)]">
             <SparkleIcon size={16} />
@@ -480,13 +425,7 @@ function UnlockConciergeBanner() {
             Gate updates, walk-time, security ETA — all unlocked when a trip is linked.
           </p>
         </div>
-        <span
-          aria-hidden
-          className="inline-flex shrink-0 items-center text-[var(--color-text-muted)]"
-        >
-          <ChevronRightIcon size={16} />
-        </span>
-      </Link>
+      </div>
     </Card>
   );
 }

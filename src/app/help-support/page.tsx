@@ -1,50 +1,14 @@
-import Link from "next/link";
 import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
-import { Button } from "@/components/Button";
-import { Card } from "@/components/Card";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
 import {
   ArrowLeftIcon,
-  ArrowRightIcon,
-  CarIcon,
   ChatBubbleIcon,
-  ChevronRightIcon,
-  ClockIcon,
-  LuggageIcon,
   ShieldCheckIcon,
   SparkleIcon,
 } from "@/components/icons";
-
-type QuickAnswer = {
-  id: string;
-  question: string;
-  meta: string;
-  icon: React.ReactNode;
-};
-
-const QUICK_ANSWERS: QuickAnswer[] = [
-  {
-    id: "baggage",
-    question: "Where is my baggage carousel?",
-    meta: "Arrivals",
-    icon: <LuggageIcon size={18} />,
-  },
-  {
-    id: "security",
-    question: "How long is security wait now?",
-    meta: "~12 min",
-    icon: <ClockIcon size={18} />,
-  },
-  {
-    id: "taxi",
-    question: "Where can I find a taxi or Uber?",
-    meta: "Level 1",
-    icon: <CarIcon size={18} />,
-  },
-];
 
 export default function HelpSupportPage() {
   return (
@@ -52,7 +16,6 @@ export default function HelpSupportPage() {
       <HelpSupportHeader />
       <div className="flex flex-1 flex-col gap-6 px-6 pb-6">
         <ConciergeHeroCard />
-        <QuickAnswersSection answers={QUICK_ANSWERS} />
       </div>
     </AppShellAuthed>
   );
@@ -126,14 +89,6 @@ function ConciergeHeroCard() {
       </div>
 
       <LastAskedTile question="Where is my baggage carousel?" />
-
-      <Button
-        tone="mint"
-        href={"/help-support/conversation" as Route}
-        trailingIcon={<ArrowRightIcon size={16} />}
-      >
-        Continue Conversation
-      </Button>
     </HeroSurface>
   );
 }
@@ -164,71 +119,5 @@ function LastAskedTile({ question }: { question: string }) {
         &ldquo;{question}&rdquo;
       </p>
     </div>
-  );
-}
-
-function QuickAnswersSection({ answers }: { answers: QuickAnswer[] }) {
-  return (
-    <section aria-label="Common questions" className="flex flex-col gap-3">
-      <div className="flex items-end justify-between gap-3">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-eyebrow uppercase text-[var(--color-text-muted)]">
-            Quick answers
-          </span>
-          <h2 className="text-section-title text-[var(--color-text-primary)]">
-            Common Questions
-          </h2>
-        </div>
-        <Link
-          href={"/help-support/all" as Route}
-          aria-label="View all common questions"
-          className="inline-flex h-11 items-center gap-1 text-body-sm-emphasis text-[var(--color-action-teal)] hover:opacity-80"
-        >
-          View all
-          <ChevronRightIcon size={14} aria-hidden />
-        </Link>
-      </div>
-
-      <Card as="div" surface="sheet" padding="none" className="overflow-hidden">
-        <ul className="flex flex-col">
-          {answers.map((a, i) => (
-            <li
-              key={a.id}
-              className={
-                i > 0 ? "border-t border-[var(--color-border-soft)]" : ""
-              }
-            >
-              <QuickAnswerRow answer={a} />
-            </li>
-          ))}
-        </ul>
-      </Card>
-    </section>
-  );
-}
-
-function QuickAnswerRow({ answer }: { answer: QuickAnswer }) {
-  return (
-    <Link
-      href={`/help-support/${answer.id}` as Route}
-      aria-label={`${answer.question}. ${answer.meta}`}
-      className="flex w-full items-center gap-3 px-4 py-4 text-left transition-colors duration-150 hover:bg-[var(--color-surface-hover)]"
-    >
-      <IconTile
-        size={36}
-        className="rounded-[var(--radius-tile)] bg-[var(--color-surface-tile)] text-[var(--color-text-secondary)]"
-      >
-        {answer.icon}
-      </IconTile>
-      <span className="flex min-w-0 flex-1 flex-col">
-        <span className="text-body-sm-emphasis text-[var(--color-text-primary)]">
-          {answer.question}
-        </span>
-      </span>
-      <span className="inline-flex shrink-0 items-center gap-2 text-label text-[var(--color-text-muted)]">
-        <span>{answer.meta}</span>
-        <ChevronRightIcon size={14} aria-hidden />
-      </span>
-    </Link>
   );
 }

@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
-import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { ChipFilter } from "@/components/ChipFilter";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
@@ -19,7 +18,6 @@ import {
   FootstepsIcon,
   LocationPinIcon,
   MoonIcon,
-  NavigationIcon,
   SearchIcon,
   ShowerIcon,
   StarIcon,
@@ -278,32 +276,12 @@ function FeaturedLoungeCard() {
 
       <MetricsStrip />
 
-      <div className="flex flex-wrap gap-2 px-5 pt-4">
+      <div className="flex flex-wrap gap-2 px-5 pt-4 pb-5">
         {FEATURED_AMENITIES.map((a) => (
           <AmenityChip key={a.id} icon={a.icon}>
             {a.label}
           </AmenityChip>
         ))}
-      </div>
-
-      <div className="flex items-stretch gap-2 px-5 pt-4 pb-5">
-        <div className="min-w-0 flex-1">
-          <Button
-            tone="teal"
-            href={"/lounges-premium/navigate" as Route}
-            leadingIcon={<NavigationIcon size={16} />}
-          >
-            Navigate to Lounge
-          </Button>
-        </div>
-        <div className="w-28 shrink-0">
-          <Button
-            variant="secondary"
-            href={"/lounges-premium/details" as Route}
-          >
-            Details
-          </Button>
-        </div>
       </div>
     </Card>
   );

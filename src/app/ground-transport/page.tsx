@@ -4,7 +4,6 @@ import { useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
-import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { ChipFilter } from "@/components/ChipFilter";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
@@ -16,7 +15,6 @@ import {
   CarIcon,
   ChevronRightIcon,
   LocationPinIcon,
-  NavigationIcon,
   ProfileIcon,
   TrainIcon,
 } from "@/components/icons";
@@ -262,13 +260,6 @@ function RecommendedCard() {
         <RouteStrip />
         <MetricsRow metrics={METRICS} />
         <PickupLocationLine />
-        <Button
-          tone="mint"
-          href={"/ground-transport/directions" as Route}
-          leadingIcon={<NavigationIcon size={16} />}
-        >
-          Get SkyTrain Directions
-        </Button>
       </div>
     </HeroSurface>
   );
