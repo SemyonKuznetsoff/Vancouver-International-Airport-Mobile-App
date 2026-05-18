@@ -11,15 +11,10 @@ import { SettingsRow } from "@/components/SettingsRow";
 import { StatusPill } from "@/components/StatusPill";
 import {
   BellIcon,
-  BookmarkIcon,
-  CreditCardIcon,
-  IdCardIcon,
   LifeBuoyIcon,
   LockIcon,
   NavigationIcon,
   PlaneIcon,
-  SettingsIcon,
-  SlidersIcon,
   SparkleIcon,
   SyncIcon,
 } from "@/components/icons";
@@ -55,15 +50,6 @@ export default function ProfilePage() {
       <LargeTitleHeader
         title="Profile"
         subtitle="Your travel command center"
-        trailing={
-          <a
-            href="/profile/settings"
-            aria-label="Open settings"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
-          >
-            <SettingsIcon size={18} />
-          </a>
-        }
       />
 
       <div className="mt-8 flex flex-col gap-8 px-6 pb-8">
@@ -241,21 +227,13 @@ function NextTripCard() {
 function VaultSection() {
   return (
     <section aria-label="Travel Vault" className="flex flex-col gap-4">
-      <header className="flex items-end justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-section-title text-[var(--color-text-primary)]">
-            Travel Vault
-          </h2>
-          <p className="text-label text-[var(--color-text-secondary)]">
-            Account &amp; preferences
-          </p>
-        </div>
-        <a
-          href="/profile/vault"
-          className="text-body-sm font-semibold text-[var(--color-text-primary)] hover:text-[var(--color-text-secondary)]"
-        >
-          Manage
-        </a>
+      <header className="flex flex-col gap-1">
+        <h2 className="text-section-title text-[var(--color-text-primary)]">
+          Travel Vault
+        </h2>
+        <p className="text-label text-[var(--color-text-secondary)]">
+          Account &amp; preferences
+        </p>
       </header>
 
       <Card
@@ -269,20 +247,6 @@ function VaultSection() {
           description="Your next journey · 2 saved"
         />
         <SettingsRow
-          href="/profile/personal"
-          icon={<IdCardIcon size={18} />}
-          title="Personal information"
-          description="Passport · Date of birth · Contact"
-        />
-        <SettingsRow
-          href="/profile/payment"
-          icon={<CreditCardIcon size={18} />}
-          title="Payment methods"
-          description="Visa ····4821 · Apple Pay"
-          trailing={<CountBadge>2</CountBadge>}
-        />
-        <SettingsRow
-          href="/profile/security"
           icon={<LockIcon size={18} />}
           title="Security & password"
           description="2FA active · Updated 30 days ago"
@@ -291,12 +255,6 @@ function VaultSection() {
               Secure
             </StatusPill>
           }
-        />
-        <SettingsRow
-          href="/profile/preferences"
-          icon={<SlidersIcon size={18} />}
-          title="Travel preferences"
-          description="Language · Accessibility · Parking · Dining"
         />
         <SettingsRow
           href="/profile/notifications"
@@ -317,25 +275,11 @@ function SupportSection() {
       className="overflow-hidden [&>*+*]:border-t [&>*+*]:border-[var(--color-border-soft)]"
     >
       <SettingsRow
-        href="/saved"
-        icon={<BookmarkIcon size={18} />}
-        title="Saved places"
-        description="7 lounges, cafés and services"
-      />
-      <SettingsRow
-        href="/support"
+        href="/help-support"
         icon={<LifeBuoyIcon size={18} />}
         title="Help & support"
         description="Concierge · Lost &amp; found · Feedback"
       />
     </Card>
-  );
-}
-
-function CountBadge({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-[var(--radius-pill)] bg-[var(--color-surface-tile)] px-2 text-micro tabular-nums text-[var(--color-text-primary)]">
-      {children}
-    </span>
   );
 }

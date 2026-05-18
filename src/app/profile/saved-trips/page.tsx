@@ -121,7 +121,7 @@ const savedPlaces = ["Caffe Artigiano", "Maple Leaf Lounge", "Parkade P1"];
 
 export default function SavedTripsPage() {
   return (
-    <AppShellAuthed>
+    <AppShellAuthed activeHref="/profile">
       <SavedTripsHero />
       <div className="flex flex-col gap-8 px-6 pt-8 pb-8">
         <PrimaryTripCard trip={primaryTrip} />
@@ -238,15 +238,17 @@ function PrimaryTripCard({ trip }: { trip: PrimaryTrip }) {
       <div className="flex flex-col gap-2 px-4 pt-4 pb-4">
         <Button
           variant="primary"
-          href="/flights/ac892"
+          href="/flights/detail"
           trailingIcon={<ArrowRightIcon size={16} />}
+          aria-label="View trip details for AC 892"
         >
           View trip
         </Button>
         <Button
           variant="ghost"
-          href="/flights/ac892/navigate"
+          href="/flights/detail"
           leadingIcon={<NavigationIcon size={16} />}
+          aria-label="Navigate to gate for AC 892"
         >
           Navigate to gate
         </Button>
@@ -265,12 +267,9 @@ function SavedJourneysSection({ journeys }: { journeys: SavedJourney[] }) {
         >
           Saved Journeys
         </h2>
-        <Link
-          href="/profile/saved-trips/all"
-          className="text-body-sm font-semibold text-[var(--color-text-primary)] hover:text-[var(--color-text-secondary)]"
-        >
-          See all
-        </Link>
+        <span className="text-label text-[var(--color-text-muted)]">
+          {journeys.length} saved
+        </span>
       </header>
 
       <ul className="flex flex-col gap-3">
