@@ -744,25 +744,56 @@ it onto a semantic token.
 
 | Scale | Anchor used by | Notes |
 |---|---|---|
-| `--navy-{50..900}` | `--navy-900` → `--color-text-primary`, `--color-action-primary` | Dark brand navy. |
+| `--navy-{50..950}` | `--navy-900` → `--color-text-primary`, `--color-action-primary` | Dark brand navy. |
 | `--steel-{50..900}` | `--steel-500` → `--color-text-muted`; `--steel-700` → `--color-text-secondary` | Mid-saturation supporting blue. |
 | `--mist-{50..900}` | `--mist-100` → `--color-bg`, `--color-surface` | Cool pale surface. |
-| `--teal-{50..900}` | (forward-looking; no current semantic) | Brand-aligned action / highlight accent. |
+| `--teal-{50..950}` | `--teal-800` → `--color-action-teal` | Premium commerce / travel-document accent. Distinct from `--color-action-primary` (navy). |
 | `--aurora-sky-{50..900}` | `--aurora-sky-300` → `--color-aurora-sky` | Aurora gradient hue. |
 | `--aurora-lavender-{50..900}` | `--aurora-lavender-200` → `--color-aurora-lavender` | Aurora gradient hue. |
 | `--aurora-mint-{50..900}` | `--aurora-mint-400` → `--color-aurora-mint` | Aurora gradient hue. |
-| `--success-{50..900}` | `--success-600` → `--color-success` | Live data status. |
-| `--warning-{50..900}` | `--warning-500` → `--color-warning` | Live data status. |
-| `--danger-{50..900}` | `--danger-500` → `--color-danger` | Live data status. |
-| `--info-{50..900}` | `--info-500` → `--color-info` | Forward-looking — no current consumer. |
-| `--neutral-{0,50..900,1000}` | `--neutral-0` → `--color-text-inverse`, `--color-action-primary-fg` | Achromatic anchors. |
+| `--success-{50..900}` | `--success-600` → `--color-success`; `--success-50/300/700` → status trio | Live data status. |
+| `--warning-{50..900}` | `--warning-500` → `--color-warning`; `--warning-50/300/700` → status trio | Live data status. |
+| `--danger-{50..900}` | `--danger-500` → `--color-danger`; `--danger-50/300/700` → status trio | Live data status. |
+| `--info-{50..900}` | `--info-500` → `--color-info`; `--info-50/300/700` → status trio | Live data status. |
+| `--neutral-{0,50..900,1000}` | `--neutral-0` → `--color-text-inverse`, `--color-action-primary-fg`, `--color-surface-hero-fg`, `--color-nav-fg` | Achromatic anchors. `1000` is reserved (no consumer). |
+
+Themeable by design: every consumer-facing role above is a CSS variable that
+references a primitive. A future palette swap (e.g. a Spruce/Harbour/Fog
+direction or a dark theme) re-binds the *semantic* layer; the primitive scales
+above stay in place. No raw hex inside components — that rule is what makes the
+re-bind possible.
 
 ### Primitive alpha layers
 
-| Token | Value | Used in |
+Glass surface fills, hero foreground tints, and shadow composition consume these
+directly. `--white-a*` layers are the *only* correct way to render translucent
+white surfaces — never inline `rgba(255,255,255, …)` and never use `bg-white/N`
+opacity utilities (the design-system check blocks both).
+
+| Token | Value | Used by |
 |---|---|---|
-| `--white-a05` … `--white-a80` | `rgba(255,255,255, 0.05…0.8)` | Glass surface fills, hover/press tints. |
-| `--black-a10` … `--black-a50` | `rgba(0,0,0, 0.1…0.5)` | Shadow composition. `--black-a18` is used by `--shadow-toggle`. |
+| `--white-a05` | `rgba(255,255,255, 0.05)` | Reserved. |
+| `--white-a08` | `rgba(255,255,255, 0.08)` | `--color-surface-hero-tile` (inner stat pills on the hero). |
+| `--white-a10` | `rgba(255,255,255, 0.10)` | `--color-surface-hero-tile-border`, `--color-surface-hero-chip`. |
+| `--white-a12` | `rgba(255,255,255, 0.12)` | `--color-surface-hero-avatar`. |
+| `--white-a16` | `rgba(255,255,255, 0.16)` | `--color-surface-hero-chip-border`. |
+| `--white-a18` | `rgba(255,255,255, 0.18)` | `--color-surface-hero-avatar-border`. |
+| `--white-a30` | `rgba(255,255,255, 0.30)` | `--color-surface-hover` (hover tint on translucent rows). |
+| `--white-a40` | `rgba(255,255,255, 0.40)` | `--color-surface-card`, `--color-surface-pressed`, `--color-border-soft`. |
+| `--white-a50` | `rgba(255,255,255, 0.50)` | `--color-surface-overlay`. |
+| `--white-a55` | `rgba(255,255,255, 0.55)` | `--color-surface-hero-fg-soft`, `--color-nav-fg-muted`. |
+| `--white-a60` | `rgba(255,255,255, 0.60)` | `--color-surface-elevated`, `--color-border`, `--color-border-hairline`. |
+| `--white-a65` | `rgba(255,255,255, 0.65)` | `--color-surface-hero-fg-muted`. |
+| `--white-a70` | `rgba(255,255,255, 0.70)` | `--color-surface-elevated-hover`. |
+| `--white-a80` | `rgba(255,255,255, 0.80)` | Reserved. |
+| `--white-a95` | `rgba(255,255,255, 0.95)` | `--color-surface-sheet` (near-opaque sticky bottom sheets, raised segment pill). |
+| `--black-a10` | `rgba(0,0,0, 0.10)` | Shadow composition (reserved). |
+| `--black-a18` | `rgba(0,0,0, 0.18)` | Reserved (matches the shade used by `--shadow-toggle`). |
+| `--black-a20` … `--black-a55` | `rgba(0,0,0, 0.20…0.55)` | Shadow composition (reserved). |
+
+Composed inner-card tints (e.g. `--color-surface-tile` = `--navy-900` @ 6%) use
+`color-mix()` against a primitive instead of inlining rgba. This means a future
+palette swap repaints these tints automatically.
 
 ### Semantic — Surface
 
