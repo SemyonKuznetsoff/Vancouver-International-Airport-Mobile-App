@@ -63,7 +63,7 @@ export default function SignInPage() {
         </Button>
 
         <div className="mt-auto flex flex-col items-center gap-3 pt-8 pb-2">
-          <Button variant="ghost" href="/onboarding/permissions">
+          <Button variant="ghost" href="/onboarding/preferences">
             Continue as guest
           </Button>
           <p className="inline-flex items-center gap-2 text-label text-[var(--color-text-secondary)]">

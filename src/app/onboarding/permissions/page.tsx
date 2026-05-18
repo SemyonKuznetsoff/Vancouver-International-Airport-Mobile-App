@@ -15,7 +15,7 @@ export default function PermissionsPage() {
   return (
     <AppShell>
       <main className="flex flex-1 flex-col px-6">
-        <ScreenHeader backHref="/onboarding/sign-in" step="Step 3 of 3" />
+        <ScreenHeader backHref="/onboarding/sign-in" step="Step 4 of 4" />
 
         <section className="mt-8 flex flex-col gap-4">
           <Eyebrow>Smart Guidance</Eyebrow>
