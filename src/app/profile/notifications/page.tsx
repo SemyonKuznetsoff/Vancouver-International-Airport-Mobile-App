@@ -5,6 +5,8 @@ import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Card } from "@/components/Card";
 import { Eyebrow } from "@/components/Eyebrow";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
+import { Heading } from "@/components/Heading";
+import { IconTile } from "@/components/IconTile";
 import { Toggle } from "@/components/Toggle";
 import { ArrowLeftIcon, BellIcon } from "@/components/icons";
 
@@ -119,16 +121,13 @@ export default function NotificationsPage() {
 
 function PageHeader() {
   return (
-    <header className="relative flex items-center justify-between px-6 pt-2">
+    <header className="flex items-start gap-3 px-6 pt-2">
       <HeaderIconButton aria-label="Back to Profile" href="/profile">
         <ArrowLeftIcon size={16} />
       </HeaderIconButton>
-
-      <h1 className="pointer-events-none absolute inset-x-0 top-2 inline-flex h-11 items-center justify-center text-section-title text-[var(--color-text-primary)]">
-        Notifications
-      </h1>
-
-      <span aria-hidden className="h-11 w-11" />
+      <div className="flex min-w-0 flex-1 pt-1">
+        <Heading size="title">Notifications</Heading>
+      </div>
     </header>
   );
 }
@@ -149,12 +148,12 @@ function MasterCard({
       className="border-[var(--color-action-teal-soft)]"
     >
       <div className="flex items-center gap-4">
-        <span
-          aria-hidden
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-chip)] bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)]"
+        <IconTile
+          size={44}
+          className="bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)]"
         >
           <BellIcon size={20} />
-        </span>
+        </IconTile>
 
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h2 className="text-section-title text-[var(--color-action-teal)]">
