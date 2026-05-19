@@ -163,7 +163,7 @@ function LiveNavigationView() {
       <NavHeader content={content} />
 
       <section
-        aria-label={`Live route preview, ${level}. ${content.nextInstruction} in ${content.nextDistance} metres, then straight 180 metres to ${content.destination}.`}
+        aria-label={`Live route preview, ${level}. ${content.nextInstruction} in ${content.nextDistance} metres. ${content.nextDetail}.`}
         className="relative mx-4 mt-3 overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border-soft)] bg-[var(--color-surface-tile)] shadow-[var(--shadow-card)]"
         style={{ height: 280 }}
       >
