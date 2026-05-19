@@ -410,7 +410,7 @@ function SheetHeader() {
         </p>
       </div>
       <Button
-        href="/map/accessible-route"
+        href="/map/live-navigation"
         variant="primary"
         tone="teal"
         leadingIcon={<NavigationIcon size={16} />}
