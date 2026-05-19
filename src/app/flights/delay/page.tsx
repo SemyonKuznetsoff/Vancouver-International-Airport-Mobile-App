@@ -74,7 +74,7 @@ export default function FlightDelayPage() {
       <div className="flex flex-1 flex-col gap-4 px-6 pb-6">
         <FlightUpdateCard update={UPDATE} />
         <NextActionCard update={UPDATE} />
-        <WhatToDoNowSection steps={STEPS} totalSteps={3} />
+        <WhatToDoNowSection steps={STEPS} totalSteps={STEPS.length} />
       </div>
     </AppShellAuthed>
   );
@@ -566,7 +566,7 @@ function WhatToDoNowSection({
           What to do now
         </h2>
         <span className="text-label text-[var(--color-text-secondary)]">
-          {totalSteps} steps
+          {totalSteps} {totalSteps === 1 ? "step" : "steps"}
         </span>
       </div>
       <ol className="flex flex-col gap-2">
