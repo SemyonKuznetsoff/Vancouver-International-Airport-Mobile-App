@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { HeroSurface } from "@/components/HeroSurface";
@@ -89,7 +90,6 @@ const ETA_LINE = "12 min · step-free · live guidance";
 
 export default function AccessibleRoutePage() {
   const [mode, setMode] = useState<ModeId>("accessible");
-  const [started, setStarted] = useState(false);
 
   return (
     <AppShellAuthed activeHref="/map">
@@ -98,11 +98,7 @@ export default function AccessibleRoutePage() {
         <ModeSegmentedControl active={mode} onChange={setMode} />
         <RouteVerificationCard data={VERIFICATION} />
         <RouteMapPreview level={MAP_LEVEL} gate={GATE} />
-        <StartNavigationCTA
-          started={started}
-          onStart={() => setStarted(true)}
-          etaLine={ETA_LINE}
-        />
+        <StartNavigationCTA etaLine={ETA_LINE} />
       </div>
     </AppShellAuthed>
   );
@@ -478,29 +474,12 @@ function MapPreviewArt({ gate }: { gate: string }) {
 
 /* ------------------------------------------------------------ Start CTA */
 
-function StartNavigationCTA({
-  started,
-  onStart,
-  etaLine,
-}: {
-  started: boolean;
-  onStart: () => void;
-  etaLine: string;
-}) {
-  const title = started ? "Saved for this trip" : "Start Accessible Navigation";
-  const subtitle = started
-    ? "Live turn-by-turn launches with the next release"
-    : etaLine;
-  const ariaLabel = started
-    ? `Accessible route saved — ${subtitle}`
-    : `Start accessible navigation — ${etaLine}`;
+function StartNavigationCTA({ etaLine }: { etaLine: string }) {
   return (
-    <button
-      type="button"
-      onClick={onStart}
-      aria-label={ariaLabel}
-      aria-pressed={started}
-      className="relative w-full overflow-hidden rounded-[var(--radius-card)] p-4 text-left text-[var(--color-surface-hero-fg)] shadow-[var(--shadow-hero-card)] transition-opacity duration-150 hover:opacity-95 active:opacity-90"
+    <Link
+      href="/map/live-navigation"
+      aria-label={`Start accessible navigation — ${etaLine}`}
+      className="relative block w-full overflow-hidden rounded-[var(--radius-card)] p-4 text-left text-[var(--color-surface-hero-fg)] shadow-[var(--shadow-hero-card)] transition-opacity duration-150 hover:opacity-95 active:opacity-90"
       style={{
         backgroundImage:
           "linear-gradient(135deg, var(--color-surface-hero-start) 0%, var(--color-surface-hero-end) 100%)",
@@ -511,17 +490,14 @@ function StartNavigationCTA({
           aria-hidden
           className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[var(--radius-tile)] bg-[var(--color-surface-hero-tile)] text-[var(--color-map-mint)]"
         >
-          {started ? <CheckIcon size={18} /> : <NavigationIcon size={18} />}
+          <NavigationIcon size={18} />
         </span>
-        <span
-          aria-live="polite"
-          className="flex min-w-0 flex-1 flex-col gap-0.5"
-        >
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="text-body-sm-emphasis text-[var(--color-surface-hero-fg)]">
-            {title}
+            Start Accessible Navigation
           </span>
           <span className="text-label text-[var(--color-surface-hero-fg-muted)]">
-            {subtitle}
+            {etaLine}
           </span>
         </span>
         <span
@@ -531,6 +507,6 @@ function StartNavigationCTA({
           <ArrowRightIcon size={16} />
         </span>
       </span>
-    </button>
+    </Link>
   );
 }
