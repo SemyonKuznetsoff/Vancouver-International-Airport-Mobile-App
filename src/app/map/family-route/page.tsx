@@ -31,7 +31,7 @@ const MODES: Mode[] = [
     label: "Standard",
     ariaLabel: "Standard route — 8 minutes",
     icon: <FootstepsIcon size={14} />,
-    href: "/map",
+    href: "/map/standard-route",
   },
   {
     id: "accessible",
