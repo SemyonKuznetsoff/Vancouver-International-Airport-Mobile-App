@@ -10,6 +10,7 @@ import { RouteTimeline } from "@/components/RouteTimeline";
 import { SettingsRow } from "@/components/SettingsRow";
 import { StatusPill } from "@/components/StatusPill";
 import {
+  AccessibilityIcon,
   BellIcon,
   LifeBuoyIcon,
   NavigationIcon,
@@ -251,6 +252,12 @@ function VaultSection() {
           title="Notifications"
           description="Flight alerts · Gate changes · Security"
           unread
+        />
+        <SettingsRow
+          href="/profile/accessibility-settings"
+          icon={<AccessibilityIcon size={18} />}
+          title="Accessibility"
+          description="Language · Display · Step-free routes"
         />
       </Card>
     </section>
