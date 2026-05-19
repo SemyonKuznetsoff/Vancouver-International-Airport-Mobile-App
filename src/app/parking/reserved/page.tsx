@@ -13,12 +13,9 @@ import {
   CarIcon,
   CheckIcon,
   FootstepsIcon,
-  MoreIcon,
   NavigationIcon,
   ParkingPassChip,
-  ShareIcon,
   ShieldCheckIcon,
-  SlidersIcon,
   WalletIcon,
 } from "@/components/icons";
 
@@ -34,13 +31,6 @@ type DetailRow = {
   id: string;
   label: string;
   value: React.ReactNode;
-};
-
-type SecondaryAction = {
-  id: string;
-  label: string;
-  icon: React.ReactNode;
-  ariaLabel: string;
 };
 
 const ROUTE_STOPS: RouteStop[] = [
@@ -75,27 +65,6 @@ const DETAILS: DetailRow[] = [
   { id: "total", label: "Total", value: "$36.00 CAD" },
 ];
 
-const SECONDARY_ACTIONS: SecondaryAction[] = [
-  {
-    id: "wallet",
-    label: "Add to Wallet",
-    icon: <WalletIcon size={16} />,
-    ariaLabel: "Add parking pass to Wallet",
-  },
-  {
-    id: "share",
-    label: "Share Pass",
-    icon: <ShareIcon size={16} />,
-    ariaLabel: "Share parking pass",
-  },
-  {
-    id: "manage",
-    label: "Manage",
-    icon: <SlidersIcon size={16} />,
-    ariaLabel: "Manage reservation",
-  },
-];
-
 export default function ReservedParkingPage() {
   return (
     <AppShellAuthed activeHref="/services">
@@ -105,7 +74,6 @@ export default function ReservedParkingPage() {
         <ParkingPassCard />
         <RouteCard stops={ROUTE_STOPS} />
         <DetailsCard details={DETAILS} />
-        <SecondaryActionsRow actions={SECONDARY_ACTIONS} />
       </div>
       <StickyDirectionsCTA />
     </AppShellAuthed>
@@ -131,9 +99,7 @@ function ReservedHeader() {
         </h1>
       </div>
 
-      <HeaderIconButton aria-label="More parking reservation options">
-        <MoreIcon size={16} />
-      </HeaderIconButton>
+      <span aria-hidden className="h-11 w-11 shrink-0" />
     </header>
   );
 }
@@ -485,33 +451,6 @@ function CancellationLine() {
         Free before entry
       </span>
     </div>
-  );
-}
-
-function SecondaryActionsRow({ actions }: { actions: SecondaryAction[] }) {
-  return (
-    <div className="grid grid-cols-3 gap-3">
-      {actions.map((action) => (
-        <SecondaryActionTile key={action.id} action={action} />
-      ))}
-    </div>
-  );
-}
-
-function SecondaryActionTile({ action }: { action: SecondaryAction }) {
-  return (
-    <button
-      type="button"
-      aria-label={action.ariaLabel}
-      className="flex flex-col items-center justify-center gap-2 rounded-[var(--radius-tile)] border border-[var(--color-border-soft)] bg-[var(--color-surface-sheet)] px-2 py-3 text-[var(--color-text-primary)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
-    >
-      <span aria-hidden className="text-[var(--color-text-primary)]">
-        {action.icon}
-      </span>
-      <span className="text-label font-semibold text-[var(--color-text-primary)]">
-        {action.label}
-      </span>
-    </button>
   );
 }
 
