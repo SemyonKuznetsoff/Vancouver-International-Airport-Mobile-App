@@ -10,7 +10,6 @@ import { PassPerforation } from "@/components/PassPerforation";
 import { StatusPill } from "@/components/StatusPill";
 import {
   ArrowLeftIcon,
-  ArrowRightIcon,
   ArrowsVerticalIcon,
   BellIcon,
   CalendarIcon,
@@ -381,11 +380,11 @@ function DateAndCtaRow({
       </div>
       <div className="w-36 shrink-0">
         <Button
+          disabled
           tone="teal"
-          trailingIcon={<ArrowRightIcon size={16} />}
-          aria-label={`Search ${tripType.toLowerCase()} flights on ${date}`}
+          aria-label={`Route search for ${tripType.toLowerCase()} on ${date} is coming soon`}
         >
-          Search Flights
+          Coming soon
         </Button>
       </div>
     </div>
