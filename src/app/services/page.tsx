@@ -10,20 +10,16 @@ import { PassPerforation } from "@/components/PassPerforation";
 import { SettingsRow } from "@/components/SettingsRow";
 import { StatusPill } from "@/components/StatusPill";
 import {
-  AccessibilityIcon,
   ArrowRightIcon,
   CarIcon,
-  DiningIcon,
   LifeBuoyIcon,
   ParkingIcon,
   PlaneIcon,
-  SearchIcon,
   ShieldCheckIcon,
   SignpostIcon,
   SparkleIcon,
   SyncIcon,
   TrainIcon,
-  UmbrellaIcon,
 } from "@/components/icons";
 
 type ServiceStatus = {
@@ -99,6 +95,7 @@ const QUICK_ACTIONS: QuickAction[] = [
     id: "wayfinding",
     label: "Wayfinding",
     icon: <SignpostIcon size={14} />,
+    href: "/map" as Route,
   },
   {
     id: "security",
@@ -159,23 +156,11 @@ const SERVICE_GROUPS: ServiceGroup[] = [
         href: "/services/arrival-assistant" as Route,
       },
       {
-        id: "dining",
-        icon: <DiningIcon size={16} />,
-        title: "Dining & Shops",
-        description: "32 open now · Near your gate",
-      },
-      {
         id: "lounges",
         icon: <SparkleIcon size={16} />,
         title: "Lounges",
         description: "3 open · SkyTeam, Plaza Premium",
         href: "/lounges-premium" as Route,
-      },
-      {
-        id: "amenities",
-        icon: <UmbrellaIcon size={16} />,
-        title: "Restrooms & Amenities",
-        description: "Family rooms, water stations, prayer rooms",
       },
     ],
   },
@@ -189,12 +174,6 @@ const SERVICE_GROUPS: ServiceGroup[] = [
         title: "Help & Concierge",
         description: "Ask YVR · Lost items, support, questions",
         href: "/help-support" as Route,
-      },
-      {
-        id: "accessibility",
-        icon: <AccessibilityIcon size={16} />,
-        title: "Accessibility Support",
-        description: "Mobility, sensory, hidden disabilities",
       },
     ],
   },
@@ -395,21 +374,12 @@ function BestRightNowCard() {
 function QuickActions({ actions }: { actions: QuickAction[] }) {
   return (
     <section aria-labelledby="quick-actions-heading" className="flex flex-col gap-3 pt-1">
-      <div className="flex items-center justify-between gap-3">
-        <h2
-          id="quick-actions-heading"
-          className="text-eyebrow uppercase text-[var(--color-text-muted)]"
-        >
-          Quick actions
-        </h2>
-        <button
-          type="button"
-          aria-label="Search services"
-          className="inline-flex h-11 w-11 items-center justify-center text-[var(--color-text-muted)] transition-colors duration-150 hover:text-[var(--color-text-primary)]"
-        >
-          <SearchIcon size={14} aria-hidden />
-        </button>
-      </div>
+      <h2
+        id="quick-actions-heading"
+        className="text-eyebrow uppercase text-[var(--color-text-muted)]"
+      >
+        Quick actions
+      </h2>
 
       <div
         role="list"
