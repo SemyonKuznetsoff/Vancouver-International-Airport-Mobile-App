@@ -35,6 +35,16 @@ type CommonProps = {
    *   read on the dark navy-teal map background.
    */
   variant?: Variant;
+  /**
+   * Toggle state. When provided, the rendered `<button>` carries
+   * `aria-pressed` and swaps chrome to a teal-filled pressed look.
+   * Only valid on the button form — `aria-pressed` is not a valid
+   * attribute on anchors, so it is silently dropped when `href` is
+   * also supplied. The pressed visual currently sits on top of the
+   * `light` variant; combining with `variant="map"` will still apply
+   * the teal pressed chrome.
+   */
+  pressed?: boolean;
   className?: string;
 };
 
@@ -55,6 +65,9 @@ const variantClasses: Record<Variant, string> = {
   map:
     "border border-[var(--color-surface-map-border)] bg-[var(--color-surface-map-elevated)] text-[var(--color-surface-map-fg)] transition-opacity duration-150 hover:opacity-80",
 };
+
+const pressedClasses =
+  "bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button-teal)] transition-colors duration-150";
 
 const badgeToneClasses: Record<BadgeTone, string> = {
   warning: "bg-[var(--color-warning)]",
@@ -98,13 +111,15 @@ export function HeaderIconButton(props: AsLink | AsButton) {
     badgeDot = false,
     badgeTone = "warning",
     variant = "light",
+    pressed,
     className = "",
     "aria-label": ariaLabel,
     ...rest
   } = props as CommonProps & Record<string, unknown>;
 
-  const classes =
-    `${base} ${variantClasses[variant]} ${className}`.trim();
+  const chromeClasses =
+    pressed === true ? pressedClasses : variantClasses[variant];
+  const classes = `${base} ${chromeClasses} ${className}`.trim();
 
   const inner = (
     <>
@@ -137,6 +152,7 @@ export function HeaderIconButton(props: AsLink | AsButton) {
     <button
       type={btnProps.type ?? "button"}
       aria-label={ariaLabel}
+      aria-pressed={pressed}
       className={classes}
       {...btnProps}
     >

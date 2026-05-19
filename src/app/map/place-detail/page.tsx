@@ -267,19 +267,13 @@ function PlaceHeroOverlayHeader({ placeName }: { placeName: string }) {
       <HeaderIconButton aria-label="Back to map" href="/map">
         <ArrowLeftIcon size={16} />
       </HeaderIconButton>
-      <button
-        type="button"
+      <HeaderIconButton
         aria-label={saveLabel}
-        aria-pressed={saved}
+        pressed={saved}
         onClick={() => setSaved((v) => !v)}
-        className={`relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-150 ${
-          saved
-            ? "bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button-teal)]"
-            : "bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] hover:bg-[var(--color-surface-elevated-hover)]"
-        }`}
       >
         {saved ? <CheckIcon size={16} /> : <BookmarkIcon size={16} />}
-      </button>
+      </HeaderIconButton>
     </header>
   );
 }
