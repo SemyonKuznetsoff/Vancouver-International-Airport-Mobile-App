@@ -7,8 +7,8 @@ on:
     branches: [main]
 
 jobs:
-  design-system:
-    name: Design system (strict)
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -25,3 +25,9 @@ jobs:
 
       - name: Check design system (strict)
         run: npm run check:design-system:strict
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build
+        run: npm run build
