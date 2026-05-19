@@ -191,19 +191,13 @@ function SearchHeader() {
         ) : null}
       </div>
 
-      <button
-        type="button"
+      <HeaderIconButton
         aria-label={layersOn ? "Map layers, on" : "Map layers, off"}
-        aria-pressed={layersOn}
+        pressed={layersOn}
         onClick={() => setLayersOn((v) => !v)}
-        className={`relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-150 ${
-          layersOn
-            ? "bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button-teal)]"
-            : "bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] hover:bg-[var(--color-surface-elevated-hover)]"
-        }`}
       >
         <LayersIcon size={16} />
-      </button>
+      </HeaderIconButton>
     </header>
   );
 }
