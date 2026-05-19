@@ -9,12 +9,17 @@ type AuthOptionProps = {
   badge?: string;
   onClick?: () => void;
   ariaLabel?: string;
+  disabled?: boolean;
 };
 
 /**
  * A single row inside the stacked sign-in options card. Renders a real
  * <button> so it's keyboard-focusable and exposes the global focus ring.
  * Used inside <AuthOptionGroup> which paints the card chrome + dividers.
+ *
+ * Pass `disabled` for a preview/unavailable provider — the row stays in
+ * the layout (so the design intent is communicated) but stops behaving
+ * like a CTA. Pair with `badge="Soon"` to label *why*.
  */
 export function AuthOption({
   leading,
@@ -22,13 +27,15 @@ export function AuthOption({
   badge,
   onClick,
   ariaLabel,
+  disabled = false,
 }: AuthOptionProps) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       aria-label={ariaLabel ?? label}
-      className="flex h-[58px] w-full items-center justify-between gap-3 px-5 text-left transition-colors duration-150 hover:bg-[var(--color-surface-hover)] active:bg-[var(--color-surface-pressed)]"
+      className="flex h-[58px] w-full items-center justify-between gap-3 px-5 text-left transition-colors duration-150 hover:bg-[var(--color-surface-hover)] active:bg-[var(--color-surface-pressed)] disabled:opacity-[var(--opacity-disabled)] disabled:cursor-not-allowed disabled:pointer-events-none"
     >
       <span className="flex items-center gap-3">
         <span className="inline-flex w-[22px] shrink-0 items-center justify-center text-[var(--color-text-primary)]">

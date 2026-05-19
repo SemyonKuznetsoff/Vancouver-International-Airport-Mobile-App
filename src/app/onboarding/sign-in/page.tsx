@@ -35,14 +35,20 @@ export default function SignInPage() {
             <AuthOption
               leading={<AppleIcon size={18} />}
               label="Continue with Apple"
+              badge="Soon"
+              disabled
             />
             <AuthOption
               leading={<GoogleIcon size={18} />}
               label="Continue with Google"
+              badge="Soon"
+              disabled
             />
             <AuthOption
               leading={<AeroplanBadge size={20} />}
               label="Continue with Aeroplan"
+              badge="Soon"
+              disabled
             />
           </AuthOptionGroup>
         </section>
@@ -58,6 +64,7 @@ export default function SignInPage() {
           leadingIcon={<MailIcon size={16} />}
           aria-label="Sign in with email"
           className="mt-4"
+          disabled
         >
           Sign in with email
         </Button>
