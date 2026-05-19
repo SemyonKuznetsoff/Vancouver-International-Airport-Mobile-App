@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -23,70 +24,162 @@ type RouteStep = {
   state: "current" | "upcoming";
 };
 
-const DESTINATION = "Gate D73";
-const DESTINATION_META = "International · Level 2";
-const NEXT_INSTRUCTION = "Turn right at Duty Free";
-const NEXT_DETAIL = "Then straight 180 m to Gate D73";
-const NEXT_DISTANCE = "60";
-const NEXT_DISTANCE_UNIT = "m";
-const PROGRESS_PCT = 62;
-const PROGRESS_REMAINING = "260 m remaining";
-const PROGRESS_STEPS = "2 steps";
-const PROGRESS_LABEL = "62% complete";
+// Prototype-only context routing for live navigation. The screen has no
+// real GPS / route engine, so destination copy is selected from a small
+// set of hand-authored prototype contexts keyed off the `?context=` query
+// param. Default (no param) preserves the existing flight/gate scenario;
+// `parking` is entered from /parking/find-my-car.
+type NavContextId = "flight" | "parking";
 
-const BOARDING_LINE = "Boarding 14:15";
-const BOARDING_BUFFER = "42 min buffer";
-const BOARDING_TITLE = "Boarding on track";
+type NavContent = {
+  destination: string;
+  destinationMeta: string;
+  destinationChip: string;
+  nextInstruction: string;
+  nextDetail: string;
+  nextDistance: string;
+  nextDistanceUnit: string;
+  progressPct: number;
+  progressRemaining: string;
+  progressSteps: string;
+  progressLabel: string;
+  secondary: {
+    title: string;
+    value: string;
+    valueUnit: string;
+    footnote: string;
+  };
+  stop: {
+    title: string;
+    detail: string;
+  };
+  routeSteps: RouteStep[];
+};
 
-const STOP_TITLE = "Coffee is safe";
-const STOP_DETAIL = "+0 min route impact";
+const FLIGHT_CONTENT: NavContent = {
+  destination: "Gate D73",
+  destinationMeta: "International · Level 2",
+  destinationChip: "Gate D73",
+  nextInstruction: "Turn right at Duty Free",
+  nextDetail: "Then straight 180 m to Gate D73",
+  nextDistance: "60",
+  nextDistanceUnit: "m",
+  progressPct: 62,
+  progressRemaining: "260 m remaining",
+  progressSteps: "2 steps",
+  progressLabel: "62% complete",
+  secondary: {
+    title: "Boarding on track",
+    value: "42",
+    valueUnit: "min buffer",
+    footnote: "Boarding 14:15",
+  },
+  stop: {
+    title: "Coffee is safe",
+    detail: "+0 min route impact",
+  },
+  routeSteps: [
+    {
+      id: "duty-free",
+      title: "Turn right at Duty Free",
+      distance: "60 m",
+      icon: <TurnRightGlyph />,
+      state: "current",
+    },
+    {
+      id: "gate",
+      title: "Straight toward D73",
+      distance: "180 m",
+      icon: <StraightGlyph />,
+      state: "upcoming",
+    },
+  ],
+};
+
+const PARKING_CONTENT: NavContent = {
+  destination: "Space B-042",
+  destinationMeta: "Parkade P1 · Level 2",
+  destinationChip: "B-042",
+  nextInstruction: "Turn right at Skybridge",
+  nextDetail: "Then straight 180 m to Space B-042",
+  nextDistance: "60",
+  nextDistanceUnit: "m",
+  progressPct: 62,
+  progressRemaining: "260 m remaining",
+  progressSteps: "2 steps",
+  progressLabel: "62% complete",
+  secondary: {
+    title: "Walk on track",
+    value: "4",
+    valueUnit: "min walk",
+    footnote: "280 m to Space B-042",
+  },
+  stop: {
+    title: "Quick detour OK",
+    detail: "+0 min route impact",
+  },
+  routeSteps: [
+    {
+      id: "skybridge",
+      title: "Turn right at Skybridge",
+      distance: "60 m",
+      icon: <TurnRightGlyph />,
+      state: "current",
+    },
+    {
+      id: "space",
+      title: "Straight toward B-042",
+      distance: "180 m",
+      icon: <StraightGlyph />,
+      state: "upcoming",
+    },
+  ],
+};
+
+function resolveContent(raw: string | null): NavContent {
+  const id: NavContextId = raw === "parking" ? "parking" : "flight";
+  return id === "parking" ? PARKING_CONTENT : FLIGHT_CONTENT;
+}
 
 const LEVELS: LevelId[] = ["L3", "L2", "L1"];
 
-const ROUTE_STEPS: RouteStep[] = [
-  {
-    id: "duty-free",
-    title: "Turn right at Duty Free",
-    distance: "60 m",
-    icon: <TurnRightGlyph />,
-    state: "current",
-  },
-  {
-    id: "gate",
-    title: "Straight toward D73",
-    distance: "180 m",
-    icon: <StraightGlyph />,
-    state: "upcoming",
-  },
-];
-
 export default function LiveNavigationPage() {
+  return (
+    <Suspense fallback={null}>
+      <LiveNavigationView />
+    </Suspense>
+  );
+}
+
+function LiveNavigationView() {
+  const search = useSearchParams();
+  const content = resolveContent(search.get("context"));
   const [level, setLevel] = useState<LevelId>("L2");
 
   return (
     <AppShellAuthed activeHref="/map" hideTabBar>
-      <h1 className="sr-only">{`Live navigation to ${DESTINATION}`}</h1>
+      <h1 className="sr-only">{`Live navigation to ${content.destination}`}</h1>
 
-      <NavHeader />
+      <NavHeader content={content} />
 
       <section
-        aria-label={`Live route preview, ${level}. Turn right at Duty Free in 60 metres, then straight 180 metres to ${DESTINATION}.`}
+        aria-label={`Live route preview, ${level}. ${content.nextInstruction} in ${content.nextDistance} metres, then straight 180 metres to ${content.destination}.`}
         className="relative mx-4 mt-3 overflow-hidden rounded-[var(--radius-card)] border border-[var(--color-border-soft)] bg-[var(--color-surface-tile)] shadow-[var(--shadow-card)]"
         style={{ height: 280 }}
       >
         <MapCanvasArt />
         <LevelSelector value={level} onChange={setLevel} />
-        <GateMarker />
+        <DestinationMarker label={content.destinationChip} />
       </section>
 
-      <NavSheet />
+      <NavSheet content={content} />
     </AppShellAuthed>
   );
 }
 
 /* ----------------------------------------------------------- Top header */
 
-function NavHeader() {
+function NavHeader({ content }: { content: NavContent }) {
   return (
     <header className="flex items-start gap-3 px-4 pt-1">
       <HeaderIconButton aria-label="Exit live navigation" href="/map">
@@ -95,15 +188,15 @@ function NavHeader() {
       <Card
         as="section"
         padding="compact"
-        aria-label={`Active destination ${DESTINATION}, ${DESTINATION_META}, on track`}
+        aria-label={`Active destination ${content.destination}, ${content.destinationMeta}, on track`}
         className="flex flex-1 items-center gap-3"
       >
         <div className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="text-body-sm-emphasis text-[var(--color-text-primary)]">
-            {DESTINATION}
+            {content.destination}
           </span>
           <span className="text-label text-[var(--color-text-secondary)]">
-            {DESTINATION_META}
+            {content.destinationMeta}
           </span>
         </div>
         <StatusPill tone="success" size="sm" leadingDot>
@@ -114,12 +207,12 @@ function NavHeader() {
   );
 }
 
-/* ------------------------------------------------------- Gate marker chip */
+/* -------------------------------------------------- Destination marker chip */
 
-function GateMarker() {
+function DestinationMarker({ label }: { label: string }) {
   return (
     <span className="pointer-events-none absolute right-12 top-2 z-20 inline-flex items-center gap-1 rounded-[var(--radius-pill)] bg-[var(--color-action-teal)] px-2 py-0.5 text-micro uppercase text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button-teal)]">
-      Gate D73
+      {label}
     </span>
   );
 }
@@ -362,19 +455,19 @@ function MapCanvasArt() {
 
 /* ----------------------------------------------- Bottom navigation sheet */
 
-function NavSheet() {
+function NavSheet({ content }: { content: NavContent }) {
   return (
     <section
       aria-label="Live navigation details"
       className="relative mt-3 flex flex-1 flex-col gap-3 rounded-t-[var(--radius-card)] border-t border-[var(--color-border)] bg-[var(--color-surface-sheet)] px-4 pt-3 pb-6 shadow-[var(--shadow-sheet)]"
     >
       <SheetGrabber />
-      <InstructionCard />
+      <InstructionCard content={content} />
       <div className="grid grid-cols-2 gap-3">
-        <BoardingCard />
-        <StopCard />
+        <SecondaryCard content={content} />
+        <StopCard content={content} />
       </div>
-      <RouteTimelineList />
+      <RouteTimelineList steps={content.routeSteps} />
     </section>
   );
 }
@@ -390,10 +483,10 @@ function SheetGrabber() {
 
 /* ----------------------------------------------- Instruction (hero) card */
 
-function InstructionCard() {
+function InstructionCard({ content }: { content: NavContent }) {
   return (
     <section
-      aria-label={`In ${NEXT_DISTANCE} metres: ${NEXT_INSTRUCTION}. ${NEXT_DETAIL}. ${PROGRESS_REMAINING}, ${PROGRESS_STEPS}, ${PROGRESS_LABEL}.`}
+      aria-label={`In ${content.nextDistance} metres: ${content.nextInstruction}. ${content.nextDetail}. ${content.progressRemaining}, ${content.progressSteps}, ${content.progressLabel}.`}
       className="relative overflow-hidden rounded-[var(--radius-card)] p-5 text-[var(--color-surface-hero-fg)] shadow-[var(--shadow-hero-card)]"
       style={{
         backgroundImage:
@@ -413,10 +506,10 @@ function InstructionCard() {
           </span>
           <span className="flex items-baseline gap-1">
             <span className="text-display tabular-nums text-[var(--color-surface-hero-fg)]">
-              {NEXT_DISTANCE}
+              {content.nextDistance}
             </span>
             <span className="text-section-title text-[var(--color-surface-hero-fg-muted)]">
-              {NEXT_DISTANCE_UNIT}
+              {content.nextDistanceUnit}
             </span>
           </span>
         </div>
@@ -424,10 +517,10 @@ function InstructionCard() {
 
       <div className="mt-4 flex flex-col gap-1">
         <p className="text-section-title text-[var(--color-surface-hero-fg)]">
-          {NEXT_INSTRUCTION}
+          {content.nextInstruction}
         </p>
         <p className="text-body-sm text-[var(--color-surface-hero-fg-muted)]">
-          {NEXT_DETAIL}
+          {content.nextDetail}
         </p>
       </div>
 
@@ -437,25 +530,25 @@ function InstructionCard() {
           aria-label="Route progress"
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-valuenow={PROGRESS_PCT}
-          aria-valuetext={PROGRESS_LABEL}
+          aria-valuenow={content.progressPct}
+          aria-valuetext={content.progressLabel}
           className="h-1.5 w-full overflow-hidden rounded-[var(--radius-pill)] bg-[var(--color-surface-hero-tile)]"
         >
           <span
             aria-hidden
             className="block h-full rounded-[var(--radius-pill)] bg-[var(--color-map-mint)]"
-            style={{ width: `${PROGRESS_PCT}%` }}
+            style={{ width: `${content.progressPct}%` }}
           />
         </div>
         <div className="mt-3 flex items-center justify-between gap-3 text-label">
           <span className="text-[var(--color-surface-hero-fg-muted)]">
-            {PROGRESS_REMAINING}
+            {content.progressRemaining}
           </span>
           <span className="text-[var(--color-surface-hero-fg-muted)]">
-            {PROGRESS_STEPS}
+            {content.progressSteps}
           </span>
           <span className="text-[var(--color-map-mint)]">
-            {PROGRESS_LABEL}
+            {content.progressLabel}
           </span>
         </div>
       </div>
@@ -465,12 +558,13 @@ function InstructionCard() {
 
 /* -------------------------------------------------- Support cards (row) */
 
-function BoardingCard() {
+function SecondaryCard({ content }: { content: NavContent }) {
+  const { secondary } = content;
   return (
     <Card
       as="section"
       padding="compact"
-      aria-label={`${BOARDING_TITLE}. ${BOARDING_BUFFER}. ${BOARDING_LINE}.`}
+      aria-label={`${secondary.title}. ${secondary.value} ${secondary.valueUnit}. ${secondary.footnote}.`}
       className="flex flex-col gap-3"
     >
       <div className="flex items-center gap-2">
@@ -481,32 +575,33 @@ function BoardingCard() {
           <ShieldCheckIcon size={14} />
         </span>
         <span className="text-label text-[var(--color-text-primary)]">
-          {BOARDING_TITLE}
+          {secondary.title}
         </span>
       </div>
       <div className="flex flex-col gap-0.5">
         <span className="flex items-baseline gap-1">
           <span className="text-section-title tabular-nums text-[var(--color-text-primary)]">
-            42
+            {secondary.value}
           </span>
           <span className="text-label text-[var(--color-text-secondary)]">
-            min buffer
+            {secondary.valueUnit}
           </span>
         </span>
         <span className="text-label text-[var(--color-text-secondary)]">
-          {BOARDING_LINE}
+          {secondary.footnote}
         </span>
       </div>
     </Card>
   );
 }
 
-function StopCard() {
+function StopCard({ content }: { content: NavContent }) {
+  const { stop } = content;
   return (
     <Card
       as="section"
       padding="compact"
-      aria-label={`${STOP_TITLE}. ${STOP_DETAIL}.`}
+      aria-label={`${stop.title}. ${stop.detail}.`}
       className="flex flex-col gap-3"
     >
       <div className="flex items-center gap-2">
@@ -517,12 +612,12 @@ function StopCard() {
           <DiningIcon size={14} />
         </span>
         <span className="text-label text-[var(--color-text-primary)]">
-          {STOP_TITLE}
+          {stop.title}
         </span>
       </div>
       <div className="flex flex-col gap-2">
         <span className="text-label text-[var(--color-text-secondary)]">
-          {STOP_DETAIL}
+          {stop.detail}
         </span>
         <Button
           href="/map/search-results"
@@ -540,17 +635,17 @@ function StopCard() {
 
 /* --------------------------------------------------- Route timeline */
 
-function RouteTimelineList() {
+function RouteTimelineList({ steps }: { steps: RouteStep[] }) {
   return (
     <ol
       aria-label="Upcoming route steps"
       className="flex flex-col gap-3 pt-1"
     >
-      {ROUTE_STEPS.map((step, index) => (
+      {steps.map((step, index) => (
         <RouteStepRow
           key={step.id}
           step={step}
-          isLast={index === ROUTE_STEPS.length - 1}
+          isLast={index === steps.length - 1}
         />
       ))}
     </ol>
@@ -642,4 +737,3 @@ function StraightGlyph({ size = 14 }: { size?: number }) {
     </svg>
   );
 }
-
