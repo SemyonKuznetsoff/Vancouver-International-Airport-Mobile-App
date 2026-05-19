@@ -531,6 +531,7 @@ function NextActionCard({ update }: { update: FlightUpdate }) {
       <div className="flex items-stretch gap-2">
         <div className="min-w-0 flex-1">
           <Button
+            href={"/map/live-navigation" as Route}
             tone="teal"
             trailingIcon={<ArrowRightIcon size={16} />}
             aria-label={`Start walking to gate ${update.nextGate}`}
@@ -540,6 +541,7 @@ function NextActionCard({ update }: { update: FlightUpdate }) {
         </div>
         <div className="w-28 shrink-0">
           <Button
+            href={"/map" as Route}
             variant="secondary"
             leadingIcon={<MapIcon size={14} />}
             aria-label="Open terminal map"
