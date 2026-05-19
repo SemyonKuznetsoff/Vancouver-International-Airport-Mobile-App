@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import type { Route } from "next";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
@@ -129,7 +132,7 @@ const SECONDARY_RESULTS: SecondaryResult[] = [
 export default function MapSearchResultsPage() {
   return (
     <AppShellAuthed activeHref="/map">
-      <SearchHeader query={QUERY} />
+      <SearchHeader />
       <div className="flex flex-col gap-4 px-6 pb-8">
         <FilterChipsRow filters={FILTERS} />
         <MapPreview />
@@ -141,14 +144,18 @@ export default function MapSearchResultsPage() {
   );
 }
 
-function SearchHeader({ query }: { query: string }) {
+function SearchHeader() {
+  const [searchValue, setSearchValue] = useState(QUERY);
+  const [layersOn, setLayersOn] = useState(false);
+  const hasValue = searchValue.length > 0;
+
   return (
     <header className="flex items-center justify-between gap-3 px-6 pb-4 pt-2">
       <HeaderIconButton aria-label="Back to map" href="/map">
         <ArrowLeftIcon size={16} />
       </HeaderIconButton>
 
-      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] px-3 shadow-[var(--shadow-card)]">
+      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-[var(--radius-pill)] border border-[var(--color-border)] bg-[var(--color-surface-elevated)] pl-3 pr-1 shadow-[var(--shadow-card)]">
         <label htmlFor="map-search-input" className="sr-only">
           Search airport places
         </label>
@@ -163,21 +170,40 @@ function SearchHeader({ query }: { query: string }) {
           type="text"
           inputMode="search"
           autoComplete="off"
-          defaultValue={query}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
           className="h-11 min-w-0 flex-1 bg-transparent text-body-sm text-[var(--color-text-primary)] placeholder:text-[var(--color-text-muted)] focus:outline-none"
         />
-        <button
-          type="button"
-          aria-label="Clear search query"
-          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-surface-tile)] text-[var(--color-text-secondary)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
-        >
-          <CloseIcon size={11} aria-hidden />
-        </button>
+        {hasValue ? (
+          <button
+            type="button"
+            aria-label="Clear search query"
+            onClick={() => setSearchValue("")}
+            className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[var(--color-text-secondary)]"
+          >
+            <span
+              aria-hidden
+              className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[var(--color-surface-tile)] transition-colors duration-150 hover:bg-[var(--color-surface-elevated-hover)]"
+            >
+              <CloseIcon size={11} />
+            </span>
+          </button>
+        ) : null}
       </div>
 
-      <HeaderIconButton aria-label="Map layers">
+      <button
+        type="button"
+        aria-label={layersOn ? "Map layers, on" : "Map layers, off"}
+        aria-pressed={layersOn}
+        onClick={() => setLayersOn((v) => !v)}
+        className={`relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-150 ${
+          layersOn
+            ? "bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button-teal)]"
+            : "bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] hover:bg-[var(--color-surface-elevated-hover)]"
+        }`}
+      >
         <LayersIcon size={16} />
-      </HeaderIconButton>
+      </button>
     </header>
   );
 }

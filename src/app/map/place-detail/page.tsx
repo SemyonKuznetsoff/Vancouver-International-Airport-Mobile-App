@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
@@ -255,14 +258,28 @@ function PlaceHeroVignette() {
 }
 
 function PlaceHeroOverlayHeader({ placeName }: { placeName: string }) {
+  const [saved, setSaved] = useState(false);
+  const saveLabel = saved
+    ? `${placeName} saved. Tap to remove.`
+    : `Save ${placeName}`;
   return (
     <header className="absolute left-6 right-6 top-4 z-20 flex items-center justify-between gap-3">
       <HeaderIconButton aria-label="Back to map" href="/map">
         <ArrowLeftIcon size={16} />
       </HeaderIconButton>
-      <HeaderIconButton aria-label={`Save ${placeName}`}>
-        <BookmarkIcon size={16} />
-      </HeaderIconButton>
+      <button
+        type="button"
+        aria-label={saveLabel}
+        aria-pressed={saved}
+        onClick={() => setSaved((v) => !v)}
+        className={`relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full transition-colors duration-150 ${
+          saved
+            ? "bg-[var(--color-action-teal)] text-[var(--color-action-primary-fg)] shadow-[var(--shadow-button-teal)]"
+            : "bg-[var(--color-surface-elevated)] text-[var(--color-text-primary)] shadow-[var(--shadow-card)] hover:bg-[var(--color-surface-elevated-hover)]"
+        }`}
+      >
+        {saved ? <CheckIcon size={16} /> : <BookmarkIcon size={16} />}
+      </button>
     </header>
   );
 }
