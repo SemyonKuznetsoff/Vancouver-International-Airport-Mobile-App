@@ -144,7 +144,7 @@ export default function MapSearchResultsPage() {
 function SearchHeader({ query }: { query: string }) {
   return (
     <header className="flex items-center justify-between gap-3 px-6 pb-4 pt-2">
-      <HeaderIconButton aria-label="Back to map">
+      <HeaderIconButton aria-label="Back to map" href="/map">
         <ArrowLeftIcon size={16} />
       </HeaderIconButton>
 

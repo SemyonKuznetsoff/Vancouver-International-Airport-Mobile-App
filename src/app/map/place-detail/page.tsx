@@ -257,7 +257,7 @@ function PlaceHeroVignette() {
 function PlaceHeroOverlayHeader({ placeName }: { placeName: string }) {
   return (
     <header className="absolute left-6 right-6 top-4 z-20 flex items-center justify-between gap-3">
-      <HeaderIconButton aria-label="Back to map">
+      <HeaderIconButton aria-label="Back to map" href="/map">
         <ArrowLeftIcon size={16} />
       </HeaderIconButton>
       <HeaderIconButton aria-label={`Save ${placeName}`}>
