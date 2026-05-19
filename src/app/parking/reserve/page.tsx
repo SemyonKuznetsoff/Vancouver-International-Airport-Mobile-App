@@ -16,7 +16,6 @@ import {
   ArrowsVerticalIcon,
   CalendarIcon,
   CarIcon,
-  ChevronRightIcon,
   ClockIcon,
   FootstepsIcon,
   LocationPinIcon,
@@ -247,13 +246,13 @@ function AvailabilityLine() {
       <p className="text-label text-[var(--color-text-secondary)]">
         Live availability · updated 1 min ago
       </p>
-      <button
-        type="button"
+      <Link
+        href={"/parking" as Route}
         aria-label="Change parkade"
         className="text-body-sm-emphasis text-[var(--color-action-teal)] hover:opacity-80"
       >
         Change
-      </button>
+      </Link>
     </div>
   );
 }
@@ -293,7 +292,6 @@ function ReservationDetailsCard({
         helper="10:30 AM"
         icon={<CalendarIcon size={18} />}
         iconTone="teal"
-        ariaLabel="Change entry date and time"
       />
       <DetailRow
         eyebrow="Exit"
@@ -301,7 +299,6 @@ function ReservationDetailsCard({
         helper="Anytime · by midnight"
         icon={<ClockIcon size={18} />}
         iconTone="teal"
-        ariaLabel="Change exit date and time"
       />
       <DetailRow
         eyebrow="Vehicle"
@@ -310,7 +307,6 @@ function ReservationDetailsCard({
         helper="Honda Civic · Silver"
         icon={<CarIcon size={18} />}
         iconTone="primary"
-        ariaLabel="Change vehicle for this reservation"
       />
     </Card>
   );
@@ -359,7 +355,6 @@ type DetailRowProps = {
   helper: string;
   icon: React.ReactNode;
   iconTone: "teal" | "primary";
-  ariaLabel: string;
 };
 
 function DetailRow({
@@ -369,18 +364,13 @@ function DetailRow({
   helper,
   icon,
   iconTone,
-  ariaLabel,
 }: DetailRowProps) {
   const tileClass =
     iconTone === "primary"
       ? "bg-[var(--color-action-primary)] text-[var(--color-action-primary-fg)]"
       : "bg-[var(--color-action-teal-soft)] text-[var(--color-action-teal)]";
   return (
-    <button
-      type="button"
-      aria-label={ariaLabel}
-      className="flex w-full items-center gap-4 border-t border-[var(--color-border-soft)] px-5 py-4 text-left transition-colors duration-150 hover:bg-[var(--color-surface-hover)]"
-    >
+    <div className="flex w-full items-center gap-4 border-t border-[var(--color-border-soft)] px-5 py-4 text-left">
       <IconTile size={40} className={`rounded-[var(--radius-tile)] ${tileClass}`}>
         {icon}
       </IconTile>
@@ -402,13 +392,7 @@ function DetailRow({
           {helper}
         </span>
       </span>
-      <span
-        aria-hidden
-        className="inline-flex shrink-0 items-center text-[var(--color-text-muted)]"
-      >
-        <ChevronRightIcon size={16} />
-      </span>
-    </button>
+    </div>
   );
 }
 
@@ -425,28 +409,19 @@ function SummarySheet({
       className="sticky bottom-0 z-10 flex flex-col gap-4 border-t border-[var(--color-border-soft)] bg-[var(--color-surface-sheet)] px-6 pt-5 shadow-[var(--shadow-sheet)] backdrop-blur-md"
       style={{ paddingBottom: "max(env(safe-area-inset-bottom), 16px)" }}
     >
-      <div className="flex items-end justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <p className="text-eyebrow uppercase text-[var(--color-text-muted)]">
-            Estimated total
-          </p>
-          <p className="inline-flex items-baseline gap-1.5 text-display tabular-nums text-[var(--color-text-primary)]">
-            <span>${total}</span>
-            <span className="text-label text-[var(--color-text-secondary)]">
-              CAD
-            </span>
-          </p>
-          <p className="text-label text-[var(--color-text-secondary)]">
-            {support}
-          </p>
-        </div>
-        <button
-          type="button"
-          aria-label="View price breakdown"
-          className="text-body-sm-emphasis text-[var(--color-action-teal)] hover:opacity-80"
-        >
-          View breakdown
-        </button>
+      <div className="flex flex-col gap-1">
+        <p className="text-eyebrow uppercase text-[var(--color-text-muted)]">
+          Estimated total
+        </p>
+        <p className="inline-flex items-baseline gap-1.5 text-display tabular-nums text-[var(--color-text-primary)]">
+          <span>${total}</span>
+          <span className="text-label text-[var(--color-text-secondary)]">
+            CAD
+          </span>
+        </p>
+        <p className="text-label text-[var(--color-text-secondary)]">
+          {support}
+        </p>
       </div>
 
       <Button
