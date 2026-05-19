@@ -12,7 +12,6 @@ import { StatusPill } from "@/components/StatusPill";
 import {
   BellIcon,
   LifeBuoyIcon,
-  LockIcon,
   NavigationIcon,
   PlaneIcon,
   SparkleIcon,
@@ -245,16 +244,6 @@ function VaultSection() {
           icon={<PlaneIcon size={18} />}
           title="Saved trips"
           description="Your next journey · 2 saved"
-        />
-        <SettingsRow
-          icon={<LockIcon size={18} />}
-          title="Security & password"
-          description="2FA active · Updated 30 days ago"
-          trailing={
-            <StatusPill tone="success" size="sm" leadingDot>
-              Secure
-            </StatusPill>
-          }
         />
         <SettingsRow
           href="/profile/notifications"
