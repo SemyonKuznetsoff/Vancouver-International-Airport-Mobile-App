@@ -101,6 +101,7 @@ function FlightDelayHeader() {
 
       <HeaderIconButton
         aria-label="Flight notifications, new alert"
+        href={"/profile/notifications" as Route}
         badgeDot
       >
         <BellIcon size={16} />

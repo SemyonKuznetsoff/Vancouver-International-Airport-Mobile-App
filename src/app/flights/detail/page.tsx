@@ -106,7 +106,10 @@ function FlightDetailHeader() {
         </p>
       </div>
 
-      <HeaderIconButton aria-label="Flight notifications">
+      <HeaderIconButton
+        aria-label="Flight notifications"
+        href={"/profile/notifications" as Route}
+      >
         <BellIcon size={16} />
       </HeaderIconButton>
     </header>
