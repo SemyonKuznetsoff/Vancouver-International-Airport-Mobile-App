@@ -117,7 +117,7 @@ function RouteHeader() {
       }}
     >
       <div className="flex items-start gap-3">
-        <HeaderIconButton aria-label="Back">
+        <HeaderIconButton aria-label="Back to map" href="/map">
           <ArrowLeftIcon size={16} />
         </HeaderIconButton>
 
