@@ -113,7 +113,7 @@ const liveMetrics: LiveMetric[] = [
 
 const intentDeparting: IntentCard = {
   id: "departing",
-  href: "/home/departing",
+  href: "/flights/departing",
   title: "Departing",
   description: "Check-in, gate and wayfinding",
   icon: <PlaneIcon size={16} />,

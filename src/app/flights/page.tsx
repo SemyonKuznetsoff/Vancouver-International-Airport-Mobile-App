@@ -371,7 +371,7 @@ function ViewTripDetailsLink() {
   return (
     <div className="flex justify-center">
       <Link
-        href={"/flights/detail" as Route}
+        href={"/flights/departing" as Route}
         className="inline-flex h-11 items-center text-body-sm-emphasis text-[var(--color-action-teal)] hover:opacity-80"
       >
         View trip details
