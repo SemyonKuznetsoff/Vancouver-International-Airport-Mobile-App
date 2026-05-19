@@ -3449,6 +3449,42 @@ visibly changing existing screens.**
 
 ---
 
+## 14. Prototype data convention
+
+`src/data/` houses **prototype-only** state and data modules — typed
+literals that stand in for state we will eventually derive from real
+sources (server data, clocks, user input). It is not the place for
+runtime fixtures, mocks, or any code that should survive past the
+prototype phase.
+
+- **Centralise prototype values.** When two screens depend on the same
+  prototype decision (e.g. which of two routes to link to), they read
+  from one module under `src/data/` so the screens cannot disagree.
+- **Type everything.** Export a union or literal type alongside the
+  value (`type DepartingState = "upcoming" | "urgent"`), and return
+  literal-union strings from helpers so consumers' route or prop
+  types stay narrow.
+- **Name the prototype seam.** Any constant that is not real runtime
+  data must be prefixed `PROTOTYPE_` (e.g.
+  `PROTOTYPE_DEPARTING_STATE`). The prefix is the visible flag that
+  says "this module is scaffolding, delete the `PROTOTYPE_` half when
+  real data lands."
+- **Document the retirement plan.** Each module's docstring names the
+  real signal it stands in for and the action that retires it.
+
+Current modules:
+
+| Module | Purpose | Retired by |
+|---|---|---|
+| `src/data/departing-state.ts` | Picks between `/flights/departing` and `/flights/departing-urgent` from Home and Flights entry points. | Replace `PROTOTYPE_DEPARTING_STATE` with a derivation from boarding-window + clock state. |
+
+Do not introduce shared visual or component data through `src/data/` —
+that belongs alongside the component or in this doc. `src/data/` is for
+*state values the prototype hard-codes because no real source exists
+yet.*
+
+---
+
 ## Appendix A — Components inventory
 
 | Component | Source | Notes |
