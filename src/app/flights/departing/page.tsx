@@ -4,12 +4,14 @@ import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { Eyebrow } from "@/components/Eyebrow";
+import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { Heading } from "@/components/Heading";
 import { HeroSurface } from "@/components/HeroSurface";
 import { PassDecorBackground } from "@/components/PassDecorBackground";
 import { PassPerforation } from "@/components/PassPerforation";
 import { StatusPill } from "@/components/StatusPill";
 import {
+  ArrowLeftIcon,
   ArrowRightIcon,
   BellIcon,
   ChevronRightIcon,
@@ -61,6 +63,7 @@ const TRIP_DETAILS: TripDetailRow[] = [
 export default function DepartingPage() {
   return (
     <AppShellAuthed activeHref="/flights">
+      <DepartingHeader />
       <div className="flex flex-1 flex-col gap-5 px-6 pt-2 pb-6">
         <DepartingPassCard trip={TRIP} />
         <CheckInNotice />
@@ -68,6 +71,32 @@ export default function DepartingPage() {
         <TripDetailsSection details={TRIP_DETAILS} />
       </div>
     </AppShellAuthed>
+  );
+}
+
+function DepartingHeader() {
+  return (
+    <header className="flex items-center justify-between gap-3 px-6 pb-4 pt-2">
+      <HeaderIconButton
+        aria-label="Back to My Flights"
+        href={"/flights" as Route}
+      >
+        <ArrowLeftIcon size={16} />
+      </HeaderIconButton>
+
+      <div className="flex min-w-0 flex-1 flex-col items-center gap-0.5 text-center">
+        <span className="text-eyebrow uppercase text-[var(--color-text-muted)]">
+          My Flights
+        </span>
+        <h1 className="text-section-title text-[var(--color-text-primary)]">
+          Departing
+        </h1>
+      </div>
+
+      <HeaderIconButton aria-label="Flight notifications">
+        <BellIcon size={16} />
+      </HeaderIconButton>
+    </header>
   );
 }
 
@@ -106,41 +135,25 @@ function DepartingPassCard({ trip }: { trip: DepartingTrip }) {
 
 function PassIntro() {
   return (
-    <div className="flex items-start justify-between gap-3">
-      <div className="flex min-w-0 flex-1 flex-col gap-3">
-        <Eyebrow tone="hero">
-          <span className="inline-flex items-center gap-2">
-            <span
-              aria-hidden
-              className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-map-mint)]"
-            />
-            Upcoming trip · In 2 days
-          </span>
-        </Eyebrow>
-        <Heading as="h1" size="display" tone="hero">
-          Ready when
-          <br />
-          <em>you are.</em>
-        </Heading>
-        <p className="text-body text-[var(--color-surface-hero-fg-muted)]">
-          We&rsquo;ll guide you from home to gate.
-        </p>
-      </div>
-
-      <PassBellButton />
+    <div className="flex flex-col gap-3">
+      <Eyebrow tone="hero">
+        <span className="inline-flex items-center gap-2">
+          <span
+            aria-hidden
+            className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-map-mint)]"
+          />
+          Upcoming trip · In 2 days
+        </span>
+      </Eyebrow>
+      <Heading as="h2" size="display" tone="hero">
+        Ready when
+        <br />
+        <em>you are.</em>
+      </Heading>
+      <p className="text-body text-[var(--color-surface-hero-fg-muted)]">
+        We&rsquo;ll guide you from home to gate.
+      </p>
     </div>
-  );
-}
-
-function PassBellButton() {
-  return (
-    <button
-      type="button"
-      aria-label="Flight notifications"
-      className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[var(--color-surface-hero-chip-border)] bg-[var(--color-surface-hero-chip)] text-[var(--color-surface-hero-fg)] transition-opacity duration-150 hover:opacity-80"
-    >
-      <BellIcon size={16} />
-    </button>
   );
 }
 
