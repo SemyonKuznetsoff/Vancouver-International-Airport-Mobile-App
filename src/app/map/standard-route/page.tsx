@@ -10,6 +10,7 @@ import {
   ArrowRightIcon,
   CheckIcon,
   FootstepsIcon,
+  InfoIcon,
   NavigationIcon,
   UsersIcon,
 } from "@/components/icons";
@@ -28,14 +29,14 @@ const MODES: Mode[] = [
   {
     id: "standard",
     label: "Standard",
-    ariaLabel: "Standard route — 8 minutes",
+    ariaLabel: "Standard route — 8 minutes, currently selected",
     icon: <FootstepsIcon size={14} />,
     href: "/map/standard-route",
   },
   {
     id: "accessible",
     label: "Accessible",
-    ariaLabel: "Accessible route — 12 minutes, currently selected",
+    ariaLabel: "Accessible route — 12 minutes",
     icon: <AccessibilityIcon size={14} />,
     href: "/map/accessible-route",
   },
@@ -48,55 +49,33 @@ const MODES: Mode[] = [
   },
 ];
 
-type StatTone = "default" | "mint";
-
-type RouteStat = {
+type Benefit = {
   id: string;
   label: string;
-  value: string;
-  unit?: string;
-  tone?: StatTone;
 };
 
-type RouteVerification = {
-  controlLabel: string;
-  title: string;
-  supportLine: string;
-  chips: string[];
-  stats: RouteStat[];
-};
-
-const VERIFICATION: RouteVerification = {
-  controlLabel: "Live Access Control",
-  title: "Step-free route verified",
-  supportLine: "Elevators live · Lane open · Updated just now",
-  chips: ["Elevators Live", "Step-Free", "Lane Open"],
-  stats: [
-    { id: "time", label: "Time", value: "12", unit: "min" },
-    { id: "distance", label: "Distance", value: "550", unit: "m" },
-    { id: "elevators", label: "Elevators", value: "2", unit: "lifts" },
-    {
-      id: "confidence",
-      label: "Confidence",
-      value: "High",
-      unit: "verified",
-      tone: "mint",
-    },
-  ],
-};
+const BENEFITS: Benefit[] = [
+  { id: "fastest", label: "Fastest option" },
+  { id: "security", label: "Security A open" },
+  { id: "direct", label: "Direct concourse route" },
+  { id: "delays", label: "No major delays" },
+];
 
 const GATE = "D73";
 const TERMINAL = "International Terminal · Level 2";
 const MAP_LEVEL = "Level 2";
-const ETA_LINE = "12 min · step-free · live guidance";
+const SUMMARY_LINE = "8 min · 420 m · 4 steps";
+const SUPPORT_LINE = "Direct route · security checkpoint clear · gate route open";
+const TRADEOFF_LINE = "Includes stairs/escalator section · choose Accessible for step-free";
+const ETA_LINE = "8 min · direct · security clear";
 
-export default function AccessibleRoutePage() {
+export default function StandardRoutePage() {
   return (
     <AppShellAuthed activeHref="/map">
       <RouteHeader />
       <div className="flex flex-1 flex-col gap-4 px-6 pt-4 pb-6">
-        <ModeSegmentedControl active="accessible" />
-        <RouteVerificationCard data={VERIFICATION} />
+        <ModeSegmentedControl active="standard" />
+        <StandardRouteCard />
         <RouteMapPreview level={MAP_LEVEL} gate={GATE} />
         <StartNavigationCTA etaLine={ETA_LINE} />
       </div>
@@ -109,7 +88,7 @@ export default function AccessibleRoutePage() {
 function RouteHeader() {
   return (
     <header
-      aria-label={`Accessible route to gate ${GATE}, ${TERMINAL}`}
+      aria-label={`Standard route to gate ${GATE}, ${TERMINAL}`}
       className="px-6 pb-5 pt-2 text-[var(--color-surface-hero-fg)]"
       style={{
         backgroundImage:
@@ -130,17 +109,17 @@ function RouteHeader() {
           </p>
         </div>
 
-        <HeaderAccessiblePill />
+        <HeaderStandardPill />
       </div>
     </header>
   );
 }
 
-function HeaderAccessiblePill() {
+function HeaderStandardPill() {
   return (
-    <span className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-[var(--radius-pill)] border border-[var(--color-map-mint-soft)] bg-[var(--color-map-mint-bg)] px-2.5 text-micro uppercase text-[var(--color-map-mint)]">
-      <AccessibilityIcon size={12} aria-hidden />
-      Accessible
+    <span className="inline-flex h-8 shrink-0 items-center gap-1.5 rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-chip-border)] bg-[var(--color-surface-hero-chip)] px-2.5 text-micro uppercase text-[var(--color-surface-hero-fg)]">
+      <FootstepsIcon size={12} aria-hidden />
+      Standard
     </span>
   );
 }
@@ -193,12 +172,12 @@ function ModeSegmentedControl({ active }: { active: ModeId }) {
   );
 }
 
-/* -------------------------------------------------- Verification card */
+/* ------------------------------------------------------- Standard card */
 
-function RouteVerificationCard({ data }: { data: RouteVerification }) {
-  const accessibleLabel = `${data.controlLabel}: ${data.title}. ${data.supportLine}. ${data.stats
-    .map((s) => `${s.label}: ${s.value}${s.unit ? ` ${s.unit}` : ""}`)
-    .join(", ")}.`;
+function StandardRouteCard() {
+  const accessibleLabel = `Fastest route, live conditions. ${SUMMARY_LINE}. ${SUPPORT_LINE}. Benefits: ${BENEFITS.map(
+    (b) => b.label
+  ).join(", ")}. ${TRADEOFF_LINE}.`;
 
   return (
     <HeroSurface
@@ -207,18 +186,15 @@ function RouteVerificationCard({ data }: { data: RouteVerification }) {
       angle="180deg"
       className="flex flex-col gap-5 p-5 shadow-[var(--shadow-hero-card)]"
     >
-      <VerificationHeaderRow controlLabel={data.controlLabel} />
-      <VerificationTitleBlock
-        title={data.title}
-        supportLine={data.supportLine}
-      />
-      <VerificationChipsRow chips={data.chips} />
-      <VerificationStatsGrid stats={data.stats} />
+      <StandardCardHeaderRow />
+      <StandardCardTitleBlock />
+      <StandardBenefitGrid benefits={BENEFITS} />
+      <StandardTradeoffNote />
     </HeroSurface>
   );
 }
 
-function VerificationHeaderRow({ controlLabel }: { controlLabel: string }) {
+function StandardCardHeaderRow() {
   return (
     <div className="flex items-center justify-between gap-3">
       <span className="inline-flex items-center gap-2 text-label text-[var(--color-surface-hero-fg)]">
@@ -226,9 +202,9 @@ function VerificationHeaderRow({ controlLabel }: { controlLabel: string }) {
           aria-hidden
           className="inline-flex h-7 w-7 items-center justify-center rounded-[var(--radius-tile)] bg-[var(--color-surface-hero-tile)] text-[var(--color-map-mint)]"
         >
-          <AccessibilityIcon size={14} />
+          <FootstepsIcon size={14} />
         </span>
-        {controlLabel}
+        Live Conditions
       </span>
       <StatusPill tone="success" surface="hero" size="sm" leadingDot>
         Live
@@ -237,76 +213,67 @@ function VerificationHeaderRow({ controlLabel }: { controlLabel: string }) {
   );
 }
 
-function VerificationTitleBlock({
-  title,
-  supportLine,
-}: {
-  title: string;
-  supportLine: string;
-}) {
+function StandardCardTitleBlock() {
   return (
     <div className="flex flex-col gap-2">
       <h2 className="text-title text-[var(--color-surface-hero-fg)]">
-        {title}
+        Fastest route
       </h2>
       <p className="text-body-sm text-[var(--color-surface-hero-fg-muted)]">
-        {supportLine}
+        {SUMMARY_LINE}
+      </p>
+      <p className="text-body-sm text-[var(--color-surface-hero-fg-muted)]">
+        {SUPPORT_LINE}
       </p>
     </div>
   );
 }
 
-function VerificationChipsRow({ chips }: { chips: string[] }) {
+function StandardBenefitGrid({ benefits }: { benefits: Benefit[] }) {
   return (
-    <ul className="flex flex-wrap gap-2" aria-label="Route conditions">
-      {chips.map((c) => (
-        <li
-          key={c}
-          className="inline-flex h-7 items-center gap-1.5 rounded-[var(--radius-pill)] border border-[var(--color-map-mint-soft)] bg-[var(--color-map-mint-bg)] px-2.5 text-micro uppercase text-[var(--color-map-mint)]"
-        >
-          <CheckIcon size={11} aria-hidden />
-          {c}
+    <ul className="grid grid-cols-2 gap-2" aria-label="Standard route benefits">
+      {benefits.map((b) => (
+        <li key={b.id}>
+          <StandardBenefitTile label={b.label} />
         </li>
       ))}
     </ul>
   );
 }
 
-function VerificationStatsGrid({ stats }: { stats: RouteStat[] }) {
-  return (
-    <ul className="grid grid-cols-2 gap-2" aria-label="Route stats">
-      {stats.map((s) => (
-        <li key={s.id}>
-          <RouteStatTile stat={s} />
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function RouteStatTile({ stat }: { stat: RouteStat }) {
-  const valueClass =
-    stat.tone === "mint"
-      ? "text-[var(--color-map-mint)]"
-      : "text-[var(--color-surface-hero-fg)]";
-  const unitClass =
-    stat.tone === "mint"
-      ? "text-[var(--color-map-mint)]"
-      : "text-[var(--color-surface-hero-fg-muted)]";
+function StandardBenefitTile({ label }: { label: string }) {
   return (
     <div
-      aria-label={`${stat.label}: ${stat.value}${stat.unit ? ` ${stat.unit}` : ""}`}
-      className="flex flex-col gap-1 rounded-[var(--radius-tile)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] px-4 py-3"
+      className="flex h-full items-start gap-2 rounded-[var(--radius-tile)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] px-3 py-3"
     >
-      <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
-        {stat.label}
+      <span
+        aria-hidden
+        className="mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-[var(--color-map-mint-bg)] text-[var(--color-map-mint)]"
+      >
+        <CheckIcon size={11} />
       </span>
-      <span className={`text-title tabular-nums ${valueClass}`}>
-        {stat.value}
+      <span className="text-body-sm text-[var(--color-surface-hero-fg)]">
+        {label}
       </span>
-      {stat.unit ? (
-        <span className={`text-label ${unitClass}`}>{stat.unit}</span>
-      ) : null}
+    </div>
+  );
+}
+
+function StandardTradeoffNote() {
+  return (
+    <div
+      aria-label={TRADEOFF_LINE}
+      className="flex items-start gap-2 rounded-[var(--radius-tile)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] px-3 py-3"
+    >
+      <span
+        aria-hidden
+        className="mt-0.5 inline-flex shrink-0 text-[var(--color-surface-hero-fg-muted)]"
+      >
+        <InfoIcon size={14} />
+      </span>
+      <span className="text-body-sm text-[var(--color-surface-hero-fg-muted)]">
+        {TRADEOFF_LINE}
+      </span>
     </div>
   );
 }
@@ -316,7 +283,7 @@ function RouteStatTile({ stat }: { stat: RouteStat }) {
 function RouteMapPreview({ level, gate }: { level: string; gate: string }) {
   return (
     <section
-      aria-label={`Mini map preview: ${level}, step-free route from Domestic to International heading toward gate ${gate}, live tracking.`}
+      aria-label={`Mini map preview: ${level}, direct route from Domestic to International heading toward gate ${gate}, live tracking.`}
       className="relative overflow-hidden rounded-[var(--radius-tile)] border border-[var(--color-border-soft)] bg-[var(--color-surface-tile)] shadow-[var(--shadow-card)]"
       style={{ height: 196 }}
     >
@@ -341,10 +308,10 @@ function RouteMapPreview({ level, gate }: { level: string; gate: string }) {
 }
 
 /**
- * Stylized terminal-layout map. Three concourse zones (Domestic,
- * International, US) connected by a dashed route line, with a current
- * location marker centered over the International zone. All decorative —
- * the wrapping section carries the meaning via `aria-label`.
+ * Stylized terminal-layout map shared with the Accessible and Family
+ * route previews — Domestic / International / US zones with a dashed
+ * route line to gate D73. Decorative; wrapping section carries meaning
+ * via aria-label.
  */
 function MapPreviewArt({ gate }: { gate: string }) {
   return (
@@ -354,7 +321,6 @@ function MapPreviewArt({ gate }: { gate: string }) {
         preserveAspectRatio="xMidYMid slice"
         className="h-full w-full"
       >
-        {/* Three terminal zones */}
         <rect
           x="14"
           y="78"
@@ -386,7 +352,6 @@ function MapPreviewArt({ gate }: { gate: string }) {
           strokeWidth="1"
         />
 
-        {/* Zone labels (small, decorative) */}
         <text
           x="64"
           y="124"
@@ -421,7 +386,6 @@ function MapPreviewArt({ gate }: { gate: string }) {
           US
         </text>
 
-        {/* Destination halo near the right edge of International zone */}
         <circle
           cx="246"
           cy="108"
@@ -430,7 +394,6 @@ function MapPreviewArt({ gate }: { gate: string }) {
           opacity="0.10"
         />
 
-        {/* Route path — soft glow under-stroke */}
         <path
           d="M 50 118 Q 100 118 130 110 Q 170 100 210 108 Q 232 110 246 108"
           fill="none"
@@ -439,7 +402,6 @@ function MapPreviewArt({ gate }: { gate: string }) {
           opacity="0.16"
           strokeLinecap="round"
         />
-        {/* Route path — crisp dashed */}
         <path
           d="M 50 118 Q 100 118 130 110 Q 170 100 210 108 Q 232 110 246 108"
           fill="none"
@@ -449,15 +411,8 @@ function MapPreviewArt({ gate }: { gate: string }) {
           strokeLinecap="round"
         />
 
-        {/* Destination dot */}
-        <circle
-          cx="246"
-          cy="108"
-          r="5"
-          fill="var(--color-action-teal)"
-        />
+        <circle cx="246" cy="108" r="5" fill="var(--color-action-teal)" />
 
-        {/* Gate label by destination */}
         <text
           x="246"
           y="148"
@@ -471,7 +426,6 @@ function MapPreviewArt({ gate }: { gate: string }) {
         </text>
       </svg>
 
-      {/* Current-location pulse marker */}
       <span
         className="absolute inline-flex h-3.5 w-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[var(--color-action-teal)] ring-4 ring-[var(--color-action-teal-soft)]"
         style={{ left: "14%", top: "60%" }}
@@ -486,7 +440,7 @@ function StartNavigationCTA({ etaLine }: { etaLine: string }) {
   return (
     <Link
       href="/map/live-navigation"
-      aria-label={`Start accessible navigation — ${etaLine}`}
+      aria-label={`Start navigation — ${etaLine}`}
       className="relative block w-full overflow-hidden rounded-[var(--radius-card)] p-4 text-left text-[var(--color-surface-hero-fg)] shadow-[var(--shadow-hero-card)] transition-opacity duration-150 hover:opacity-95 active:opacity-90"
       style={{
         backgroundImage:
@@ -502,7 +456,7 @@ function StartNavigationCTA({ etaLine }: { etaLine: string }) {
         </span>
         <span className="flex min-w-0 flex-1 flex-col gap-0.5">
           <span className="text-body-sm-emphasis text-[var(--color-surface-hero-fg)]">
-            Start Accessible Navigation
+            Start Navigation
           </span>
           <span className="text-label text-[var(--color-surface-hero-fg-muted)]">
             {etaLine}
