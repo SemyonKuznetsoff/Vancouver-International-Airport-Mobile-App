@@ -357,7 +357,7 @@ function ScanZone({ numericCode }: { numericCode: string }) {
           Present this code at the boarding gate scanner.
         </p>
         <span
-          className="font-mono text-label tabular-nums tracking-[0.12em] text-[var(--color-map-mint)]"
+          className="font-mono text-label tabular-nums text-[var(--color-map-mint)]"
           aria-label={`Boarding code ${numericCode}`}
         >
           {numericCode}
