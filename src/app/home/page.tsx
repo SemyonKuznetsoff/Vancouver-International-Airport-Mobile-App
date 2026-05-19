@@ -1,4 +1,8 @@
 import Link from "next/link";
+import {
+  PROTOTYPE_DEPARTING_STATE,
+  departingHref,
+} from "@/data/departing-state";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { BrandMark } from "@/components/BrandMark";
 import { Card } from "@/components/Card";
@@ -113,7 +117,7 @@ const liveMetrics: LiveMetric[] = [
 
 const intentDeparting: IntentCard = {
   id: "departing",
-  href: "/flights/departing",
+  href: departingHref(PROTOTYPE_DEPARTING_STATE),
   title: "Departing",
   description: "Check-in, gate and wayfinding",
   icon: <PlaneIcon size={16} />,
