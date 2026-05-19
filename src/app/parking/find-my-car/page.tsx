@@ -661,7 +661,7 @@ function StickyNavigateCTA({ car }: { car: SavedCar }) {
       }}
     >
       <Button
-        href={"/map/live-navigation" as Route}
+        href={"/map/live-navigation?context=parking" as Route}
         tone="teal"
         leadingIcon={<NavigationIcon size={16} />}
         aria-label={`Navigate to my car at space ${car.space}`}
