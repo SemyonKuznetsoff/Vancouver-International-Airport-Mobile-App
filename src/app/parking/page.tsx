@@ -14,7 +14,6 @@ import {
   ArrowLeftIcon,
   InfoIcon,
   NavigationIcon,
-  SearchIcon,
   ShieldCheckIcon,
   SparkleIcon,
 } from "@/components/icons";
@@ -159,9 +158,7 @@ function ParkingHeader() {
         </h1>
       </div>
 
-      <HeaderIconButton aria-label="Search parking">
-        <SearchIcon size={16} />
-      </HeaderIconButton>
+      <span aria-hidden className="h-11 w-11 shrink-0" />
     </header>
   );
 }
@@ -293,21 +290,13 @@ function PromoOrbits() {
 function LiveAvailabilitySection({ parkades }: { parkades: Parkade[] }) {
   return (
     <section aria-label="Live parkade availability" className="flex flex-col gap-3 pt-1">
-      <div className="flex items-end justify-between gap-3">
-        <div className="flex flex-col gap-0.5">
-          <h2 className="text-section-title text-[var(--color-text-primary)]">
-            Live Availability
-          </h2>
-          <p className="text-label text-[var(--color-text-secondary)]">
-            {parkades.length} options · Sorted: Best match
-          </p>
-        </div>
-        <button
-          type="button"
-          className="inline-flex h-11 items-center text-body-sm-emphasis text-[var(--color-action-teal)] hover:opacity-80"
-        >
-          View map
-        </button>
+      <div className="flex flex-col gap-0.5">
+        <h2 className="text-section-title text-[var(--color-text-primary)]">
+          Live Availability
+        </h2>
+        <p className="text-label text-[var(--color-text-secondary)]">
+          {parkades.length} options · Sorted: Best match
+        </p>
       </div>
       <ul className="flex flex-col gap-2.5">
         {parkades.map((p) => (
