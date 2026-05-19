@@ -449,7 +449,11 @@ function SummarySheet({
         </button>
       </div>
 
-      <Button tone="teal" trailingIcon={<ArrowRightIcon size={16} />}>
+      <Button
+        href={"/parking/reserved" as Route}
+        tone="teal"
+        trailingIcon={<ArrowRightIcon size={16} />}
+      >
         Reserve Parking
       </Button>
     </section>
