@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Route } from "next";
 import {
   PROTOTYPE_DEPARTING_STATE,
   departingHref,
@@ -15,10 +16,8 @@ import { MetricBlock } from "@/components/MetricBlock";
 import { SettingsRow } from "@/components/SettingsRow";
 import { StatusPill } from "@/components/StatusPill";
 import {
-  AccessibilityIcon,
   ArrowRightIcon,
   BellIcon,
-  DiningIcon,
   LifeBuoyIcon,
   MapIcon,
   NavigationIcon,
@@ -41,7 +40,7 @@ type AirportStatus = {
 
 type LiveMetric = {
   id: string;
-  href: string;
+  href: Route;
   label: string;
   icon: React.ReactNode;
   value: string;
@@ -51,7 +50,7 @@ type LiveMetric = {
 
 type IntentCard = {
   id: string;
-  href: string;
+  href: Route;
   title: string;
   description: string;
   icon: React.ReactNode;
@@ -59,7 +58,7 @@ type IntentCard = {
 
 type ServiceRow = {
   id: string;
-  href: string;
+  href: Route;
   title: string;
   description: string;
   icon: React.ReactNode;
@@ -76,7 +75,7 @@ const airportStatus: AirportStatus = {
 const liveMetrics: LiveMetric[] = [
   {
     id: "security",
-    href: "/security",
+    href: "/services/security-wait",
     label: "Security",
     icon: <ShieldCheckIcon size={14} />,
     value: "8",
@@ -102,7 +101,7 @@ const liveMetrics: LiveMetric[] = [
   },
   {
     id: "skytrain",
-    href: "/transport",
+    href: "/ground-transport",
     label: "SkyTrain",
     icon: <TrainIcon size={14} />,
     value: "4",
@@ -126,7 +125,7 @@ const intentDeparting: IntentCard = {
 const intentSecondary: IntentCard[] = [
   {
     id: "arriving",
-    href: "/home/arriving",
+    href: "/services/arrival-assistant",
     title: "Arriving",
     description: "Bags · transit",
     icon: <NavigationIcon size={16} />,
@@ -150,29 +149,15 @@ const exploreCard: IntentCard = {
 
 const services: ServiceRow[] = [
   {
-    id: "accessibility",
-    href: "/services/accessibility",
-    title: "Accessibility & Assistance",
-    description: "Mobility · sensory rooms",
-    icon: <AccessibilityIcon size={18} />,
-  },
-  {
     id: "customer-care",
-    href: "/services/customer-care",
+    href: "/help-support",
     title: "Customer Care",
     description: "24/7 · Level 3",
     icon: <LifeBuoyIcon size={18} />,
   },
   {
-    id: "shops-dining",
-    href: "/services/shops-dining",
-    title: "Shops & Dining",
-    description: "180+ open now",
-    icon: <DiningIcon size={18} />,
-  },
-  {
     id: "parking-transport",
-    href: "/services/parking-transport",
+    href: "/parking",
     title: "Parking & Transport",
     description: "P1 · P2 · SkyTrain",
     icon: <MapIcon size={18} />,
