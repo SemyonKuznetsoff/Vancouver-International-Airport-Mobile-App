@@ -1,5 +1,9 @@
 import Link from "next/link";
 import type { Route } from "next";
+import {
+  PROTOTYPE_DEPARTING_STATE,
+  departingHref,
+} from "@/data/departing-state";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -371,7 +375,7 @@ function ViewTripDetailsLink() {
   return (
     <div className="flex justify-center">
       <Link
-        href={"/flights/departing" as Route}
+        href={departingHref(PROTOTYPE_DEPARTING_STATE) as Route}
         className="inline-flex h-11 items-center text-body-sm-emphasis text-[var(--color-action-teal)] hover:opacity-80"
       >
         View trip details
