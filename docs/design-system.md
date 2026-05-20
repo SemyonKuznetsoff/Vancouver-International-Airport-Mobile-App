@@ -37,8 +37,9 @@ disagrees with the code, the doc wins — fix the code.
 | from | back goes to | forward CTA goes to |
 |---|---|---|
 | `/` (Welcome) | n/a | `/onboarding/sign-in` |
-| `/onboarding/sign-in` | `/` | `/onboarding/permissions` (guest) |
-| `/onboarding/permissions` | `/onboarding/sign-in` | `/` (start app) |
+| `/onboarding/sign-in` | `/` | `/onboarding/preferences` (guest) |
+| `/onboarding/preferences` | `/onboarding/sign-in` | `/onboarding/permissions` (Skip → `/onboarding/permissions`) |
+| `/onboarding/permissions` | `/onboarding/preferences` | `/home` (start app — also where "Set up later" lands) |
 | `/home` (Home — No Trip state) | n/a — tab root | `/trips/new`, `/trips/import`, `/security`, `/parking`, `/transport`, `/home/departing`, `/home/arriving`, `/home/pickup`, `/map`, `/services`, `/services/<category>`, `/profile`, `/profile/notifications` (placeholders today) |
 | `/profile` (Profile main) | n/a — tab root | `/profile/saved-trips`, `/profile/settings`, `/profile/personal`, `/profile/payment`, `/profile/security`, `/profile/preferences`, `/profile/notifications`, `/profile/vault`, `/saved`, `/support`, `/flights/<id>`, `/flights/<id>/navigate` (placeholders today) |
 | `/profile/saved-trips` (Saved Trips) | `/profile` | `/flights/<id>`, `/flights/<id>/navigate`, `/profile/saved-trips/all` (placeholders today) |
@@ -57,20 +58,40 @@ When new routes are added, append rows to this table in the same PR.
 ## 2a. Onboarding screen patterns
 
 The canonical layouts for the onboarding flow (`/`, `/onboarding/sign-in`,
-`/onboarding/permissions`). Copying any of these into a future onboarding
-screen should produce a screen that feels like the same product. These
-rules were finalised after the May 2026 onboarding consistency audit; the
-three current screens are the reference implementations.
+`/onboarding/preferences`, `/onboarding/permissions`). Copying any of these
+into a future onboarding screen should produce a screen that feels like
+the same product. These rules were finalised after the May 2026 onboarding
+consistency audit; the four current screens are the reference
+implementations.
 
 ### Top rhythm
 
-- Non-root step screens use `<ScreenHeader>` followed by **`mt-8` (32px)**
-  on the first eyebrow + heading section.
-- `mt-12` (48px) after a `<ScreenHeader>` is **not** the default. Use it
+- Step screens (`/onboarding/sign-in`, `/onboarding/preferences`,
+  `/onboarding/permissions`) use **`<OnboardingStepHeader>`** —
+  back chip + centered `STEP N OF 4` label + optional Skip link +
+  segmented progress track. Identical chrome across all three;
+  the back chip routes to the previous screen, the progress track
+  reflects position (2, 3, 4 of 4). The welcome screen (`/`) has no
+  step header.
+- The header block is followed by **`mt-8` (32px)** on the first
+  eyebrow + heading section.
+- `mt-12` (48px) after the header block is **not** the default. Use it
   only with a one-line justification in the PR description (e.g. a screen
   with no eyebrow whose hero needs extra drop).
 - The root welcome screen (`/`) uses `pt-2` from `<BrandMark>` and `mt-8`
   to its first content section.
+
+### Local onboarding state
+
+Onboarding choices (travel mode, language, wayfinding/notification
+intent, "continue as guest") persist via
+`@/data/onboarding-state` — a typed `localStorage` shim, **no backend,
+no auth, no real OS permission**. Toggling a `PermissionCard` records
+*intent only*; the actual OS permission is requested later by the
+feature that needs it. The final CTA on `/onboarding/permissions`
+("Start using YVR" and "Set up later") stamps
+`completed: true, completedAt: <ISO>` via `completeOnboarding()` —
+do not introduce a parallel "completed" flag.
 
 ### Bottom CTA group
 
@@ -92,7 +113,8 @@ screens:
   padding here.
 - The pattern is **primary + ghost**: one navy pill for the main action,
   one text-link for the escape path. Skip the ghost only when the screen
-  has no escape (e.g. a forced confirmation — none today).
+  has no escape (e.g. `/onboarding/sign-in`, where the primary CTA
+  *is* the escape from unavailable auth providers).
 - **Do not** invent bespoke spring spacers
   (`<div className="min-h-N max-h-N flex-grow" />`, fixed-height shims).
   They drift between screens; `mt-auto` does not.
