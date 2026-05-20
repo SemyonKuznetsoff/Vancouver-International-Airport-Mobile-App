@@ -3507,6 +3507,117 @@ yet.*
 
 ---
 
+## 15. Screen consistency rules
+
+These rules codify patterns the codebase already follows. They exist to
+prevent drift when adding new screens — particularly the kind that
+small one-off `<h1>` / freshness-label / dark-hero choices introduce
+when a shared pattern would do.
+
+### 15a. Screen category × heading size
+
+Pick the heading based on screen category, not visual taste. Each
+category has exactly one approved pattern.
+
+| Category | Screens (current) | Heading pattern |
+|---|---|---|
+| Top-tab root | `/home`, `/flights`, `/map`, `/services`, `/profile` | `display` (34px) via `<Heading size="display">` or `<LargeTitleHeader>`. Pair with an eyebrow above (`<Eyebrow>` or `<VancouverDateLabel>`). |
+| Authed sub-screen with back chip | `/flights/detail`, `/flights/board`, `/flights/search`, `/home/pickup-ready`, `/parking/reserve`, etc. | Centered `<header>` with `<HeaderIconButton>` ← title → `<HeaderIconButton>`. Title is `text-section-title` (15px) with `text-eyebrow` above. See §2b. |
+| Onboarding / step screen | `/`, `/onboarding/sign-in`, `/onboarding/preferences`, `/onboarding/permissions` | `<OnboardingStepHeader>` + `<Heading size="title">` (30px). See §2a. |
+| Map / immersive | `/map`, `/map/live-navigation` | Title is visually hidden (`sr-only h1`); the map itself is the title. Overlay bottom sheet uses `<Heading size="title">`. |
+
+Rules:
+
+- **Never hand-roll a raw `<h1 className="text-title …">` for a screen
+  title.** Use `<Heading>` (or `<LargeTitleHeader>` for top-tab roots).
+  The component owns size, weight, tracking, and tone tokens — and a
+  later size sweep can rebind one token instead of touching every page.
+- **One `<h1>` per page.** Sub-screens with a small centered title
+  may use a raw `<h1 className="text-section-title">` (see §2b) since
+  no semantic alternative exists — but only one per page.
+- **One italic accent max per screen** (CLAUDE.md §4). The italic
+  clause lives inside an `<em>` inside the `<Heading>`.
+
+### 15b. HeroSurface usage policy
+
+`<HeroSurface>` (dark teal gradient panel — see §5 "Semantic — Hero
+surface") has **two approved uses and nothing else**.
+
+**1. Official airport document / pass surfaces.** Things the airport
+itself owns and that represent a real travel object the traveller can
+present, redeem, scan, or arrive on. Today: flight detail pass
+(`/flights/detail`), flight-board priority card (`/flights/board`),
+baggage pass (`/flights/baggage-info`), gate-change / delay pass
+(`/flights/delay`), parking reservation pass (`/parking/reserved`),
+pickup + arrival passes (`/home/pickup-*`, `/home/arriving-*`).
+These are the surfaces that pair with `<PassDecorBackground>` and
+`<PassPerforation>`.
+
+**2. Premium YVR brand / concierge identity surfaces.** Hero panels
+where YVR is signing the experience — not a document, but an
+authoritative brand presence. Today: profile identity card
+(`/profile`), help-support concierge hero (`/help-support`), services
+operations pass (`/services`), live-tracker entry on flights search
+(`/flights/search`). These typically pair with a `YVR Verified` /
+`YVR Network Active` chip and the brand mint accent (`--color-map-mint`).
+
+**Rules:**
+
+- **Not every screen gets a Spruce hero.** Ordinary concierge,
+  search, listing, settings, and form screens stay Fog-first — glass
+  `<Card>` on the aurora background. Reaching for `<HeroSurface>`
+  should be a deliberate identity statement, not a default.
+- **Pass anatomy is reserved for official documents.** Do not pair
+  `<PassDecorBackground>` / `<PassPerforation>` with a service or
+  utility screen that isn't itself a travel object. A "Service" screen
+  styled to look like a boarding pass is dishonest chrome.
+- **A brand-identity hero is not a pass.** Identity heroes (use #2
+  above) can use `<HeroSurface>` but should not adopt the perforation
+  + decor-background pass anatomy. The hero says "this is YVR"; a
+  pass says "this is your document."
+- **Status colours stay off the hero.** Inside a hero, communicate
+  state with `<StatusPill surface="hero">` or the
+  `--color-surface-hero-fg-*` tones, not raw `--color-warning` /
+  `--color-success` decoration. Hero tier colours (Aeroplan Gold,
+  etc.) belong to `--color-hero-tier-*`.
+
+### 15c. Freshness and live-data copy
+
+Honest freshness is a brand promise. Visible "Updated …" or "Live"
+strings are a contract with the traveller — break the contract once
+and the whole calm-concierge tone collapses.
+
+- **Static prototype data must not claim freshness.** Strings like
+  "Updated now", "Updated just now", "Updated 2 min ago",
+  "Last refreshed 30 s ago" must never be hard-coded against data
+  that doesn't actually refresh. If the data is a prototype
+  literal, the freshness label is a lie. Drop the label.
+- **Real freshness copy requires a real fetch / update time.** When a
+  feed is wired (board API, security feed, baggage feed, parking
+  feed), surface freshness through `<LiveIndicator>` or a shared
+  freshness pattern, formatted from an actual `Date.now() - lastFetch`
+  reading. Until then, do not stand in.
+- **"Live" eyebrows and pills are forward-looking design intent —
+  not a behaviour claim.** Copy like "Live update", "Live baggage
+  status", "Live security status" is allowed on prototype screens
+  because it names *what the section will be when wired*, not a
+  literal "polling now" claim. A "Live" eyebrow with no
+  accompanying ticking timestamp is honest. A "Live" eyebrow paired
+  with "Updated 1 min ago" is not — the timestamp is what implies
+  the polling.
+- **Do not narrate polling.** Even when real data lands, avoid
+  copy like "Refreshing…" or "Checking for updates…" that fakes
+  activity. Let `<LiveIndicator status="live">` carry the signal.
+- **Source attribution is honest.** A static label like
+  "CATSA & YVR feed" is fine on a prototype screen — it names the
+  upstream source without claiming current freshness.
+
+When unsure, ask: "If a reviewer audits the rendered text against the
+underlying data right now, does the text accurately describe the
+data?" If the answer is no, the copy is dishonest — drop it.
+
+---
+
 ## Appendix A — Components inventory
 
 | Component | Source | Notes |

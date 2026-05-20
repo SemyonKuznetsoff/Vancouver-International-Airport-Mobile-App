@@ -65,7 +65,7 @@ const STAGES: JourneyStage[] = [
 
 export default function PickupReadyPage() {
   return (
-    <AppShellAuthed activeHref="/flights">
+    <AppShellAuthed activeHref="/home">
       <PickupReadyHeader />
       <div className="flex flex-1 flex-col gap-4 px-6 pb-6">
         <PickupReadyHero

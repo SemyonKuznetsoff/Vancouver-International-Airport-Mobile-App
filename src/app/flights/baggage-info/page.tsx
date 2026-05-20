@@ -29,7 +29,6 @@ type Baggage = {
   flightNumber: string;
   origin: string;
   carousel: number;
-  statusLabel: string;
   progressLabel: string;
   firstBagEstimate: string;
   location: string;
@@ -41,7 +40,6 @@ const BAGGAGE: Baggage = {
   flightNumber: "CX838",
   origin: "Hong Kong",
   carousel: 6,
-  statusLabel: "Updated now",
   progressLabel: "In progress",
   firstBagEstimate: "~12 min",
   location: "International Arrivals Hall · Level 2",
@@ -124,10 +122,7 @@ function BaggagePass({
       <PassDecorBackground variant="delay" />
       <div className="relative flex flex-col gap-5 p-5">
         {/* Pass header strip — live status + updated indicator */}
-        <BaggagePassHeader
-          reference={baggage.reference}
-          statusLabel={baggage.statusLabel}
-        />
+        <BaggagePassHeader reference={baggage.reference} />
 
         {/* Flight identity row */}
         <FlightIdentity
@@ -166,28 +161,18 @@ function BaggagePass({
   );
 }
 
-function BaggagePassHeader({
-  reference,
-  statusLabel,
-}: {
-  reference: string;
-  statusLabel: string;
-}) {
+function BaggagePassHeader({ reference }: { reference: string }) {
   return (
     <div className="flex items-center justify-between gap-3">
       <span className="text-eyebrow uppercase text-[var(--color-map-mint)]">
         Live baggage status
       </span>
-      <span
-        className="inline-flex items-center gap-1.5 text-micro uppercase text-[var(--color-surface-hero-fg-muted)]"
-        aria-live="polite"
-      >
+      <span className="inline-flex items-center gap-1.5 text-micro uppercase text-[var(--color-surface-hero-fg-muted)]">
         <span
           aria-hidden
           className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-map-mint)]"
         />
-        {statusLabel}
-        <span className="sr-only">— Reference {reference}</span>
+        {reference}
       </span>
     </div>
   );

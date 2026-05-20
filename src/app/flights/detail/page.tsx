@@ -31,7 +31,6 @@ type FlightDetail = {
   arrivesDayOffset?: number;
   gate: string;
   terminal: string;
-  updatedLabel: string;
   boardingTime: string;
   walkMinutes: number;
 };
@@ -56,7 +55,6 @@ const FLIGHT: FlightDetail = {
   arrivesDayOffset: 1,
   gate: "D73",
   terminal: "International Terminal",
-  updatedLabel: "Updated now",
   boardingTime: "13:50",
   walkMinutes: 8,
 };
@@ -97,13 +95,13 @@ function FlightDetailHeader() {
         <ArrowLeftIcon size={16} />
       </HeaderIconButton>
 
-      <div className="flex min-w-0 flex-1 flex-col items-center gap-1 text-center">
+      <div className="flex min-w-0 flex-1 flex-col items-center gap-0.5 text-center">
+        <span className="text-eyebrow uppercase text-[var(--color-text-muted)]">
+          My Flights
+        </span>
         <h1 className="text-section-title text-[var(--color-text-primary)]">
           Flight Detail
         </h1>
-        <p className="text-label text-[var(--color-text-secondary)]">
-          Updated now
-        </p>
       </div>
 
       <HeaderIconButton

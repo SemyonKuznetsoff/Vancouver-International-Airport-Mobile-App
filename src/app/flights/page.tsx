@@ -12,6 +12,7 @@ import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
+import { Heading } from "@/components/Heading";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
 import { PassDecorBackground } from "@/components/PassDecorBackground";
@@ -148,9 +149,9 @@ function FlightsHeader() {
     <header className="flex items-start justify-between gap-3">
       <div className="flex flex-col gap-2">
         <VancouverDateLabel className="text-eyebrow uppercase text-[var(--color-text-muted)]" />
-        <h1 className="text-title text-[var(--color-text-primary)]">
+        <Heading as="h1" size="display">
           My Flights
-        </h1>
+        </Heading>
       </div>
       <HeaderIconButton
         aria-label="Add flight"
