@@ -17,6 +17,7 @@ import { IconTile } from "@/components/IconTile";
 import { PassDecorBackground } from "@/components/PassDecorBackground";
 import { PassPerforation } from "@/components/PassPerforation";
 import { StatusPill } from "@/components/StatusPill";
+import { VancouverDateLabel } from "@/components/VancouverDateLabel";
 import {
   ChevronRightIcon,
   NavigationIcon,
@@ -123,7 +124,7 @@ export default function MyFlightsPage() {
   return (
     <AppShellAuthed activeHref="/flights">
       <div className="flex flex-1 flex-col gap-6 px-6 pt-2 pb-6">
-        <FlightsHeader date="Saturday · May 9" />
+        <FlightsHeader />
         {showSavedView ? (
           <SavedFlightsSection flights={savedFlights} />
         ) : (
@@ -142,13 +143,11 @@ export default function MyFlightsPage() {
   );
 }
 
-function FlightsHeader({ date }: { date: string }) {
+function FlightsHeader() {
   return (
     <header className="flex items-start justify-between gap-3">
       <div className="flex flex-col gap-2">
-        <span className="text-eyebrow uppercase text-[var(--color-text-muted)]">
-          {date}
-        </span>
+        <VancouverDateLabel className="text-eyebrow uppercase text-[var(--color-text-muted)]" />
         <h1 className="text-title text-[var(--color-text-primary)]">
           My Flights
         </h1>
