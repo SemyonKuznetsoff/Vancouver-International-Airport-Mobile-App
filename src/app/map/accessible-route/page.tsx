@@ -34,7 +34,7 @@ type RouteVerification = {
 const VERIFICATION: RouteVerification = {
   controlLabel: "Live Access Control",
   title: "Step-free route verified",
-  supportLine: "Elevators live · Lane open · Updated just now",
+  supportLine: "Elevators live · Lane open",
   chips: ["Elevators Live", "Step-Free", "Lane Open"],
   stats: [
     { id: "time", label: "Time", value: "12", unit: "min" },

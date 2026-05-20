@@ -99,7 +99,7 @@ const PASSENGER_FIRST_NAME = "Sarah";
 
 export default function PickupWaitingPage() {
   return (
-    <AppShellAuthed activeHref="/flights">
+    <AppShellAuthed activeHref="/home">
       <PickupWaitingHeader />
       <div className="flex flex-1 flex-col gap-4 px-6 pb-6">
         <PickupHero flight={FLIGHT} timing={TIMING} />

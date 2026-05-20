@@ -54,7 +54,6 @@ type RouteStop = {
   state: "complete" | "current" | "upcoming";
 };
 
-const STATUS_LABEL = "Updated just now";
 const SOURCE_LABEL = "CATSA & YVR feed";
 
 const SUMMARY: CheckpointSummary[] = [
@@ -178,7 +177,7 @@ function SecurityHeader() {
 }
 
 function SecurityStatusPass({ summary }: { summary: CheckpointSummary[] }) {
-  const accessibleName = `Live security status from ${SOURCE_LABEL}, ${STATUS_LABEL}. ${summary
+  const accessibleName = `Live security status from ${SOURCE_LABEL}. ${summary
     .map((s) => `${s.name}: ${s.waitMinutes} minute wait`)
     .join(", ")}.`;
   return (
@@ -207,10 +206,6 @@ function SecurityPassHeader() {
       <StatusPill tone="success" surface="hero" leadingDot size="sm">
         Live security status
       </StatusPill>
-      <span className="inline-flex items-center gap-1.5 text-label text-[var(--color-surface-hero-fg-muted)]">
-        <SyncIcon size={11} aria-hidden />
-        {STATUS_LABEL}
-      </span>
     </div>
   );
 }

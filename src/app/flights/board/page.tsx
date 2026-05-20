@@ -34,8 +34,8 @@ type StatusTone = "success" | "warning" | "info" | "neutral";
  * board content rather than calling any provider. Treat it as a
  * design/UX scaffold, not a live feed. When the real board API
  * lands, replace `PROTOTYPE_DEPARTURES` / `PROTOTYPE_ARRIVALS` with
- * normalised data and lift the "Updated 2 min ago" copy onto a real
- * freshness timestamp.
+ * normalised data and wire a real freshness timestamp via
+ * `LiveIndicator` if the header surfaces one.
  */
 type PrototypeFlight = {
   id: string;

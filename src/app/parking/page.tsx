@@ -207,18 +207,9 @@ function LiveUpdateCard() {
         <InfoIcon size={16} />
       </IconTile>
       <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-0.5">
-          <span className="text-micro uppercase text-[var(--color-warning-fg)]">
-            Live update
-          </span>
-          <span
-            aria-hidden
-            className="inline-block h-1 w-1 rounded-full bg-[var(--color-text-muted)]"
-          />
-          <span className="text-label text-[var(--color-text-muted)]">
-            Updated 1 min ago
-          </span>
-        </div>
+        <span className="text-micro uppercase text-[var(--color-warning-fg)]">
+          Live update
+        </span>
         <p className="text-body-sm text-[var(--color-text-secondary)]">
           <span className="text-[var(--color-text-primary)]">
             P4 Domestic is full.

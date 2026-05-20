@@ -167,10 +167,6 @@ function UpdateMetaRow() {
         />
         Live flight update
       </span>
-      <span className="inline-flex items-center gap-1.5 text-label text-[var(--color-surface-hero-fg-muted)]">
-        <SyncIcon size={12} aria-hidden />
-        Updated now
-      </span>
     </div>
   );
 }
