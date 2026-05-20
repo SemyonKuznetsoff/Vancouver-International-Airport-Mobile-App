@@ -1,7 +1,8 @@
 "use client";
 
 import type { Route } from "next";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { AirportCodePair } from "@/components/AirportCodePair";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
@@ -97,6 +98,19 @@ const ROUTE_SEARCH: RouteSearch = {
 };
 
 export default function FlightSearchPage() {
+  return (
+    <Suspense fallback={<FlightSearchPageShell />}>
+      <FlightSearchPageInner />
+    </Suspense>
+  );
+}
+
+function FlightSearchPageShell() {
+  return <AppShellAuthed activeHref="/flights"><FlightSearchHeader /></AppShellAuthed>;
+}
+
+function FlightSearchPageInner() {
+  const searchParams = useSearchParams();
   const [input, setInput] = useState("");
   const [phase, setPhase] = useState<SearchPhase>({ kind: "idle" });
   const [recents, setRecents] = useState<RecentFlightSearch[]>([]);
@@ -104,6 +118,7 @@ export default function FlightSearchPage() {
     () => new Set(),
   );
   const abortRef = useRef<AbortController | null>(null);
+  const autoSearchRanRef = useRef(false);
 
   useEffect(() => {
     setRecents(loadRecentSearches());
@@ -190,6 +205,16 @@ export default function FlightSearchPage() {
     },
     [refreshSaved],
   );
+
+  useEffect(() => {
+    if (autoSearchRanRef.current) return;
+    const rawFlightNumber = searchParams.get("flightNumber");
+    const auto = searchParams.get("autoSearch");
+    if (!rawFlightNumber || auto !== "1") return;
+    autoSearchRanRef.current = true;
+    setInput(rawFlightNumber);
+    void runSearch(rawFlightNumber);
+  }, [searchParams, runSearch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

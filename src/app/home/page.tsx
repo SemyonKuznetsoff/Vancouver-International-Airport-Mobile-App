@@ -10,6 +10,7 @@ import { Card } from "@/components/Card";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Heading } from "@/components/Heading";
 import { HeroSurface } from "@/components/HeroSurface";
+import { HomeFlightSearch } from "@/components/HomeFlightSearch";
 import { IconTile } from "@/components/IconTile";
 import { LiveIndicator } from "@/components/LiveIndicator";
 import { MetricBlock } from "@/components/MetricBlock";
@@ -226,6 +227,10 @@ function HeroAddTripCard({ status }: { status: AirportStatus }) {
       <p className="mt-4 text-body text-[var(--color-surface-hero-fg-muted)]">
         Add a trip and we&rsquo;ll guide every step — from curb to gate, calmly.
       </p>
+
+      <div className="mt-6">
+        <HomeFlightSearch />
+      </div>
     </HeroSurface>
   );
 }
