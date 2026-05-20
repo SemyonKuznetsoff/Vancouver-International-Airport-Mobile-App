@@ -12,6 +12,13 @@ type PermissionCardProps = {
   footerLabel: string;
   defaultOn?: boolean;
   toggleAriaLabel: string;
+  /**
+   * Fires whenever the toggle changes, with the new value. The toggle
+   * only records a preference — it does **not** request the underlying
+   * OS permission. Callers can use this hook to persist the preference
+   * (e.g. localStorage) so the user's intent survives a reload.
+   */
+  onChange?: (next: boolean) => void;
   className?: string;
 };
 
@@ -22,9 +29,15 @@ export function PermissionCard({
   footerLabel,
   defaultOn = true,
   toggleAriaLabel,
+  onChange,
   className = "",
 }: PermissionCardProps) {
   const [on, setOn] = useState(defaultOn);
+
+  const handleChange = (next: boolean) => {
+    setOn(next);
+    onChange?.(next);
+  };
 
   return (
     <Card as="article" className={className}>
@@ -38,7 +51,7 @@ export function PermissionCard({
             </h2>
             <Toggle
               checked={on}
-              onChange={setOn}
+              onChange={handleChange}
               ariaLabel={toggleAriaLabel}
             />
           </div>

@@ -1,22 +1,35 @@
+"use client";
+
 import { AppShell } from "@/components/AppShell";
 import { AuthOption, AuthOptionGroup } from "@/components/AuthOption";
 import { Button } from "@/components/Button";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Heading } from "@/components/Heading";
-import { ScreenHeader } from "@/components/ScreenHeader";
+import { OnboardingStepHeader } from "@/components/OnboardingStepHeader";
 import {
   AeroplanBadge,
   AppleIcon,
+  ArrowRightIcon,
   GoogleIcon,
   MailIcon,
   ShieldCheckIcon,
 } from "@/components/icons";
+import { saveOnboardingState } from "@/data/onboarding-state";
 
 export default function SignInPage() {
+  const handleGuestContinue = () => {
+    saveOnboardingState({ authMode: "guest" });
+  };
+
   return (
     <AppShell>
       <main className="flex flex-1 flex-col px-6">
-        <ScreenHeader backHref="/" step="Optional step" />
+        <OnboardingStepHeader
+          current={2}
+          total={4}
+          backHref="/"
+          backLabel="Back to welcome"
+        />
 
         <section className="mt-8 flex flex-col gap-4">
           <Eyebrow>Personal Concierge</Eyebrow>
@@ -50,27 +63,22 @@ export default function SignInPage() {
               badge="Soon"
               disabled
             />
+            <AuthOption
+              leading={<MailIcon size={18} />}
+              label="Continue with email"
+              badge="Soon"
+              disabled
+            />
           </AuthOptionGroup>
         </section>
 
-        <div className="mt-8 flex items-center gap-3">
-          <span className="h-px flex-1 bg-[var(--color-border)]" />
-          <Eyebrow tone="secondary">Or</Eyebrow>
-          <span className="h-px flex-1 bg-[var(--color-border)]" />
-        </div>
-
-        <Button
-          variant="secondary"
-          leadingIcon={<MailIcon size={16} />}
-          aria-label="Sign in with email"
-          className="mt-4"
-          disabled
-        >
-          Sign in with email
-        </Button>
-
         <div className="mt-auto flex flex-col items-center gap-3 pt-8 pb-2">
-          <Button variant="ghost" href="/onboarding/preferences">
+          <Button
+            href="/onboarding/preferences"
+            variant="primary"
+            trailingIcon={<ArrowRightIcon size={16} />}
+            onClick={handleGuestContinue}
+          >
             Continue as guest
           </Button>
           <p className="inline-flex items-center gap-2 text-label text-[var(--color-text-secondary)]">

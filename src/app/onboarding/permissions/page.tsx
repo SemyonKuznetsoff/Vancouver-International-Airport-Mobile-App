@@ -1,21 +1,48 @@
+"use client";
+
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Heading } from "@/components/Heading";
+import { OnboardingStepHeader } from "@/components/OnboardingStepHeader";
 import { PermissionCard } from "@/components/PermissionCard";
-import { ScreenHeader } from "@/components/ScreenHeader";
 import {
   ArrowRightIcon,
   BellIcon,
   LocationPinIcon,
   LockIcon,
 } from "@/components/icons";
+import {
+  completeOnboarding,
+  saveOnboardingState,
+} from "@/data/onboarding-state";
 
 export default function PermissionsPage() {
+  const handleWayfindingChange = (next: boolean) => {
+    saveOnboardingState({ wantsWayfinding: next });
+  };
+
+  const handleNotificationsChange = (next: boolean) => {
+    saveOnboardingState({ wantsNotifications: next });
+  };
+
+  const handleStart = () => {
+    completeOnboarding();
+  };
+
+  const handleSetUpLater = () => {
+    completeOnboarding();
+  };
+
   return (
     <AppShell>
       <main className="flex flex-1 flex-col px-6">
-        <ScreenHeader backHref="/onboarding/preferences" step="Step 4 of 4" />
+        <OnboardingStepHeader
+          current={4}
+          total={4}
+          backHref="/onboarding/preferences"
+          backLabel="Back to preferences"
+        />
 
         <section className="mt-8 flex flex-col gap-4">
           <Eyebrow>Smart Guidance</Eyebrow>
@@ -37,6 +64,7 @@ export default function PermissionsPage() {
             footerLabel="Location while using app"
             toggleAriaLabel="Enable wayfinding guidance"
             defaultOn={false}
+            onChange={handleWayfindingChange}
           />
           <PermissionCard
             icon={<BellIcon size={18} />}
@@ -45,12 +73,13 @@ export default function PermissionsPage() {
             footerLabel="Notifications"
             toggleAriaLabel="Enable flight updates"
             defaultOn={false}
+            onChange={handleNotificationsChange}
           />
         </section>
 
         <p className="mt-8 inline-flex items-center gap-2 text-label text-[var(--color-text-secondary)]">
           <LockIcon size={12} />
-          <span>Your location and notifications stay on this device.</span>
+          <span>We&apos;ll ask for device permission when needed.</span>
         </p>
 
         <div className="mt-auto flex flex-col gap-3 pt-8 pb-2">
@@ -59,10 +88,11 @@ export default function PermissionsPage() {
             variant="primary"
             trailingIcon={<ArrowRightIcon size={16} />}
             aria-label="Start using YVR"
+            onClick={handleStart}
           >
             Start using YVR
           </Button>
-          <Button href="/home" variant="ghost">
+          <Button href="/home" variant="ghost" onClick={handleSetUpLater}>
             Set up later
           </Button>
         </div>

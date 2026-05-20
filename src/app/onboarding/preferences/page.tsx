@@ -1,28 +1,28 @@
 "use client";
 
-import Link from "next/link";
 import { useId, useState } from "react";
 import { AppShell } from "@/components/AppShell";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { Eyebrow } from "@/components/Eyebrow";
 import { Heading } from "@/components/Heading";
-import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { IconTile } from "@/components/IconTile";
+import { OnboardingStepHeader } from "@/components/OnboardingStepHeader";
 import {
   AccessibilityIcon,
-  ArrowLeftIcon,
   BriefcaseIcon,
   CheckIcon,
   SparkleIcon,
   UsersIcon,
 } from "@/components/icons";
-
-type ModeId = "business" | "family" | "accessibility" | "first-timer";
-type LangId = "en" | "fr" | "zh" | "ja";
+import {
+  saveOnboardingState,
+  type Language,
+  type TravelMode,
+} from "@/data/onboarding-state";
 
 type Mode = {
-  id: ModeId;
+  id: TravelMode;
   title: string;
   subtitle: string;
   modeLabel: string;
@@ -65,7 +65,7 @@ const MODES: Mode[] = [
   },
 ];
 
-const LANGS: { id: LangId; label: string; aria: string }[] = [
+const LANGS: { id: Language; label: string; aria: string }[] = [
   { id: "en", label: "English", aria: "English" },
   { id: "fr", label: "Français", aria: "Français" },
   { id: "zh", label: "中文", aria: "Chinese" },
@@ -73,17 +73,39 @@ const LANGS: { id: LangId; label: string; aria: string }[] = [
 ];
 
 export default function PreferencesPage() {
-  const [selectedMode, setSelectedMode] = useState<ModeId>("business");
-  const [selectedLang, setSelectedLang] = useState<LangId>("en");
+  const [selectedMode, setSelectedMode] = useState<TravelMode>("business");
+  const [selectedLang, setSelectedLang] = useState<Language>("en");
 
   const activeMode = MODES.find((m) => m.id === selectedMode) ?? MODES[0];
   const otherModes = MODES.filter((m) => m.id !== selectedMode);
 
+  const handleModeChange = (id: TravelMode) => {
+    setSelectedMode(id);
+    saveOnboardingState({ travelMode: id });
+  };
+
+  const handleLangChange = (id: Language) => {
+    setSelectedLang(id);
+    saveOnboardingState({ language: id });
+  };
+
+  const handleSave = () => {
+    saveOnboardingState({
+      travelMode: selectedMode,
+      language: selectedLang,
+    });
+  };
+
   return (
     <AppShell>
       <main className="flex flex-1 flex-col px-6">
-        <StepHeader />
-        <ProgressTrack current={3} total={4} />
+        <OnboardingStepHeader
+          current={3}
+          total={4}
+          backHref="/onboarding/sign-in"
+          backLabel="Back to sign in"
+          skipHref="/onboarding/permissions"
+        />
 
         <section className="mt-8 flex flex-col gap-4">
           <Heading size="title">Personalize your experience</Heading>
@@ -111,14 +133,18 @@ export default function PreferencesPage() {
               <SecondaryModeButton
                 key={m.id}
                 mode={m}
-                onSelect={() => setSelectedMode(m.id)}
+                onSelect={() => handleModeChange(m.id)}
               />
             ))}
           </div>
         </div>
 
         <div className="mt-auto flex flex-col gap-3 pt-8 pb-2">
-          <Button href="/onboarding/permissions" variant="primary">
+          <Button
+            href="/onboarding/permissions"
+            variant="primary"
+            onClick={handleSave}
+          >
             Save &amp; Continue
           </Button>
           <p className="text-center text-label text-[var(--color-text-secondary)]">
@@ -126,69 +152,11 @@ export default function PreferencesPage() {
           </p>
           <LanguagePicker
             selected={selectedLang}
-            onSelect={setSelectedLang}
+            onSelect={handleLangChange}
           />
         </div>
       </main>
     </AppShell>
-  );
-}
-
-function StepHeader() {
-  return (
-    <div className="relative pt-2">
-      <div className="flex items-center justify-between">
-        <HeaderIconButton aria-label="Go back" href="/onboarding/sign-in">
-          <ArrowLeftIcon size={16} />
-        </HeaderIconButton>
-        <Link
-          href="/onboarding/permissions"
-          className="inline-flex h-11 items-center px-2 text-body-sm font-medium text-[var(--color-text-secondary)] hover:text-[var(--color-text-primary)]"
-        >
-          Skip
-        </Link>
-      </div>
-      <span
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-2 inline-flex h-11 items-center justify-center text-eyebrow uppercase text-[var(--color-text-secondary)]"
-      >
-        Step 3 of 4
-      </span>
-    </div>
-  );
-}
-
-function ProgressTrack({
-  current,
-  total,
-}: {
-  current: number;
-  total: number;
-}) {
-  return (
-    <div
-      role="progressbar"
-      aria-label={`Onboarding step ${current} of ${total}`}
-      aria-valuemin={1}
-      aria-valuemax={total}
-      aria-valuenow={current}
-      className="mt-4 flex items-center gap-1.5"
-    >
-      {Array.from({ length: total }).map((_, i) => {
-        const filled = i < current;
-        return (
-          <span
-            key={i}
-            aria-hidden
-            className={`h-1 flex-1 rounded-[var(--radius-pill)] ${
-              filled
-                ? "bg-[var(--color-action-primary)]"
-                : "bg-[var(--color-border-soft)]"
-            }`}
-          />
-        );
-      })}
-    </div>
   );
 }
 
@@ -286,8 +254,8 @@ function LanguagePicker({
   selected,
   onSelect,
 }: {
-  selected: LangId;
-  onSelect: (id: LangId) => void;
+  selected: Language;
+  onSelect: (id: Language) => void;
 }) {
   const groupId = useId();
   return (
