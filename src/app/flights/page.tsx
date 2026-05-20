@@ -757,7 +757,22 @@ function OnYourRadarSection({
           </li>
         ))}
       </ul>
+      <FlightBoardEntryLink />
     </section>
+  );
+}
+
+function FlightBoardEntryLink() {
+  return (
+    <div className="flex justify-center pt-1">
+      <Link
+        href={"/flights/board" as Route}
+        className="inline-flex h-11 items-center gap-1.5 text-body-sm-emphasis text-[var(--color-action-teal)] hover:opacity-80"
+      >
+        View YVR flight board
+        <ChevronRightIcon size={14} aria-hidden />
+      </Link>
+    </div>
   );
 }
 
