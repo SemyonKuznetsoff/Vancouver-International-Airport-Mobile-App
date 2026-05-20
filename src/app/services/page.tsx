@@ -142,6 +142,13 @@ const SERVICE_GROUPS: ServiceGroup[] = [
         description: "SkyTrain 4 min · Rideshare, taxi, car rental",
         href: "/ground-transport" as Route,
       },
+      {
+        id: "pickup-dropoff",
+        icon: <SignpostIcon size={16} />,
+        title: "Pickup & Drop-off",
+        description: "Find the right curbside zone by terminal",
+        href: "/services/pickup-dropoff" as Route,
+      },
     ],
   },
   {
