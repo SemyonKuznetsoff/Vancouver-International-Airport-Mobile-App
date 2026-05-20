@@ -1,9 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import type { Route } from "next";
+import { useEffect, useState } from "react";
 import {
   PROTOTYPE_DEPARTING_STATE,
   departingHref,
 } from "@/data/departing-state";
+import { loadSavedFlights, type SavedFlight } from "@/data/saved-flights";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
 import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
@@ -20,6 +24,7 @@ import {
   PlusIcon,
   QrCodeIcon,
 } from "@/components/icons";
+import type { YvrFlightStatus } from "@/lib/flights/types";
 
 type ActiveFlight = {
   airline: string;
@@ -92,15 +97,46 @@ const RADAR_FLIGHTS: RadarFlight[] = [
   },
 ];
 
+/**
+ * `loadedFromStorage` gates the swap between the prototype hero
+ * (server render) and the saved-flights view (client render after
+ * `useEffect`). The server can't read `localStorage` so it always
+ * paints the prototype; once we know what's saved we either:
+ *  - keep the prototype if there are no saved flights, or
+ *  - hide the prototype hero and show the saved-flight cards so the
+ *    user's real data dominates the screen.
+ *
+ * The "Also on your radar" preview row stays in both branches because
+ * it reads as design-preview, not live data.
+ */
 export default function MyFlightsPage() {
+  const [savedFlights, setSavedFlights] = useState<SavedFlight[]>([]);
+  const [loadedFromStorage, setLoadedFromStorage] = useState(false);
+
+  useEffect(() => {
+    setSavedFlights(loadSavedFlights());
+    setLoadedFromStorage(true);
+  }, []);
+
+  const showSavedView = loadedFromStorage && savedFlights.length > 0;
+
   return (
     <AppShellAuthed activeHref="/flights">
       <div className="flex flex-1 flex-col gap-6 px-6 pt-2 pb-6">
         <FlightsHeader date="Saturday · May 9" />
-        <HappeningSoonRow />
-        <ActiveFlightCard flight={ACTIVE_FLIGHT} />
-        <ViewTripDetailsLink />
-        <OnYourRadarSection flights={RADAR_FLIGHTS} />
+        {showSavedView ? (
+          <SavedFlightsSection flights={savedFlights} />
+        ) : (
+          <>
+            <HappeningSoonRow />
+            <ActiveFlightCard flight={ACTIVE_FLIGHT} />
+            <ViewTripDetailsLink />
+          </>
+        )}
+        <OnYourRadarSection
+          flights={RADAR_FLIGHTS}
+          previewMode={showSavedView}
+        />
       </div>
     </AppShellAuthed>
   );
@@ -125,6 +161,321 @@ function FlightsHeader({ date }: { date: string }) {
       </HeaderIconButton>
     </header>
   );
+}
+
+function SavedFlightsSection({ flights }: { flights: SavedFlight[] }) {
+  return (
+    <section
+      aria-labelledby="saved-flights-heading"
+      className="flex flex-col gap-3"
+    >
+      <h2
+        id="saved-flights-heading"
+        className="text-eyebrow uppercase text-[var(--color-text-muted)]"
+      >
+        Saved flights
+      </h2>
+      <ul className="flex flex-col gap-3">
+        {flights.map((f) => (
+          <li key={f.id}>
+            <SavedFlightHero flight={f} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/**
+ * Premium boarding-pass / ticket surface for a saved live flight.
+ * Mirrors the prototype `<ActiveFlightCard>` chrome (HeroSurface +
+ * PassDecorBackground + display-size route codes + segmented info
+ * module + PassPerforation + footer trust line) but is driven
+ * entirely by normalised `YvrFlightSearchResult` fields — no fake
+ * passenger name, seat, boarding group, QR code, or aircraft type is
+ * invented.
+ *
+ * The card is intentionally display-only: there is no per-saved-flight
+ * detail route in the app yet, so adding a "View" / "Boarding pass"
+ * CTA would lie about destination state. The Add (+) button in the
+ * page header is the only entry into the flow, and it points at the
+ * real `/flights/search` route.
+ */
+function SavedFlightHero({ flight }: { flight: SavedFlight }) {
+  const statusTone = mapStatusToTone(flight.status);
+  const statusLabel = mapStatusToLabel(flight.status);
+  const carrier =
+    flight.airlineName?.trim() || flight.flightNumber.slice(0, 2);
+  const timeCell = describeTimeCell(flight);
+  const gateCell = flight.gate
+    ? { label: "Gate", value: flight.gate, highlight: true }
+    : null;
+  const cells: PassCell[] = [];
+  if (timeCell) cells.push(timeCell);
+  if (gateCell) cells.push(gateCell);
+
+  const accessibleName = [
+    `Saved flight ${flight.flightNumber}`,
+    carrier,
+    `${flight.origin ?? "origin TBD"} to ${flight.destination ?? "destination TBD"}`,
+    statusLabel,
+    timeCell ? `${timeCell.label} ${timeCell.value}` : null,
+    flight.gate ? `gate ${flight.gate}` : null,
+    `saved ${formatRelative(flight.savedAt)}`,
+  ]
+    .filter(Boolean)
+    .join(", ");
+
+  return (
+    <HeroSurface
+      as="article"
+      aria-label={accessibleName}
+      className="shadow-[var(--shadow-hero-card)]"
+    >
+      <PassDecorBackground variant="tall" />
+      <div className="relative flex flex-col gap-5 p-6">
+        <SavedPassDocumentBand origin={flight.origin} />
+        <SavedPassIdentityRow
+          carrier={carrier}
+          flightNumber={flight.flightNumber}
+          statusTone={statusTone}
+          statusLabel={statusLabel}
+        />
+        <SavedPassRoute
+          origin={flight.origin ?? "—"}
+          destination={flight.destination ?? "—"}
+        />
+        {cells.length > 0 ? <SavedPassInfoModule cells={cells} /> : null}
+        <PassPerforation />
+        <SavedPassFooter
+          carrier={carrier}
+          flightNumber={flight.flightNumber}
+          savedAt={flight.savedAt}
+        />
+      </div>
+    </HeroSurface>
+  );
+}
+
+type PassCell = { label: string; value: string; highlight?: boolean };
+
+function SavedPassDocumentBand({ origin }: { origin?: string }) {
+  // Slim top band that reads like the title row of a printed flight
+  // document. Left chip says the snapshot is live data captured at
+  // save-time (not a continuous tracker); right chip frames the
+  // surface as the user's "saved flight" filed against YVR (or the
+  // departure airport on the snapshot, if known).
+  const airportContext = (origin ?? "YVR").toUpperCase();
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="inline-flex items-center gap-2 text-micro uppercase text-[var(--color-surface-hero-fg-muted)]">
+        <span
+          aria-hidden
+          className="inline-block h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--color-map-mint)]"
+        />
+        Live snapshot
+      </span>
+      <span className="text-micro uppercase tabular-nums text-[var(--color-surface-hero-fg-soft)]">
+        Saved flight · {airportContext}
+      </span>
+    </div>
+  );
+}
+
+function SavedPassIdentityRow({
+  carrier,
+  flightNumber,
+  statusTone,
+  statusLabel,
+}: {
+  carrier: string;
+  flightNumber: string;
+  statusTone: "success" | "warning" | "danger" | "info" | "neutral";
+  statusLabel: string;
+}) {
+  return (
+    <div className="flex items-end justify-between gap-3">
+      <div className="flex min-w-0 items-center gap-3">
+        <IconTile
+          size={36}
+          className="rounded-[var(--radius-tile)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] text-[var(--color-surface-hero-fg)]"
+        >
+          <PlaneIcon size={16} />
+        </IconTile>
+        <div className="flex min-w-0 flex-col gap-1">
+          <span className="truncate text-eyebrow uppercase text-[var(--color-surface-hero-fg-soft)]">
+            {carrier}
+          </span>
+          <span className="text-title tabular-nums text-[var(--color-surface-hero-fg)]">
+            {flightNumber}
+          </span>
+        </div>
+      </div>
+      <StatusPill tone={statusTone} surface="hero" leadingDot size="sm">
+        {statusLabel}
+      </StatusPill>
+    </div>
+  );
+}
+
+function SavedPassRoute({
+  origin,
+  destination,
+}: {
+  origin: string;
+  destination: string;
+}) {
+  return (
+    <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
+      <span className="text-display tabular-nums text-[var(--color-surface-hero-fg)]">
+        {origin}
+      </span>
+      <span aria-hidden className="relative flex w-full items-center">
+        <span className="inline-block h-1 w-1 shrink-0 rounded-full bg-[var(--color-map-mint)]" />
+        <span className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]" />
+        <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-map-mint-bg)] text-[var(--color-map-mint)]">
+          <PlaneIcon size={11} />
+        </span>
+        <span className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]" />
+        <span className="inline-block h-1 w-1 shrink-0 rounded-full bg-[var(--color-surface-hero-fg-soft)]" />
+      </span>
+      <span className="text-display tabular-nums text-[var(--color-surface-hero-fg-muted)]">
+        {destination}
+      </span>
+    </div>
+  );
+}
+
+function SavedPassInfoModule({ cells }: { cells: PassCell[] }) {
+  const colsClass = cells.length === 1 ? "grid-cols-1" : "grid-cols-2";
+  return (
+    <div
+      className={`grid ${colsClass} overflow-hidden rounded-[var(--radius-tile)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)]`}
+    >
+      {cells.map((cell, i) => (
+        <SavedPassCell
+          key={cell.label}
+          label={cell.label}
+          value={cell.value}
+          divider={i > 0}
+          highlight={cell.highlight ?? false}
+        />
+      ))}
+    </div>
+  );
+}
+
+function SavedPassCell({
+  label,
+  value,
+  divider = false,
+  highlight = false,
+}: {
+  label: string;
+  value: string;
+  divider?: boolean;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`flex flex-col gap-1 px-3 py-3 ${
+        divider ? "border-l border-[var(--color-surface-hero-tile-border)]" : ""
+      } ${highlight ? "bg-[var(--color-map-mint-bg)]" : ""}`}
+    >
+      <span
+        className={`text-micro uppercase ${
+          highlight
+            ? "text-[var(--color-map-mint)]"
+            : "text-[var(--color-surface-hero-fg-soft)]"
+        }`}
+      >
+        {label}
+      </span>
+      <span
+        className={`text-section-title tabular-nums ${
+          highlight
+            ? "text-[var(--color-map-mint)]"
+            : "text-[var(--color-surface-hero-fg)]"
+        }`}
+      >
+        {value}
+      </span>
+    </div>
+  );
+}
+
+function SavedPassFooter({
+  carrier,
+  flightNumber,
+  savedAt,
+}: {
+  carrier: string;
+  flightNumber: string;
+  savedAt: string;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div className="inline-flex min-w-0 items-center gap-2.5">
+        <span
+          aria-hidden
+          className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-[var(--radius-tile)] border border-[var(--color-map-mint-soft)] bg-[var(--color-map-mint-bg)] text-[var(--color-map-mint)]"
+        >
+          <PlaneIcon size={12} />
+        </span>
+        <span className="flex min-w-0 flex-col gap-0.5">
+          <span className="truncate text-label text-[var(--color-surface-hero-fg-muted)]">
+            {carrier} · {flightNumber}
+          </span>
+          <span className="truncate text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
+            Saved {formatRelative(savedAt)} · Live data snapshot
+          </span>
+        </span>
+      </div>
+      <SavedPassBarcodeMarks
+        aria-label={`${carrier} ${flightNumber} saved pass`}
+      />
+    </div>
+  );
+}
+
+function SavedPassBarcodeMarks({ "aria-label": ariaLabel }: { "aria-label": string }) {
+  // Decorative bar pattern. Not scannable — there is no real
+  // boarding-pass barcode tied to a saved-search snapshot, so this
+  // exists purely as visual texture matching the YVR pass language.
+  const heights = [10, 16, 8, 14, 12, 18, 10];
+  return (
+    <span
+      aria-label={ariaLabel}
+      role="img"
+      className="inline-flex shrink-0 items-end gap-[3px]"
+      style={{ height: 18 }}
+    >
+      {heights.map((h, i) => (
+        <span
+          key={i}
+          aria-hidden
+          className="inline-block w-0.5 rounded-full bg-[var(--color-surface-hero-fg-soft)]"
+          style={{ height: h }}
+        />
+      ))}
+    </span>
+  );
+}
+
+function describeTimeCell(flight: SavedFlight): PassCell | null {
+  if (flight.actualTime) {
+    const value = formatTime(flight.actualTime);
+    if (flight.status === "arrived") return { label: "Arrived", value };
+    if (flight.status === "departed") return { label: "Departed", value };
+    return { label: "Actual", value };
+  }
+  if (flight.estimatedTime) {
+    return { label: "Estimated", value: formatTime(flight.estimatedTime) };
+  }
+  if (flight.scheduledTime) {
+    return { label: "Scheduled", value: formatTime(flight.scheduledTime) };
+  }
+  return null;
 }
 
 function HappeningSoonRow() {
@@ -384,11 +735,17 @@ function ViewTripDetailsLink() {
   );
 }
 
-function OnYourRadarSection({ flights }: { flights: RadarFlight[] }) {
+function OnYourRadarSection({
+  flights,
+  previewMode = false,
+}: {
+  flights: RadarFlight[];
+  previewMode?: boolean;
+}) {
   return (
     <section aria-label="Upcoming flights" className="flex flex-col gap-3 pt-2">
       <h2 className="text-eyebrow uppercase text-[var(--color-text-muted)]">
-        Also on your radar
+        {previewMode ? "Also on your radar · preview" : "Also on your radar"}
       </h2>
       <ul className="flex flex-col gap-2.5">
         {flights.map((f) => (
@@ -498,4 +855,64 @@ function PickupFlightCard({ flight }: { flight: RadarFlight }) {
       </Link>
     </Card>
   );
+}
+
+function mapStatusToTone(
+  status: YvrFlightStatus,
+): "success" | "warning" | "danger" | "info" | "neutral" {
+  switch (status) {
+    case "scheduled":
+    case "boarding":
+    case "departed":
+    case "arrived":
+      return "info";
+    case "delayed":
+      return "warning";
+    case "cancelled":
+      return "danger";
+    default:
+      return "neutral";
+  }
+}
+
+function mapStatusToLabel(status: YvrFlightStatus): string {
+  switch (status) {
+    case "scheduled":
+      return "Scheduled";
+    case "boarding":
+      return "Boarding";
+    case "departed":
+      return "Departed";
+    case "arrived":
+      return "Arrived";
+    case "delayed":
+      return "Delayed";
+    case "cancelled":
+      return "Cancelled";
+    default:
+      return "Status TBD";
+  }
+}
+
+function formatTime(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  return d.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function formatRelative(iso: string): string {
+  const then = new Date(iso).getTime();
+  if (Number.isNaN(then)) return "recently";
+  const diffMs = Date.now() - then;
+  const diffMin = Math.max(0, Math.round(diffMs / 60000));
+  if (diffMin < 1) return "just now";
+  if (diffMin < 60) return `${diffMin}m ago`;
+  const diffHr = Math.round(diffMin / 60);
+  if (diffHr < 24) return `${diffHr}h ago`;
+  const diffDay = Math.round(diffHr / 24);
+  if (diffDay < 7) return `${diffDay}d ago`;
+  return new Date(iso).toLocaleDateString();
 }
