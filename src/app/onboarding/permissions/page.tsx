@@ -15,7 +15,7 @@ export default function PermissionsPage() {
   return (
     <AppShell>
       <main className="flex flex-1 flex-col px-6">
-        <ScreenHeader backHref="/onboarding/sign-in" step="Step 4 of 4" />
+        <ScreenHeader backHref="/onboarding/preferences" step="Step 4 of 4" />
 
         <section className="mt-8 flex flex-col gap-4">
           <Eyebrow>Smart Guidance</Eyebrow>
@@ -55,14 +55,14 @@ export default function PermissionsPage() {
 
         <div className="mt-auto flex flex-col gap-3 pt-8 pb-2">
           <Button
-            href="/"
+            href="/home"
             variant="primary"
             trailingIcon={<ArrowRightIcon size={16} />}
             aria-label="Start using YVR"
           >
             Start using YVR
           </Button>
-          <Button href="/" variant="ghost">
+          <Button href="/home" variant="ghost">
             Set up later
           </Button>
         </div>
