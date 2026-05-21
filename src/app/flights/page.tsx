@@ -2,45 +2,32 @@
 
 import Link from "next/link";
 import type { Route } from "next";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import {
-  PROTOTYPE_DEPARTING_STATE,
-  departingHref,
-} from "@/data/departing-state";
 import { loadSavedFlights, type SavedFlight } from "@/data/saved-flights";
+import {
+  loadRecentSearches,
+  type RecentFlightSearch,
+} from "@/data/recent-flight-searches";
 import { AppShellAuthed } from "@/components/AppShellAuthed";
-import { Button } from "@/components/Button";
 import { Card } from "@/components/Card";
 import { HeaderIconButton } from "@/components/HeaderIconButton";
 import { Heading } from "@/components/Heading";
 import { HeroSurface } from "@/components/HeroSurface";
 import { IconTile } from "@/components/IconTile";
+import { LiveTrackerPass } from "@/components/LiveTrackerPass";
 import { PassDecorBackground } from "@/components/PassDecorBackground";
 import { PassPerforation } from "@/components/PassPerforation";
 import { StatusPill } from "@/components/StatusPill";
 import { VancouverDateLabel } from "@/components/VancouverDateLabel";
 import {
   ChevronRightIcon,
-  NavigationIcon,
+  InfoIcon,
   PlaneIcon,
   PlusIcon,
-  QrCodeIcon,
+  SearchIcon,
 } from "@/components/icons";
 import type { YvrFlightStatus } from "@/lib/flights/types";
-
-type ActiveFlight = {
-  airline: string;
-  flightNumber: string;
-  aircraft: string;
-  status: "On time" | "Delayed" | "Boarding" | "Cancelled";
-  origin: { code: string; city: string };
-  destination: { code: string; city: string };
-  duration: string;
-  departs: string;
-  lands: string;
-  landsDayOffset?: number;
-  gate: string;
-};
 
 type RadarFlight = {
   id: string;
@@ -60,20 +47,6 @@ type RadarFlight = {
    * cards may share `/flights/detail` until real per-flight pages exist.
    */
   href: Route;
-};
-
-const ACTIVE_FLIGHT: ActiveFlight = {
-  airline: "Air Canada",
-  flightNumber: "AC 892",
-  aircraft: "Boeing 787",
-  status: "On time",
-  origin: { code: "YVR", city: "Vancouver" },
-  destination: { code: "NRT", city: "Tokyo" },
-  duration: "9h 45m",
-  departs: "14:35",
-  lands: "17:20",
-  landsDayOffset: 1,
-  gate: "D73",
 };
 
 const RADAR_FLIGHTS: RadarFlight[] = [
@@ -100,23 +73,31 @@ const RADAR_FLIGHTS: RadarFlight[] = [
 ];
 
 /**
- * `loadedFromStorage` gates the swap between the prototype hero
- * (server render) and the saved-flights view (client render after
- * `useEffect`). The server can't read `localStorage` so it always
- * paints the prototype; once we know what's saved we either:
- *  - keep the prototype if there are no saved flights, or
- *  - hide the prototype hero and show the saved-flight cards so the
- *    user's real data dominates the screen.
+ * `loadedFromStorage` gates the swap between the Add Flight mode
+ * (server render + no saved flights) and the saved-flights view
+ * (after `useEffect` reads `localStorage`). The server can't read
+ * `localStorage` so it always paints Add Flight mode; once the client
+ * resolves storage we either:
+ *  - keep Add Flight mode if no saved flights exist, or
+ *  - swap in the saved-flight cards (+ "also on your radar" preview)
+ *    so the user's real data dominates the screen.
  *
- * The "Also on your radar" preview row stays in both branches because
- * it reads as design-preview, not live data.
+ * Add Flight mode reuses the shared `<LiveTrackerPass>` (the same dark
+ * Spruce search card used on `/flights/search`) and on submit
+ * navigates to `/flights/search?flightNumber=…&autoSearch=1`. Live
+ * search and save logic stay at `/flights/search` — this page never
+ * calls the flight-data API or writes to storage directly.
  */
 export default function MyFlightsPage() {
   const [savedFlights, setSavedFlights] = useState<SavedFlight[]>([]);
+  const [recentSearches, setRecentSearches] = useState<RecentFlightSearch[]>(
+    [],
+  );
   const [loadedFromStorage, setLoadedFromStorage] = useState(false);
 
   useEffect(() => {
     setSavedFlights(loadSavedFlights());
+    setRecentSearches(loadRecentSearches());
     setLoadedFromStorage(true);
   }, []);
 
@@ -127,18 +108,13 @@ export default function MyFlightsPage() {
       <div className="flex flex-1 flex-col gap-6 px-6 pt-2 pb-6">
         <FlightsHeader />
         {showSavedView ? (
-          <SavedFlightsSection flights={savedFlights} />
-        ) : (
           <>
-            <HappeningSoonRow />
-            <ActiveFlightCard flight={ACTIVE_FLIGHT} />
-            <ViewTripDetailsLink />
+            <SavedFlightsSection flights={savedFlights} />
+            <OnYourRadarSection flights={RADAR_FLIGHTS} previewMode />
           </>
+        ) : (
+          <AddFlightModeView recentSearches={recentSearches} />
         )}
-        <OnYourRadarSection
-          flights={RADAR_FLIGHTS}
-          previewMode={showSavedView}
-        />
       </div>
     </AppShellAuthed>
   );
@@ -478,260 +454,136 @@ function describeTimeCell(flight: SavedFlight): PassCell | null {
   return null;
 }
 
-function HappeningSoonRow() {
-  return (
-    <div className="flex items-center justify-between gap-3">
-      <span className="inline-flex items-center gap-2 text-micro uppercase text-[var(--color-action-teal)]">
-        <span
-          aria-hidden
-          className="inline-block h-1.5 w-1.5 rounded-full bg-[var(--color-success)]"
-        />
-        Happening soon
-      </span>
-      <span className="text-micro uppercase text-[var(--color-text-muted)]">
-        In 3h 12m
-      </span>
-    </div>
-  );
-}
-
-function ActiveFlightCard({ flight }: { flight: ActiveFlight }) {
-  const accessibleName = `${flight.airline} flight ${flight.flightNumber}, ${flight.origin.city} to ${flight.destination.city}, departs ${flight.departs}, gate ${flight.gate}`;
-  return (
-    <HeroSurface
-      as="section"
-      aria-label={accessibleName}
-      className="shadow-[var(--shadow-hero-card)]"
-    >
-      <PassDecorBackground variant="tall" />
-      <div className="relative flex flex-col gap-5 p-6">
-        <AirlineRow
-          airline={flight.airline}
-          flightNumber={flight.flightNumber}
-          aircraft={flight.aircraft}
-          status={flight.status}
-        />
-        <RouteRow
-          origin={flight.origin}
-          destination={flight.destination}
-          duration={flight.duration}
-        />
-        <FlightInfoModule
-          departs={flight.departs}
-          lands={flight.lands}
-          landsDayOffset={flight.landsDayOffset}
-          gate={flight.gate}
-        />
-        <PassPerforation />
-        <CTARow flightNumber={flight.flightNumber} gate={flight.gate} />
-      </div>
-    </HeroSurface>
-  );
-}
-
-function AirlineRow({
-  airline,
-  flightNumber,
-  aircraft,
-  status,
+function AddFlightModeView({
+  recentSearches,
 }: {
-  airline: string;
-  flightNumber: string;
-  aircraft: string;
-  status: ActiveFlight["status"];
+  recentSearches: RecentFlightSearch[];
 }) {
-  const statusTone =
-    status === "On time"
-      ? "success"
-      : status === "Delayed"
-        ? "warning"
-        : status === "Boarding"
-          ? "info"
-          : "danger";
+  const router = useRouter();
+  const [input, setInput] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const handleChange = (next: string) => {
+    setInput(next);
+    if (error) setError(null);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmed = input.trim();
+    const normalised = trimmed.toUpperCase().replace(/[\s-]+/g, "");
+
+    if (normalised === "") {
+      setError("Enter a flight number to search.");
+      return;
+    }
+    if (!/^[A-Z0-9]{2,3}\d{1,4}$/.test(normalised)) {
+      setError("Flight number must look like AC838 or CX838.");
+      return;
+    }
+
+    setError(null);
+    router.push(
+      `/flights/search?flightNumber=${encodeURIComponent(normalised)}&autoSearch=1` as Route,
+    );
+  };
+
   return (
-    <div className="flex items-start justify-between gap-3">
-      <div className="flex min-w-0 items-center gap-3">
+    <>
+      <LiveTrackerPass
+        value={input}
+        onChange={handleChange}
+        onSubmit={handleSubmit}
+        submitting={false}
+        pillLabel="Add a flight"
+        description="Add a flight to track gates, times, and updates in one place."
+      />
+      {error ? <AddFlightValidation message={error} /> : null}
+      {recentSearches.length > 0 ? (
+        <AddFlightRecentSearches recents={recentSearches} />
+      ) : null}
+      <FlightBoardEntryLink />
+    </>
+  );
+}
+
+function AddFlightValidation({ message }: { message: string }) {
+  return (
+    <p
+      role="alert"
+      className="inline-flex items-center gap-2 rounded-[var(--radius-tile)] border border-[var(--color-warning-border)] bg-[var(--color-warning-bg)] px-3 py-2 text-body-sm text-[var(--color-warning-fg)]"
+    >
+      <InfoIcon size={14} aria-hidden />
+      <span>{message}</span>
+    </p>
+  );
+}
+
+function AddFlightRecentSearches({
+  recents,
+}: {
+  recents: RecentFlightSearch[];
+}) {
+  return (
+    <section
+      aria-labelledby="add-flight-recent-heading"
+      className="flex flex-col gap-3"
+    >
+      <h2
+        id="add-flight-recent-heading"
+        className="text-eyebrow uppercase text-[var(--color-text-muted)]"
+      >
+        Recent searches
+      </h2>
+      <ul className="flex flex-col gap-2.5">
+        {recents.slice(0, 3).map((s) => (
+          <li key={s.query}>
+            <RecentSearchLink search={s} />
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function RecentSearchLink({ search }: { search: RecentFlightSearch }) {
+  const relative = formatRelative(search.searchedAt);
+  const href =
+    `/flights/search?flightNumber=${encodeURIComponent(search.query)}&autoSearch=1` as Route;
+  return (
+    <Link
+      href={href}
+      aria-label={`Search again for ${search.query}, ${relative}`}
+      className="block w-full text-left"
+    >
+      <Card
+        as="div"
+        surface="sheet"
+        padding="compact"
+        className="flex items-center gap-3 transition-colors duration-150 hover:bg-[var(--color-surface-hover)]"
+      >
         <IconTile
           size={36}
-          className="rounded-[var(--radius-tile)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] text-[var(--color-surface-hero-fg)]"
+          className="bg-[var(--color-surface-tile)] text-[var(--color-text-secondary)]"
         >
-          <PlaneIcon size={16} />
+          <SearchIcon size={14} />
         </IconTile>
-        <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="text-body-sm-emphasis text-[var(--color-surface-hero-fg)]">
-            {airline}
+        <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="text-body-sm-emphasis tabular-nums text-[var(--color-text-primary)]">
+            {search.query}
           </span>
-          <span className="text-micro uppercase text-[var(--color-surface-hero-fg-muted)]">
-            {flightNumber} · {aircraft}
+          <span className="truncate text-label text-[var(--color-text-secondary)]">
+            {relative}
           </span>
         </div>
-      </div>
-      <StatusPill tone={statusTone} surface="hero" leadingDot size="sm">
-        {status}
-      </StatusPill>
-    </div>
-  );
-}
-
-function RouteRow({
-  origin,
-  destination,
-  duration,
-}: {
-  origin: ActiveFlight["origin"];
-  destination: ActiveFlight["destination"];
-  duration: string;
-}) {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
-        <span className="text-display tabular-nums text-[var(--color-surface-hero-fg)]">
-          {origin.code}
-        </span>
-        <div className="flex flex-col items-center gap-1.5">
-          <span className="text-micro uppercase text-[var(--color-surface-hero-fg-soft)]">
-            {duration}
-          </span>
-          <RouteLine />
-        </div>
-        <span className="text-display tabular-nums text-[var(--color-surface-hero-fg-muted)]">
-          {destination.code}
-        </span>
-      </div>
-      <div className="grid grid-cols-[auto_1fr_auto] items-center gap-3">
-        <span className="text-label text-[var(--color-surface-hero-fg-muted)]">
-          {origin.city}
-        </span>
-        <span aria-hidden />
-        <span className="text-label text-[var(--color-surface-hero-fg-soft)]">
-          {destination.city}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function RouteLine() {
-  return (
-    <span aria-hidden className="relative flex w-full items-center">
-      <span className="inline-block h-1 w-1 shrink-0 rounded-full bg-[var(--color-map-mint)]" />
-      <span className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]" />
-      <span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--color-map-mint-bg)] text-[var(--color-map-mint)]">
-        <PlaneIcon size={11} />
-      </span>
-      <span className="h-px flex-1 border-t border-dashed border-[var(--color-surface-hero-tile-border)]" />
-      <span className="inline-block h-1 w-1 shrink-0 rounded-full bg-[var(--color-surface-hero-fg-soft)]" />
-    </span>
-  );
-}
-
-function FlightInfoModule({
-  departs,
-  lands,
-  landsDayOffset,
-  gate,
-}: {
-  departs: string;
-  lands: string;
-  landsDayOffset?: number;
-  gate: string;
-}) {
-  return (
-    <div className="grid grid-cols-3 overflow-hidden rounded-[var(--radius-tile)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)]">
-      <InfoCell label="Departs" value={departs} />
-      <InfoCell
-        label="Lands"
-        value={
-          <span className="inline-flex items-baseline gap-0.5 tabular-nums">
-            {lands}
-            {landsDayOffset != null ? (
-              <span className="text-label text-[var(--color-surface-hero-fg-soft)]">
-                +{landsDayOffset}
-              </span>
-            ) : null}
-          </span>
-        }
-        divider
-      />
-      <InfoCell label="Gate" value={gate} divider highlight />
-    </div>
-  );
-}
-
-function InfoCell({
-  label,
-  value,
-  divider = false,
-  highlight = false,
-}: {
-  label: string;
-  value: React.ReactNode;
-  divider?: boolean;
-  highlight?: boolean;
-}) {
-  return (
-    <div
-      className={`flex flex-col gap-1 px-3 py-3 ${
-        divider ? "border-l border-[var(--color-surface-hero-tile-border)]" : ""
-      } ${highlight ? "bg-[var(--color-map-mint-bg)]" : ""}`}
-    >
-      <span
-        className={`text-micro uppercase ${
-          highlight
-            ? "text-[var(--color-map-mint)]"
-            : "text-[var(--color-surface-hero-fg-soft)]"
-        }`}
-      >
-        {label}
-      </span>
-      <span
-        className={`text-section-title tabular-nums ${
-          highlight
-            ? "text-[var(--color-map-mint)]"
-            : "text-[var(--color-surface-hero-fg)]"
-        }`}
-      >
-        {value}
-      </span>
-    </div>
-  );
-}
-
-function CTARow({ flightNumber, gate }: { flightNumber: string; gate: string }) {
-  return (
-    <div className="flex items-stretch gap-2">
-      <div className="min-w-0 flex-1">
-        <Button
-          tone="inverse"
-          href={"/flights/check-in" as Route}
-          leadingIcon={<QrCodeIcon size={16} />}
-          aria-label={`Open check-in for ${flightNumber}`}
+        <span
+          aria-hidden
+          className="inline-flex shrink-0 text-[var(--color-text-muted)]"
         >
-          Boarding Pass
-        </Button>
-      </div>
-      <Link
-        href={"/flights/detail" as Route}
-        aria-label={`View gate details for ${flightNumber}, gate ${gate}`}
-        className="inline-flex h-[54px] w-28 shrink-0 items-center justify-center gap-1.5 rounded-[var(--radius-pill)] border border-[var(--color-surface-hero-tile-border)] bg-[var(--color-surface-hero-tile)] px-4 text-body-sm-emphasis text-[var(--color-surface-hero-fg)] transition-colors duration-150 hover:bg-[var(--color-surface-hero-chip)]"
-      >
-        <NavigationIcon size={14} aria-hidden />
-        Gate {gate}
-      </Link>
-    </div>
-  );
-}
-
-function ViewTripDetailsLink() {
-  return (
-    <div className="flex justify-center">
-      <Link
-        href={departingHref(PROTOTYPE_DEPARTING_STATE) as Route}
-        className="inline-flex h-11 items-center text-body-sm-emphasis text-[var(--color-action-teal)] hover:opacity-80"
-      >
-        View trip details
-      </Link>
-    </div>
+          <ChevronRightIcon size={14} />
+        </span>
+      </Card>
+    </Link>
   );
 }
 
